@@ -5,10 +5,11 @@ const { makeExecutableSchema } = require('graphql-tools')
 const User = require('./user')
 const Tweet = require('./tweet')
 
+const resolvers = require('../resolvers')
+
 const rootTypeDef = `
   type Query {
-    user: User
-    tweet: Tweet
+    test: String
   }
 
   schema {
@@ -16,5 +17,6 @@ const rootTypeDef = `
 }`
 
 module.exports = makeExecutableSchema({
-  typeDefs: [rootTypeDef, User, Tweet]
+  typeDefs: [rootTypeDef, User, Tweet],
+  resolvers
 })

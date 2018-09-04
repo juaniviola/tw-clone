@@ -3,7 +3,10 @@
   "version": "0.0.1",
   "description": "Server for twitter clone app",
   "main": "index.js",
-  "scripts": {},
+  "scripts": {
+    "test": "ava tests/ --verbose",
+    "dev": "NODE_ENV=development nodemon index.js"
+  },
   "author": "Juani Viola <juaniviola1297@gmail.com> (https://twitter.com/juanviola)",
   "license": "MIT",
   "dependencies": {

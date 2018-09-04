@@ -6,7 +6,7 @@ module.exports = `
     id: ID!
     username: String!
     fullname: String!
-    followers: [User!]!
-    following: [User!]!
+    followers: [User!]
+    following: [User!]
   }
 `
