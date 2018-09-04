@@ -1,0 +1,22 @@
+{
+  "name": "server",
+  "version": "0.0.1",
+  "description": "Server for twitter clone app",
+  "main": "index.js",
+  "scripts": {},
+  "author": "Juani Viola <juaniviola1297@gmail.com> (https://twitter.com/juanviola)",
+  "license": "MIT",
+  "dependencies": {
+    "apollo-server-express": "^1.1.0",
+    "body-parser": "^1.18.3",
+    "express": "^4.16.3",
+    "graphql": "^14.0.0",
+    "graphql-tools": "^3.1.1"
+  },
+  "devDependencies": {
+    "ava": "^0.25.0",
+    "chalk": "^2.4.1",
+    "nodemon": "^1.18.4",
+    "nyc": "^13.0.1"
+  }
+}
