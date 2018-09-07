@@ -1,16 +1,27 @@
 'use strict'
 
 const mongoose = require('mongoose')
+const { Schema } = mongoose
+const uuid = require('uuid')
+const userSchema = require('./User')
 
-const tweetSchema = new mongoose.Schema({
-  username: {
+const tweetSchema = new Schema({
+  user: {
     type: String,
-    required: true
+    refs: 'User'
+  },
+
+  id: {
+    type: String,
+    default: uuid.v1()
   },
 
   description: {
     type: String,
-    required: true
+    required: true,
+    validate: (value) => {
+      return value.length <= 280
+    }
   },
 
   createdAt: {
@@ -18,19 +29,34 @@ const tweetSchema = new mongoose.Schema({
     default: Date.now()
   },
 
-  fav: [{
+  favs: [{
+    id: {
+      type: String,
+      required: true
+    },
+
     username: {
       type: String,
       required: true
     }
   }],
 
-  hashtag: {
+  hashtags: {
     type: Array,
     default: []
   },
 
-  answer: [{
+  mentions: {
+    type: Array,
+    default: []
+  },
+
+  answers: [{
+    id: {
+      type: String,
+      required: true
+    },
+
     username: {
       type: String,
       required: true

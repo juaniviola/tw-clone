@@ -2,8 +2,15 @@
 
 const mongoose = require('mongoose')
 const validator = require('validator')
+const uuid = require('uuid')
 
 const userSchema = new mongoose.Schema({
+  id: {
+    type: String,
+    unique: true,
+    default: uuid.v1()
+  },
+
   username: {
     type: String,
     required: true,

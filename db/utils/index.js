@@ -5,5 +5,11 @@ module.exports = {
     const hashtag = text.match(/#\w+/g)
 
     return hashtag
+  },
+
+  getMentions (text) {
+    const mentions = text.match(/@\w+/g)
+
+    return mentions
   }
 }
