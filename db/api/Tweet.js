@@ -1,7 +1,7 @@
 'use strict'
 
 const mongoose = require('mongoose')
-const { Tweet } = require('../models')
+const { Tweet, User } = require('../models')
 const utils = require('../utils')
 
 module.exports = {
@@ -19,31 +19,33 @@ module.exports = {
     return tweet.save()
   },
 
-  tweetsByUser (user) {
-    return Tweet.find({ user })
+  tweetsByUser (userId) {
+    return Tweet
+      .find({ user: userId })
+      .populate({ path: 'user', options: { select: { username: 1, fullName: 1, email: 1 } } })
+      .populate({ path: 'favs', options: { select: { username: 1, fullName: 1, email: 1 } } })
+      .populate({ path: 'answers.user', options: { select: { username: 1, fullName: 1, email: 1 } } })
   },
 
   tweetsByHashtag (hashtag) {
-    return Tweet.find({ hashtags: hashtag })
+    return Tweet
+      .find({ hashtags: hashtag })
+      .populate({ path: 'user', options: { select: { username: 1, fullName: 1, email: 1 } } })
+      .populate({ path: 'favs', options: { select: { username: 1, fullName: 1, email: 1 } } })
+      .populate({ path: 'answers.user', options: { select: { username: 1, fullName: 1, email: 1 } } })
   },
 
   favTweet (tId, fav, user) {
     if (fav) {
-      return Tweet.findOneAndUpdate({ id: tId }, {
+      return Tweet.findOneAndUpdate({ _id: tId }, {
         $push: {
-          favs: {
-            username: user.username,
-            id: user.id
-          }
+          favs: user._id
         }
       }, { multi: true })
     } else {
-      return Tweet.findOneAndUpdate({ id: tId }, {
+      return Tweet.findOneAndUpdate({ _id: tId }, {
         $pull: {
-          'favs': {
-            id: user.id,
-            username: user.username
-          }
+          favs: user._id
         }
       }, { multi: true })
     }
@@ -53,7 +55,7 @@ module.exports = {
     const hashtags = utils.getHashtag(description)
     const mentions = utils.getMentions(description)
 
-    return Tweet.findOneAndUpdate({ id }, {
+    return Tweet.findOneAndUpdate({ _id: id }, {
       description,
       mentions,
       hashtags
@@ -61,15 +63,14 @@ module.exports = {
   },
 
   deleteTweet (id) {
-    return Tweet.findOneAndRemove({ id })
+    return Tweet.findOneAndRemove({ _id: id })
   },
 
   addAnswer (tId, user, description) {
-    return Tweet.findOneAndUpdate({ id: tId }, {
+    return Tweet.findOneAndUpdate({ _id: tId }, {
       $push: {
         answers: {
-          id: user.id,
-          username: user.username,
+          user: user._id,
           description
         }
       }
@@ -77,12 +78,17 @@ module.exports = {
   },
 
   deleteAnswer (tId, aId) {
-    return Tweet.findOneAndUpdate({ id: tId }, {
+    return Tweet.findOneAndUpdate({ _id: tId }, {
       $pull: {
         answers: {
           _id: aId
         }
       }
     })
+  },
+
+  async tweetByFollowingUsers (userId) {
+    const f = await User.findOne({ _id: userId })
+    return Tweet.find({ user: { $in: f.following } }).sort({ createdAt: -1 }).limit(100)
   }
 }

@@ -5,12 +5,6 @@ const validator = require('validator')
 const uuid = require('uuid')
 
 const userSchema = new mongoose.Schema({
-  id: {
-    type: String,
-    unique: true,
-    default: uuid.v1()
-  },
-
   username: {
     type: String,
     required: true,
@@ -38,9 +32,9 @@ const userSchema = new mongoose.Schema({
     required: true
   },
 
-  followers: [{ username: String, fullName: String }],
+  followers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
 
-  following: [{ username: String, fullName: String }]
+  following: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }]
 })
 
 module.exports = mongoose.model('User', userSchema)

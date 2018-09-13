@@ -3,17 +3,11 @@
 const mongoose = require('mongoose')
 const { Schema } = mongoose
 const uuid = require('uuid')
-const userSchema = require('./User')
 
 const tweetSchema = new Schema({
   user: {
-    type: String,
-    refs: 'User'
-  },
-
-  id: {
-    type: String,
-    default: uuid.v1()
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
   },
 
   description: {
@@ -30,15 +24,8 @@ const tweetSchema = new Schema({
   },
 
   favs: [{
-    id: {
-      type: String,
-      required: true
-    },
-
-    username: {
-      type: String,
-      required: true
-    }
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
   }],
 
   hashtags: {
@@ -52,14 +39,9 @@ const tweetSchema = new Schema({
   },
 
   answers: [{
-    id: {
-      type: String,
-      required: true
-    },
-
-    username: {
-      type: String,
-      required: true
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User'
     },
 
     description: {
