@@ -89,6 +89,10 @@ module.exports = {
 
   async tweetByFollowingUsers (userId) {
     const f = await User.findOne({ _id: userId })
-    return Tweet.find({ user: { $in: f.following } }).sort({ createdAt: -1 }).limit(100)
+    return Tweet
+      .find({ user: { $in: f.following } })
+      .sort({ createdAt: -1 })
+      .limit(100)
+      .populate({ path: 'user', options: { select: { username: 1, fullName: 1, email: 1 } } })
   }
 }

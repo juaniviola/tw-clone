@@ -42,7 +42,7 @@ test.serial('pass', t => t.pass())
 test.serial('add tweet', async t => {
   const u = await userSchema.findOne({ username: 'juaniviola' })
 
-  console.log(chalk.red(u._id))
+  // console.log(chalk.red(u._id))
   const tw = await twApi.saveTweet({
     user: u._id,
     description: 'Hello guys. #goodDay. How are you @juaniviola ?'
@@ -204,6 +204,8 @@ test.serial('tweets by following users', async t => {
   await userApi.addFollower(u, user)
   const f = await twApi.tweetByFollowingUsers(u._id)
 
-  t.deepEqual(f[0].user, user._id)
+  // console.log(f)
+
+  t.deepEqual(f[0].user.username, 'viola')
   t.deepEqual(f[0].description, 'Hola broder x2')
 })
