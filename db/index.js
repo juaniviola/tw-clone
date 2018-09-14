@@ -4,9 +4,10 @@ const mongoose = require('mongoose')
 const api = require('./api')
 
 module.exports = {
-  connect (url, port, db) {
-    const mongoUrl = `mongodb://${url}:${port}/${db}`
-    return mongoose.connect(mongoUrl, { useNewUrlParser: true })
+  connect (mongoUrl) {
+    const { url, port, db } = mongoUrl
+    const urldb = `mongodb://${url}:${port}/${db}`
+    return mongoose.connect(urldb, { useNewUrlParser: true })
   },
 
   api
