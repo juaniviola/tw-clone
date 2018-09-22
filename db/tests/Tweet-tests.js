@@ -24,7 +24,6 @@ test.before(async t => {
     password: 'none'
   })
 
-
   await userApi.saveUser({
     username: 'viola',
     email: 'viola@gmail.com',
@@ -42,13 +41,12 @@ test.serial('pass', t => t.pass())
 test.serial('add tweet', async t => {
   const u = await userSchema.findOne({ username: 'juaniviola' })
 
-  // console.log(chalk.red(u._id))
   const tw = await twApi.saveTweet({
     user: u._id,
     description: 'Hello guys. #goodDay. How are you @juaniviola ?'
   })
 
-  t.deepEqual(tw.user, u._id)
+  t.deepEqual(tw.user.username, 'juaniviola')
   t.deepEqual(tw.description, 'Hello guys. #goodDay. How are you @juaniviola ?')
   t.deepEqual(tw.hashtags[0], '#goodDay')
   t.deepEqual(tw.mentions[0], '@juaniviola')
@@ -112,15 +110,18 @@ test.serial('fav tweet', async t => {
 
 test.serial('edit tweet', async t => {
   const u = await userSchema.findOne({ username: 'juaniviola' })
+  // console.log(chalk.blue(u._id))
 
   const tweet = await twApi.saveTweet({
     user: u._id,
     description: 'Hola como va'
   })
 
+  // console.log(chalk.red(tweet.description))
   const up = await twApi.updateTweet(tweet._id, 'Hola #brother')
   const tw = await twSchema.findOne({ _id: tweet._id })
 
+  // console.log()
   t.deepEqual(tw.description, 'Hola #brother')
   t.deepEqual(tw.hashtags[0], '#brother')
 })

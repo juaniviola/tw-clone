@@ -5,7 +5,7 @@ const { Tweet, User } = require('../models')
 const utils = require('../utils')
 
 module.exports = {
-  saveTweet (payload) {
+  async saveTweet (payload) {
     const hashtags = utils.getHashtag(payload.description)
     const mentions = utils.getMentions(payload.description)
 
@@ -16,58 +16,79 @@ module.exports = {
       mentions: mentions ? mentions : []
     })
 
-    return tweet.save()
+    try {
+      await tweet.save()
+    } catch (err) {
+      console.log(err)
+      return err
+    }
+
+    return Tweet
+      .findOne({ _id: tweet._id })
+      .populate({ path: 'user', options: { select: { username: 1, fullName: 1 } } })
   },
 
   tweetsByUser (userId) {
     return Tweet
       .find({ user: userId })
-      .populate({ path: 'user', options: { select: { username: 1, fullName: 1, email: 1 } } })
-      .populate({ path: 'favs', options: { select: { username: 1, fullName: 1, email: 1 } } })
-      .populate({ path: 'answers.user', options: { select: { username: 1, fullName: 1, email: 1 } } })
+      .populate({ path: 'user', options: { select: { username: 1, fullName: 1 } } })
+      .populate({ path: 'favs', options: { select: { username: 1, fullName: 1 } } })
+      .populate({ path: 'answers.user', options: { select: { username: 1, fullName: 1 } } })
   },
 
   tweetsByHashtag (hashtag) {
     return Tweet
       .find({ hashtags: hashtag })
-      .populate({ path: 'user', options: { select: { username: 1, fullName: 1, email: 1 } } })
-      .populate({ path: 'favs', options: { select: { username: 1, fullName: 1, email: 1 } } })
-      .populate({ path: 'answers.user', options: { select: { username: 1, fullName: 1, email: 1 } } })
+      .populate({ path: 'user', options: { select: { username: 1, fullName: 1 } } })
+      .populate({ path: 'favs', options: { select: { username: 1, fullName: 1 } } })
+      .populate({ path: 'answers.user', options: { select: { username: 1, fullName: 1 } } })
   },
 
-  favTweet (tId, fav, user) {
+  async favTweet (tId, fav, user) {
     if (fav) {
-      return Tweet.findOneAndUpdate({ _id: tId }, {
+      await Tweet.findOneAndUpdate({ _id: tId }, {
         $push: {
           favs: user._id
         }
       }, { multi: true })
     } else {
-      return Tweet.findOneAndUpdate({ _id: tId }, {
+      await Tweet.findOneAndUpdate({ _id: tId }, {
         $pull: {
           favs: user._id
         }
       }, { multi: true })
     }
+
+    return Tweet
+      .findOne({ _id: tId })
+      .populate({ path: 'user', options: { select: { username: 1, fullName: 1 } } })
+      .populate({ path: 'favs', options: { select: { username: 1, fullName: 1 } } })
+      .populate({ path: 'answers.user', options: { select: { username: 1, fullName: 1 } } })
   },
 
-  updateTweet (id, description) {
+  async updateTweet (_id, description) {
     const hashtags = utils.getHashtag(description)
     const mentions = utils.getMentions(description)
 
-    return Tweet.findOneAndUpdate({ _id: id }, {
+    await Tweet.findOneAndUpdate({ _id }, {
       description,
       mentions,
       hashtags
     })
+
+    return Tweet
+      .findOne({ _id })
+      .populate({ path: 'user', options: { select: { username: 1, fullName: 1 } } })
+      .populate({ path: 'favs', options: { select: { username: 1, fullName: 1 } } })
+      .populate({ path: 'answers.user', options: { select: { username: 1, fullName: 1 } } })
   },
 
-  deleteTweet (id) {
-    return Tweet.findOneAndRemove({ _id: id })
+  deleteTweet (_id) {
+    return Tweet.findOneAndRemove({ _id })
   },
 
-  addAnswer (tId, user, description) {
-    return Tweet.findOneAndUpdate({ _id: tId }, {
+  async addAnswer (tId, user, description) {
+    await Tweet.findOneAndUpdate({ _id: tId }, {
       $push: {
         answers: {
           user: user._id,
@@ -75,16 +96,28 @@ module.exports = {
         }
       }
     })
+
+    return Tweet
+      .findOne({ _id: tId })
+      .populate({ path: 'user', options: { select: { username: 1, fullName: 1 } } })
+      .populate({ path: 'favs', options: { select: { username: 1, fullName: 1 } } })
+      .populate({ path: 'answers.user', options: { select: { username: 1, fullName: 1 } } })
   },
 
-  deleteAnswer (tId, aId) {
-    return Tweet.findOneAndUpdate({ _id: tId }, {
+  async deleteAnswer (tId, aId) {
+    await Tweet.findOneAndUpdate({ _id: tId }, {
       $pull: {
         answers: {
           _id: aId
         }
       }
     })
+
+    return Tweet
+      .findOne({ _id: tId })
+      .populate({ path: 'user', options: { select: { username: 1, fullName: 1 } } })
+      .populate({ path: 'favs', options: { select: { username: 1, fullName: 1 } } })
+      .populate({ path: 'answers.user', options: { select: { username: 1, fullName: 1 } } })
   },
 
   async tweetByFollowingUsers (userId) {
@@ -93,6 +126,8 @@ module.exports = {
       .find({ user: { $in: f.following } })
       .sort({ createdAt: -1 })
       .limit(100)
-      .populate({ path: 'user', options: { select: { username: 1, fullName: 1, email: 1 } } })
+      .populate({ path: 'user', options: { select: { username: 1, fullName: 1 } } })
+      .populate({ path: 'favs', options: { select: { username: 1, fullName: 1 } } })
+      .populate({ path: 'answers.user', options: { select: { username: 1, fullName: 1 } } })
   }
 }

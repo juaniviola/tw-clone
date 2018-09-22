@@ -2,7 +2,6 @@
 
 const mongoose = require('mongoose')
 const { Schema } = mongoose
-const uuid = require('uuid')
 
 const tweetSchema = new Schema({
   user: {
