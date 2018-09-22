@@ -5,16 +5,31 @@ module.exports = `
   scalar Date
 
   type Tweet {
+    _id: objectId!
     user: User
     description: String!
     createdAt: Date!
     favs: [User!]
-    answer: [Answer]
+    answers: [Answer!]
+    hashtags: [String!]
+    mentions: [String!]
   }
 
   type Answer {
-    user: User
+    _id: objectId!
+    user: User!
     description: String!
     createdAt: Date!
+  }
+
+  input newTweet {
+    # userId
+    user: objectId!,
+    description: String!
+  }
+
+  input editTweet {
+    _id: objectId!,
+    description: String!
   }
 `

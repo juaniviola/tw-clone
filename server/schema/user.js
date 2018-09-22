@@ -2,11 +2,24 @@
 
 module.exports = `
   # Type User definition
+
   type User {
-    id: ID!
+    _id: objectId!
     username: String!
-    fullname: String!
+    fullName: String!
+    email: String!
     followers: [User!]
     following: [User!]
+  }
+
+  input newUser {
+    username: String!,
+    email: String!,
+    fullName: String!,
+    password: String!
+  }
+
+  input twUser {
+    _id: objectId!
   }
 `
