@@ -21,6 +21,34 @@ module.exports = {
   Query: {
     helloWorld () {
       return 'Hello world'
+    },
+
+    userById (rootValue, { id }) {
+      return User.getUserById(id)
+    },
+
+    userByUsername (rootValue, { username }) {
+      return User.getUserByUsername(username)
+    },
+
+    usersByUsername (rootValue, { username }) {
+      return User.getUsersByUsername(username)
+    },
+
+    tweetById (rootValue, { id }) {
+      return Tweet.tweetById(id)
+    },
+
+    tweetsByUsername (rootValue, { id }) {
+      return Tweet.tweetsByUser(id)
+    },
+
+    tweetsByFollowingUsers (rootValue, { id }) {
+      return Tweet.tweetByFollowingUsers(id)
+    },
+
+    tweetsByHashtags (rootValue, { hashtag }) {
+      return Tweet.tweetsByHashtag(hashtag)
     }
   },
 
@@ -69,6 +97,14 @@ module.exports = {
 
     delAnswer(_, args) {
       return Tweet.deleteAnswer(args.id, args.ansId)
+    },
+
+    addFollow(_, args) {
+      return User.addFollower(args.userFrom, args.userTo)
+    },
+
+    delFollow(_, args) {
+      return User.deleteFollower(args.userFrom, args.userTo)
     }
   }
 }

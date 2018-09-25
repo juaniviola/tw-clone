@@ -283,7 +283,84 @@ test.serial('many users', async t => {
   }
 })
 
-test.todo('add follow')
+test.serial('add follow', async t => {
+  const query = `
+    mutation addFollow($userFrom: twUser!, $userTo: twUser!) {
+      addFollow(userFrom: $userFrom, userTo: $userTo) {
+        username
+
+        following {
+          username
+        }
+
+        followers {
+          username
+        }
+      }
+    }
+  `
+
+  const variable = [
+    {
+      userFrom: { _id: users[0]._id },
+      userTo: { _id: users[1]._id }
+    },
+    {
+      userFrom: { _id: users[0]._id },
+      userTo: { _id: users[2]._id }
+    },
+    {
+      userFrom: { _id: users[1]._id },
+      userTo: { _id: users[0]._id }
+    }
+  ]
+
+  const expect = [
+    { addFollow: { username: 'juanito', following: [{ username: 'viola' }] } },
+    { addFollow: { username: 'juanito', following: [{ username: 'viola'}, { username: 'violanacho' } ] } },
+    { addFollow: { username: 'viola', following: [{ username:'juanito' }] } }
+  ]
+
+  for (let i=0; i<variable.length; i++) {
+    const variables = variable[i]
+    const result = await graphql(schema, query, null, null, variables)
+    const { data } = result
+
+    if (i === 2) {
+      t.deepEqual(data.addFollow.username, expect[i].addFollow.username)
+      t.deepEqual(data.addFollow.following, expect[i].addFollow.following)
+      t.deepEqual(data.addFollow.followers[0].username, 'juanito')
+    } else {
+      t.deepEqual(data.addFollow.username, expect[i].addFollow.username)
+      t.deepEqual(data.addFollow.following, expect[i].addFollow.following)
+    }
+  }
+})
+
+test.serial('delete follow', async t => {
+  const query = `
+    mutation delFoll($userFrom: twUser!, $userTo: twUser!) {
+      delFollow(userFrom: $userFrom, userTo: $userTo) {
+        username
+
+        following {
+          username
+        }
+      }
+    }
+  `
+
+  const variables = {
+    userFrom: { _id: users[0]._id },
+    userTo: { _id: users[1]._id }
+  }
+
+  const result = await graphql(schema, query, null, null, variables)
+  const { data } = result
+
+  t.deepEqual(data.delFollow.username, 'juanito')
+  t.deepEqual(data.delFollow.following[0].username, 'violanacho')
+})
 
 test.serial('many tweets', async t => {
   const query = `
@@ -326,3 +403,68 @@ test.serial('many tweets', async t => {
     t.deepEqual(data.addTweet.hashtags[0], expect[i].hashtags[0])
   }
 })
+
+test.serial('user by username', async t => {
+  const query = `
+    query us ($username: String!) {
+      userByUsername(username: $username) {
+        username
+        fullName
+      }
+    }
+  `
+
+  const variables = {
+    username: 'juaniviola'
+  }
+
+  const result = await graphql(schema, query, null, null, variables)
+  const { data } = result
+
+  t.deepEqual(data.userByUsername.username, 'juaniviola')
+  t.deepEqual(data.userByUsername.fullName, 'Juani Viola')
+})
+
+test.serial('user by id', async t => {
+  const query = `
+    query usId ($id: objectId!) {
+      userById (id: $id) {
+        username
+        fullName
+      }
+    }
+  `
+
+  const variables = {
+    id: uId
+  }
+
+  const result = await graphql(schema, query, null, null, variables)
+  const { data } = result
+
+  t.deepEqual(data.userById.username, 'juaniviola')
+  t.deepEqual(data.userById.fullName, 'Juani Viola')
+})
+
+test.serial('users by username', async t => {
+  const query = `
+    query ussby ($username: String!) {
+      usersByUsername (username: $username) {
+        username,
+        fullName
+      }
+    }
+  `
+
+  const variables = {
+    username: 'juani.vi'
+  }
+
+  const result = await graphql(schema, query, null, null, variables)
+  const { data } = result
+
+  t.deepEqual(data.usersByUsername[0].username, 'juani.viola123')
+})
+
+test.todo('querys')
+test.todo('drive errors')

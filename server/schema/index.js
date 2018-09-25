@@ -13,12 +13,12 @@ const rootTypeDef = `
   type Query {
     helloWorld: String!
     userById(id: objectId!): User!
-    userByUsername(username: String!): [User!]
-    tweetsByUsername(username: String!): [Tweet!]!
-    tweetsByFollowingUsers(username: String!): [Tweet!]!
+    userByUsername(username: String!): User!
+    usersByUsername(username: String!): [User!]!
+    tweetById(id: objectId!): Tweet!
+    tweetsByUsername(id: objectId!): [Tweet!]!
+    tweetsByFollowingUsers(id: objectId!): [Tweet!]!
     tweetsByHashtags(hashtag: String!): [Tweet!]
-
-    tweet(id: objectId!): Tweet!
   }
 
   type Mutation {
