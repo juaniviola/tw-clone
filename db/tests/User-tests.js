@@ -12,32 +12,53 @@ const mongoUrl = 'mongodb://127.0.0.1:27017/tw-clone'
 
 test.before(async () => {
   await mongoose.connect(mongoUrl, { useNewUrlParser: true })
-
-  await userSchema.deleteMany()
-})
-
-test.after(async () => {
-  await userSchema.deleteMany()
 })
 
 test.serial('pass', t => t.pass())
 
+let userId = null
 test.serial('save user', async t => {
   const user = await userApi.saveUser({
-    username: 'juaniviola1',
-    email: 'jv1@gmail.com',
-    fullName: 'Juani Viola',
+    username: 'foo_user',
+    email: 'foo@gmail.com',
+    fullName: 'Foo Test',
     password: 'null'
   })
 
-  await userSchema.findOneAndRemove({ _id: user._id })
-
-  t.deepEqual(user.username, 'juaniviola1')
-  t.deepEqual(user.email, 'jv1@gmail.com')
-  t.deepEqual(user.fullName, 'Juani Viola')
+  userId = user._id
+  t.deepEqual(user.username, 'foo_user')
+  t.deepEqual(user.email, 'foo@gmail.com')
+  t.deepEqual(user.fullName, 'Foo Test')
   t.deepEqual(user.password, 'null')
   t.deepEqual(user.followers[0], undefined)
   t.deepEqual(user.following[0], undefined)
+})
+
+test.serial('get user by id', async t => {
+  const user = await userApi.getUserById(userId)
+
+  t.deepEqual(user.username, 'foo_user')
+  t.deepEqual(user.fullName, 'Foo Test')
+  t.deepEqual(user.followers.length, 0)
+  t.deepEqual(user.following.length, 0)
+})
+
+test.serial('get user by username', async t => {
+  const user = await userApi.getUserByUsername('foo_user')
+
+  t.deepEqual(user.username, 'foo_user')
+  t.deepEqual(user.fullName, 'Foo Test')
+  t.deepEqual(user.following.length, 0)
+  t.deepEqual(user.followers.length, 0)
+})
+
+test.serial('get users by username', async t => {
+  const user = await userApi.getUsersByUsername('foo')
+
+  t.deepEqual(user[0].username, 'foo_user')
+  t.deepEqual(user[0].fullName, 'Foo Test')
+  t.deepEqual(user[0].followers.length, 0)
+  t.deepEqual(user[0].following.length, 0)
 })
 
 test.serial('add and delete followers', async t => {
@@ -55,7 +76,6 @@ test.serial('add and delete followers', async t => {
     password: 'cualquiera'
   })
 
-  // u follow to user. user follower u
   await userApi.addFollower(u, user)
 
   const userFrom = await userApi.getUserByUsername('juaniviola1')
@@ -66,14 +86,14 @@ test.serial('add and delete followers', async t => {
   const _userFrom = await userApi.getUserByUsername('juaniviola1')
   const _userTo = await userApi.getUserByUsername('violanacho')
 
-  t.deepEqual(userFrom[0].following[0].username, 'violanacho')
-  t.deepEqual(userFrom[0].following[0].fullName, 'Juani Viola')
-  t.notDeepEqual(userFrom[0].following[0].password, 'cualquiera')
+  t.deepEqual(userFrom.following[0].username, 'violanacho')
+  t.deepEqual(userFrom.following[0].fullName, 'Juani Viola')
 
-  t.deepEqual(userTo[0].followers[0].username, 'juaniviola1')
-  t.deepEqual(userTo[0].followers[0].fullName, 'Juanito Viola')
-  t.notDeepEqual(userTo[0].followers[0].email, 'juaniviola1@gmail.com')
+  t.deepEqual(userTo.followers[0].username, 'juaniviola1')
+  t.deepEqual(userTo.followers[0].fullName, 'Juanito Viola')
 
-  t.deepEqual(_userFrom[0].following[0], undefined)
-  t.deepEqual(_userTo[0].followers[0], undefined)
+  t.deepEqual(_userFrom.following[0], undefined)
+  t.deepEqual(_userTo.followers[0], undefined)
 })
+
+test.todo('errors')

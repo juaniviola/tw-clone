@@ -36,6 +36,14 @@ module.exports = {
       .populate({ path: 'answers.user', options: { select: { username: 1, fullName: 1 } } })
   },
 
+  tweetById (id) {
+    return Tweet
+      .findOne({ _id: id })
+      .populate({ path: 'user', options: { select: { username: 1, fullName: 1 } } })
+      .populate({ path: 'favs', options: { select: { username: 1, fullName: 1 } } })
+      .populate({ path: 'answers.user', options: { select: { username: 1, fullName: 1 } } })
+  },
+
   tweetsByHashtag (hashtag) {
     return Tweet
       .find({ hashtags: hashtag })

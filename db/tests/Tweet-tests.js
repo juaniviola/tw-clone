@@ -17,19 +17,21 @@ test.before(async t => {
   await twSchema.deleteMany()
   await userSchema.deleteMany()
 
-  await userApi.saveUser({
+  const users = [{
     username: 'juaniviola',
     email: 'juaniviola@gmail.com',
     fullName: 'juani viola',
     password: 'none'
-  })
-
-  await userApi.saveUser({
+  }, {
     username: 'viola',
     email: 'viola@gmail.com',
     fullName: 'viola',
     password: 'ninguna'
-  })
+  }]
+
+  for (let i=0; i<users.length; i++) {
+    await userApi.saveUser(users[i])
+  }
 })
 
 test.beforeEach(async () => {
@@ -58,7 +60,7 @@ test.serial('tweet with desc > 280', async t => {
   let tw = null
 
   try {
-    await twApi.saveTweet({
+    tw = await twApi.saveTweet({
       user: u._id,
       description: desc
     })
@@ -72,58 +74,69 @@ test.serial('tweet with desc > 280', async t => {
 test.serial('tweets by user', async t => {
   const u = await userSchema.findOne({ username: 'juaniviola' })
 
-  const tweet = await twApi.saveTweet({
+  const tweets = [{
     user: u._id,
     description: 'testing1'
-  })
+  }, {
+    user: u._id,
+    description: 'La banda'
+  }, {
+    user: u._id,
+    description: 'Hello guys #hello'
+  }]
+
+  for (let i=0; i<tweets.length; i++) {
+    await twApi.saveTweet(tweets[i])
+  }
 
   const search1 = await twApi.tweetsByUser(u._id)
 
   t.deepEqual(search1[0].user.username, 'juaniviola')
-  t.deepEqual(search1[0].user.email, 'juaniviola@gmail.com')
   t.deepEqual(search1[0].description, 'testing1')
+  t.deepEqual(search1[1].description, 'La banda')
+  t.deepEqual(search1[2].description, 'Hello guys #hello')
+  t.deepEqual(search1[2].hashtags[0], '#hello')
 })
 
 test.serial('fav tweet', async t => {
   const u = await userSchema.findOne({ username: 'juaniviola' })
+  const user = await userSchema.findOne({ username: 'viola' })
 
   const tw = await twApi.saveTweet({
     user: u._id,
     description: '#Hello #guys'
   })
 
-  const user = await userSchema.findOne({ username: 'viola' })
   await twApi.favTweet(tw._id, true, user)
-  const tweet = await twSchema
-    .findOne({ _id: tw._id })
-    .populate({ path: 'favs', options: { select: { username: 1 } } })
+  const tweet = await twApi.tweetById(tw._id)
 
   await twApi.favTweet(tw._id, false, user)
-  const tweet2 = await twSchema
-    .findOne({ _id: tw._id })
-    .populate({ path: 'favs', options: { select: { username: 1 } } })
+  const tweet2 = await twApi.tweetById(tw._id)
 
+  t.deepEqual(tweet.favs.length, 1)
   t.deepEqual(tweet.favs[0]._id, user._id)
   t.deepEqual(tweet.favs[0].username, 'viola')
+
+  t.deepEqual(tweet2.user.username, 'juaniviola')
   t.deepEqual(tweet2.favs[0], undefined)
 })
 
 test.serial('edit tweet', async t => {
   const u = await userSchema.findOne({ username: 'juaniviola' })
-  // console.log(chalk.blue(u._id))
 
   const tweet = await twApi.saveTweet({
     user: u._id,
     description: 'Hola como va'
   })
 
-  // console.log(chalk.red(tweet.description))
   const up = await twApi.updateTweet(tweet._id, 'Hola #brother')
-  const tw = await twSchema.findOne({ _id: tweet._id })
 
-  // console.log()
-  t.deepEqual(tw.description, 'Hola #brother')
-  t.deepEqual(tw.hashtags[0], '#brother')
+  t.deepEqual(tweet.user.username, 'juaniviola')
+  t.deepEqual(tweet.description, 'Hola como va')
+
+  t.deepEqual(up.user.username, 'juaniviola')
+  t.deepEqual(up.description, 'Hola #brother')
+  t.deepEqual(up.hashtags[0], '#brother')
 })
 
 test.serial('add answer', async t => {
@@ -136,12 +149,10 @@ test.serial('add answer', async t => {
 
   const user = await userSchema.findOne({ username: 'viola' })
   const ans = await twApi.addAnswer(tw._id, user, 'Prueba')
-  const tweet = await twSchema
-    .findOne({ _id: tw._id })
-    .populate({ path: 'answers.user', options: { select: { username: 1 } } })
 
-  t.deepEqual(tweet.answers[0].user.username, 'viola')
-  t.deepEqual(tweet.answers[0].description, 'Prueba')
+  t.deepEqual(ans.answers.length, 1)
+  t.deepEqual(ans.answers[0].user.username, 'viola')
+  t.deepEqual(ans.answers[0].description, 'Prueba')
 })
 
 test.serial('delete answer', async t => {
@@ -154,12 +165,12 @@ test.serial('delete answer', async t => {
 
   const user = await userSchema.findOne({ username: 'viola' })
   const addAns = await twApi.addAnswer(tw._id, user, 'Prueba')
-  const tweet = await twSchema.findOne({ _id: tw._id })
-  const delAns = await twApi.deleteAnswer(tweet._id, tweet.answers[0]._id)
+  const delAns = await twApi.deleteAnswer(tw._id, addAns.answers[0]._id)
 
-  const ansDel = await twSchema.findOne({ _id: tw._id })
-
-  t.deepEqual(ansDel.answers[0], undefined)
+  t.deepEqual(addAns.answers.length, 1)
+  t.deepEqual(addAns.answers[0].user.username, 'viola')
+  t.deepEqual(addAns.answers[0].description, 'Prueba')
+  t.deepEqual(delAns.answers.length, 0)
 })
 
 test.serial('delete tweet', async t => {
@@ -205,8 +216,8 @@ test.serial('tweets by following users', async t => {
   await userApi.addFollower(u, user)
   const f = await twApi.tweetByFollowingUsers(u._id)
 
-  // console.log(f)
-
   t.deepEqual(f[0].user.username, 'viola')
   t.deepEqual(f[0].description, 'Hola broder x2')
 })
+
+test.todo('errors')
