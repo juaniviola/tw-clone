@@ -1,2 +1,9 @@
+.vscode
+
 server/node_modules
 server/package-lock.json
+
+db/node_modules
+db/package-lock.json
+db/.nyc_output
+db/coverage
