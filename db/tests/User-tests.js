@@ -29,9 +29,18 @@ test.serial('save user', async t => {
   t.deepEqual(user.username, 'foo_user')
   t.deepEqual(user.email, 'foo@gmail.com')
   t.deepEqual(user.fullName, 'Foo Test')
-  t.deepEqual(user.password, 'null')
   t.deepEqual(user.followers[0], undefined)
   t.deepEqual(user.following[0], undefined)
+})
+
+test.serial('signin', async t => {
+  const result = await userApi.comparePassword({ _id: userId, password: 'null' })
+  const error = await userApi.comparePassword({ _id: userId, password: 'foobar' })
+  const nullUser = await userApi.comparePassword({ _id: `...${userId}...`,  password: 'null'})
+
+  t.deepEqual(result.data.message, 'exit')
+  t.deepEqual(error.error.message, 'Login failed')
+  t.deepEqual(nullUser.error.message, 'Some error ocurred')
 })
 
 test.serial('get user by id', async t => {

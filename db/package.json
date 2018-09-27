@@ -9,6 +9,7 @@
   "author": "Juani Viola <juaniviola1297@gmail.com> (https://twitter.com/juanviola15)",
   "license": "MIT",
   "dependencies": {
+    "bcryptjs": "^2.4.3",
     "mongoose": "^5.2.13",
     "uuid": "^3.3.2",
     "validator": "^10.7.1"
