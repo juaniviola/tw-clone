@@ -78,5 +78,9 @@ module.exports = {
       .findOne({ _id: userFrom._id })
       .populate({ path: 'following', options: { select: { username: 1, fullName: 1 } } })
       .populate({ path: 'followers', options: { select: { username: 1, fullName: 1 } } })
+  },
+
+  setSecure (_id, secure) {
+    return User.findOneAndUpdate({ _id }, { secure })
   }
 }
