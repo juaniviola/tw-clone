@@ -23,15 +23,16 @@ const rootTypeDef = `
 
   type Mutation {
     addUser(u: newUser!): User!
+    signin(user: login!): UserLogged!
     addTweet(tw: newTweet!): Tweet!
     editTweet(tw: editTweet!): Tweet!
-    deleteTweet(id: objectId!): String!
-    favTweet(id: objectId!, user: twUser!): Tweet!
-    delFav(id: objectId!, user: twUser!): Tweet!
-    addAnswer(id: objectId!, user: twUser!, description: String!): Tweet!
-    delAnswer(id: objectId!, ansId: objectId!): Tweet!
-    addFollow(userFrom: twUser!, userTo: twUser!): User!
-    delFollow(userFrom: twUser!, userTo: twUser!): User!
+    deleteTweet(tw: deleteTweet!): String!
+    favTweet(fav: favTweet!): Tweet!
+    delFav(fav: favTweet!): Tweet!
+    addAnswer(answer: addAnswer!): Tweet!
+    delAnswer(answer: delAnswer!): Tweet!
+    addFollow(follow: userFollow!): User!
+    delFollow(follow: userFollow!): User!
   }
 
   schema {

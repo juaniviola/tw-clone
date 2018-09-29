@@ -12,14 +12,26 @@ module.exports = `
     following: [User!]
   }
 
+  type UserLogged {
+    user: User!
+    secure: String!
+  }
+
   input newUser {
-    username: String!,
-    email: String!,
-    fullName: String!,
+    username: String!
+    email: String!
+    fullName: String!
     password: String!
   }
 
-  input twUser {
-    _id: objectId!
+  input login {
+    username: String!
+    password: String!
+  }
+
+  input userFollow {
+    userFromId: objectId!
+    userFromSecure: String!
+    userToId: objectId!
   }
 `

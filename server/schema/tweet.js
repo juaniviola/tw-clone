@@ -26,10 +26,39 @@ module.exports = `
     # userId
     user: objectId!,
     description: String!
+    secure: String!
   }
 
   input editTweet {
     _id: objectId!,
+    description: String!,
+    secure: String!,
+    userId: objectId!
+  }
+
+  input favTweet {
+    tweetId: objectId!,
+    userId: objectId!,
+    userSecure: String!
+  }
+
+  input addAnswer {
+    tweetId: objectId!
+    userId: objectId!
+    userSecure: String!
     description: String!
+  }
+
+  input delAnswer {
+    tweetId: objectId!
+    userId: objectId!
+    answerId: objectId!
+    userSecure: String!
+  }
+
+  input deleteTweet {
+    tweetId: objectId!
+    userId: objectId!
+    userSecure: String!
   }
 `

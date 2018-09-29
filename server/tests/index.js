@@ -22,6 +22,8 @@ test.serial('hello world', async t => {
 
 let uId = null
 let twId = null
+let twUserId = null
+let twUserSecure = null
 
 test.serial('adding user', async t => {
   const query = `
@@ -46,14 +48,24 @@ test.serial('adding user', async t => {
   const result = await graphql(schema, query, null, null, variables)
   const { data } = result
 
-  // console.log(result)
-
   uId = data.addUser._id
   t.deepEqual(data.addUser.username, 'juaniviola')
   t.deepEqual(data.addUser.fullName, 'Juani Viola')
 })
 
 test.serial('add tweet', async t => {
+  const loginQuery = `
+    mutation signin($user: login!) {
+      signin(user: $user) {
+        secure
+      }
+    }
+  `
+  const loginVariables = { user: { username: 'juaniviola', password: 'ninguna' } }
+  const loginResult = await graphql(schema, loginQuery, null, null, loginVariables)
+  const dataLogin = loginResult.data
+  twUserSecure = dataLogin.signin.secure
+
   const query = `
     mutation addTweet ($tw: newTweet!) {
       addTweet(tw: $tw) {
@@ -61,6 +73,7 @@ test.serial('add tweet', async t => {
         description
         hashtags
         user {
+          _id
           username
         }
       }
@@ -70,7 +83,8 @@ test.serial('add tweet', async t => {
   const variables = {
     tw: {
       user: uId,
-      description: 'Good morning guys!!. #GoodDay #Relax'
+      description: 'Good morning guys!!. #GoodDay #Relax',
+      secure: twUserSecure
     }
   }
 
@@ -78,6 +92,9 @@ test.serial('add tweet', async t => {
   const { data } = result
 
   twId = data.addTweet._id
+  twUserId = data.addTweet.user._id
+  t.deepEqual(data.addTweet.user._id, uId)
+  t.deepEqual(data.addTweet.user.username, 'juaniviola')
   t.deepEqual(data.addTweet.description, 'Good morning guys!!. #GoodDay #Relax')
   t.deepEqual(data.addTweet.hashtags[0], '#GoodDay')
   t.deepEqual(data.addTweet.hashtags[1], '#Relax')
@@ -91,6 +108,9 @@ test.serial('edit tweet', async t => {
         description
         hashtags
         mentions
+        user {
+          username
+        }
       }
     }
   `
@@ -98,7 +118,9 @@ test.serial('edit tweet', async t => {
   const variables = {
     tw: {
       _id: twId,
-      description: 'Hello @juaniviola how are you?? #Question'
+      description: 'Hello @juaniviola how are you?? #Question',
+      userId: twUserId,
+      secure: twUserSecure
     }
   }
 
@@ -106,6 +128,7 @@ test.serial('edit tweet', async t => {
   const { data } = result
 
   t.deepEqual(data.editTweet._id, twId)
+  t.deepEqual(data.editTweet.user.username, 'juaniviola')
   t.deepEqual(data.editTweet.description, 'Hello @juaniviola how are you?? #Question')
   t.deepEqual(data.editTweet.hashtags[0], '#Question')
   t.deepEqual(data.editTweet.mentions[0], '@juaniviola')
@@ -113,9 +136,12 @@ test.serial('edit tweet', async t => {
 
 test.serial('fav tweet', async t => {
   const query = `
-    mutation favTw ($id: objectId!, $user: twUser!) {
-      favTweet(id: $id, user: $user) {
+    mutation favTw ($fav: favTweet!) {
+      favTweet(fav: $fav) {
         description
+        user {
+          username
+        }
         favs {
           username
           fullName
@@ -125,25 +151,31 @@ test.serial('fav tweet', async t => {
   `
 
   const variables = {
-    id: twId,
-    user: {
-      _id: uId
+    fav: {
+      tweetId: twId,
+      userId: uId,
+      userSecure: twUserSecure
     }
   }
 
   const result = await graphql(schema, query, null, null, variables)
   const { data } = result
 
+  t.deepEqual(data.favTweet.user.username, 'juaniviola')
+  t.deepEqual(data.favTweet.description, 'Hello @juaniviola how are you?? #Question')
   t.deepEqual(data.favTweet.favs.length, 1)
   t.deepEqual(data.favTweet.favs[0].username, 'juaniviola')
 })
 
 test.serial('delete fav', async t => {
   const query = `
-    mutation delFav ($id: objectId!, $user: twUser!) {
-      delFav(id: $id, user: $user) {
+    mutation delFav ($fav: favTweet!) {
+      delFav(fav: $fav) {
         description
         favs {
+          username
+        }
+        user {
           username
         }
       }
@@ -151,15 +183,18 @@ test.serial('delete fav', async t => {
   `
 
   const variables = {
-    id: twId,
-    user: {
-      _id: uId
+    fav: {
+      tweetId: twId,
+      userId: uId,
+      userSecure: twUserSecure
     }
   }
 
   const result = await graphql(schema, query, null, null, variables)
   const { data } = result
 
+  t.deepEqual(data.delFav.user.username, 'juaniviola')
+  t.deepEqual(data.delFav.description, 'Hello @juaniviola how are you?? #Question')
   t.deepEqual(data.delFav.favs.length, 0)
   t.deepEqual(data.delFav.favs[0], undefined)
 })
@@ -167,8 +202,8 @@ test.serial('delete fav', async t => {
 let answerId = null
 test.serial('add answer to tweet', async t => {
   const query = `
-    mutation addAnswer ($id: objectId!, $user: twUser!, $description: String!) {
-      addAnswer(id: $id, user: $user, description: $description) {
+    mutation addAnswer ($answer: addAnswer!) {
+      addAnswer(answer: $answer) {
         description
         user {
           username
@@ -187,11 +222,12 @@ test.serial('add answer to tweet', async t => {
   `
 
   const variables = {
-    id: twId,
-    user: {
-      _id: uId
-    },
-    description: 'La banda!!'
+    answer: {
+      tweetId: twId,
+      userId: uId,
+      userSecure: twUserSecure,
+      description: 'La banda!!'
+    }
   }
 
   const result = await graphql(schema, query, null, null, variables)
@@ -205,8 +241,8 @@ test.serial('add answer to tweet', async t => {
 
 test.serial('delete answer', async t => {
   const query = `
-    mutation delAns ($id: objectId!, $ansId: objectId!) {
-      delAnswer(id: $id, ansId: $ansId) {
+    mutation delAns ($answer: delAnswer!) {
+      delAnswer(answer: $answer) {
         description
         answers {
           user {
@@ -218,8 +254,12 @@ test.serial('delete answer', async t => {
   `
 
   const variables = {
-    id: twId,
-    ansId: answerId
+    answer: {
+      tweetId: twId,
+      userId: uId,
+      answerId,
+      userSecure: twUserSecure
+    }
   }
 
   const result = await graphql(schema, query, null, null, variables)
@@ -230,13 +270,17 @@ test.serial('delete answer', async t => {
 
 test.serial('delete tweet', async t => {
   const query = `
-    mutation a ($id: objectId!) {
-      deleteTweet (id: $id)
+    mutation a ($tw: deleteTweet!) {
+      deleteTweet (tw: $tw)
     }
   `
 
   const variables = {
-    id: twId
+    tw: {
+      userId: uId,
+      tweetId: twId,
+      userSecure: twUserSecure
+    }
   }
 
   const result = await graphql(schema, query, null, null, variables)
@@ -248,20 +292,24 @@ test.serial('delete tweet', async t => {
 let users = []
 test.serial('many users', async t => {
   const query = `
-    mutation adUs($u: newUser!) {
+    mutation adUs($u: newUser!, $user: login!) {
       addUser(u: $u) {
         _id
         username
         fullName
       }
+
+      signin(user: $user) {
+        secure
+      }
     }
   `
 
   const variable = [
-    { u: { username: 'juanito', fullName: 'Juani Viola', email: 'j@gmail.com', password: 'nop' } },
-    { u: { username: 'viola', fullName: 'Ignacio Viola', email: 'juani@gmail.com', password: 'nop' } },
-    { u: { username: 'violanacho', fullName: 'Juan Ignacio', email: 'viola@gmail.com', password: 'nop' } },
-    { u: { username: 'juani.viola123', fullName: 'juan', email: 'niidea@gmail.com', password: 'nop' } }
+    { u: { username: 'juanito', fullName: 'Juani Viola', email: 'j@gmail.com', password: 'nop' }, user: { username: 'juanito', password: 'nop' } },
+    { u: { username: 'viola', fullName: 'Ignacio Viola', email: 'juani@gmail.com', password: 'nop' }, user: { username: 'viola', password: 'nop' } },
+    { u: { username: 'violanacho', fullName: 'Juan Ignacio', email: 'viola@gmail.com', password: 'nop' }, user: { username: 'violanacho', password: 'nop' } },
+    { u: { username: 'juani.viola123', fullName: 'juan', email: 'niidea@gmail.com', password: 'nop' }, user: { username: 'juani.viola123', password: 'nop' } }
   ]
 
   const expect = [
@@ -276,7 +324,7 @@ test.serial('many users', async t => {
     const result = await graphql(schema, query, null, null, variables)
     const { data } = result
 
-    users.push({ username: data.addUser.username, _id: data.addUser._id })
+    users.push({ username: data.addUser.username, _id: data.addUser._id, secure: data.signin.secure })
 
     t.deepEqual(data.addUser.username, expect[i].addUser.username)
     t.deepEqual(data.addUser.fullName, expect[i].addUser.fullName)
@@ -285,8 +333,8 @@ test.serial('many users', async t => {
 
 test.serial('add follow', async t => {
   const query = `
-    mutation addFollow($userFrom: twUser!, $userTo: twUser!) {
-      addFollow(userFrom: $userFrom, userTo: $userTo) {
+    mutation addFollow($follow: userFollow!) {
+      addFollow(follow: $follow) {
         username
 
         following {
@@ -302,16 +350,25 @@ test.serial('add follow', async t => {
 
   const variable = [
     {
-      userFrom: { _id: users[0]._id },
-      userTo: { _id: users[1]._id }
+      follow: {
+        userFromId: users[0]._id,
+        userFromSecure: users[0].secure,
+        userToId: users[1]._id
+      }
     },
     {
-      userFrom: { _id: users[0]._id },
-      userTo: { _id: users[2]._id }
+      follow: {
+        userFromId: users[0]._id,
+        userFromSecure: users[0].secure,
+        userToId: users[2]._id
+      }
     },
     {
-      userFrom: { _id: users[1]._id },
-      userTo: { _id: users[0]._id }
+      follow: {
+        userFromId: users[1]._id,
+        userFromSecure: users[1].secure,
+        userToId: users[0]._id
+      }
     }
   ]
 
@@ -339,8 +396,8 @@ test.serial('add follow', async t => {
 
 test.serial('delete follow', async t => {
   const query = `
-    mutation delFoll($userFrom: twUser!, $userTo: twUser!) {
-      delFollow(userFrom: $userFrom, userTo: $userTo) {
+    mutation delFoll($follow: userFollow!) {
+      delFollow(follow: $follow) {
         username
 
         following {
@@ -351,8 +408,11 @@ test.serial('delete follow', async t => {
   `
 
   const variables = {
-    userFrom: { _id: users[0]._id },
-    userTo: { _id: users[1]._id }
+    follow: {
+      userFromId: users[0]._id,
+      userFromSecure: users[0].secure,
+      userToId: users[1]._id
+    }
   }
 
   const result = await graphql(schema, query, null, null, variables)
@@ -381,10 +441,10 @@ test.serial('many tweets', async t => {
   `
 
   const variable = [
-    { tw: { description: 'Hello guys #goodMorning', user: users[0]._id } },
-    { tw: { description: 'Viva la banda #labanda #niidea', user: users[0]._id } },
-    { tw: { description: 'Hola mi nombre es #niidea', user: users[1]._id } },
-    { tw: { description: 'Hola chavales #goodMorning', user: users[2]._id } }
+    { tw: { description: 'Hello guys #goodMorning', user: users[0]._id, secure: users[0].secure } },
+    { tw: { description: 'Viva la banda #labanda #niidea', user: users[0]._id, secure: users[0].secure } },
+    { tw: { description: 'Hola mi nombre es #niidea', user: users[1]._id, secure: users[1].secure } },
+    { tw: { description: 'Hola chavales #goodMorning', user: users[2]._id, secure: users[2].secure } }
   ]
 
   const expect = [
@@ -577,4 +637,3 @@ test.serial('tweets by hashtags', async t => {
 })
 
 test.todo('errors')
-test.todo('user logged')

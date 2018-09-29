@@ -1,6 +1,8 @@
 'use strict'
 
 const db = require('db')
+const jwt = require('jsonwebtoken')
+const secret = process.env.SECRET || 'test'
 let Tweet = null
 let User = null
 const url = {
@@ -62,20 +64,25 @@ module.exports = {
       })
     },
 
+    signin(_, args) {
+      return User.signin(args)
+    },
+
     addTweet(_, args) {
       return Tweet.saveTweet({
         user: args.tw.user,
-        description: args.tw.description
+        description: args.tw.description,
+        secure: args.tw.secure
       })
     },
 
     editTweet(_, args) {
-      return Tweet.updateTweet(args.tw._id, args.tw.description)
+      return Tweet.updateTweet(args)
     },
 
     async deleteTweet(_, args) {
       try {
-        await Tweet.deleteTweet(args.id)
+        await Tweet.deleteTweet(args)
         return 'success'
       } catch (err) {
         console.log(err)
@@ -84,27 +91,29 @@ module.exports = {
     },
 
     favTweet(_, args) {
-      return Tweet.favTweet(args.id, true, args.user)
+      args.fav.fav = true
+      return Tweet.favTweet(args)
     },
 
     delFav(_, args) {
-      return Tweet.favTweet(args.id, false, args.user)
+      args.fav.fav = false
+      return Tweet.favTweet(args)
     },
 
     addAnswer(_, args) {
-      return Tweet.addAnswer(args.id, args.user, args.description)
+      return Tweet.addAnswer(args)
     },
 
     delAnswer(_, args) {
-      return Tweet.deleteAnswer(args.id, args.ansId)
+      return Tweet.deleteAnswer(args)
     },
 
     addFollow(_, args) {
-      return User.addFollower(args.userFrom, args.userTo)
+      return User.addFollower(args)
     },
 
     delFollow(_, args) {
-      return User.deleteFollower(args.userFrom, args.userTo)
+      return User.deleteFollower(args)
     }
   }
 }
