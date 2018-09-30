@@ -71,26 +71,52 @@ test.serial('get users by username', async t => {
 })
 
 test.serial('add and delete followers', async t => {
-  const u = await userApi.saveUser({
-    username: 'juaniviola1',
-    email: 'juaniviola1@gmail.com',
-    fullName: 'Juanito Viola',
-    password: 'cualquiera'
-  })
+  const users = [
+    {
+      username: 'juaniviola1',
+      email: 'juaniviola1@gmail.com',
+      fullName: 'Juanito Viola',
+      password: 'cualquiera'
+    },
+    {
+      username: 'violanacho',
+      email: 'violanacho@gmail.com',
+      fullName: 'Juani Viola',
+      password: 'cualquiera'
+    }
+  ]
 
-  const user = await userApi.saveUser({
-    username: 'violanacho',
-    email: 'violanacho@gmail.com',
-    fullName: 'Juani Viola',
-    password: 'cualquiera'
-  })
+  const _signin = [
+    { user: { username: 'juaniviola1', password: 'cualquiera' } },
+    { user: { username: 'violanacho', password: 'cualquiera' } }
+  ]
 
-  await userApi.addFollower(u, user)
+  for (let i=0; i<users.length; i++) {
+    const us = await userApi.saveUser(users[i])
+    const secure = await userApi.signin(_signin[i])
+
+    users[i]._id = us._id
+    users[i].secure = secure.secure
+  }
+
+  await userApi.addFollower({
+    follow: {
+      userFromId: users[0]._id,
+      userFromSecure: users[0].secure,
+      userToId: users[1]._id
+    }
+  })
 
   const userFrom = await userApi.getUserByUsername('juaniviola1')
   const userTo = await userApi.getUserByUsername('violanacho')
 
-  await userApi.deleteFollower(u, user)
+  await userApi.deleteFollower({
+    follow: {
+      userFromId: users[0]._id,
+      userFromSecure: users[0].secure,
+      userToId: users[1]._id
+    }
+  })
 
   const _userFrom = await userApi.getUserByUsername('juaniviola1')
   const _userTo = await userApi.getUserByUsername('violanacho')

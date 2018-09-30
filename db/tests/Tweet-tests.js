@@ -29,8 +29,18 @@ test.before(async t => {
     password: 'ninguna'
   }]
 
+  const _signin = [{
+    username: 'juaniviola',
+    password: 'none'
+  }, {
+    username: 'viola',
+    password: 'ninguna'
+  }]
+
   for (let i=0; i<users.length; i++) {
     await userApi.saveUser(users[i])
+
+    await userApi.signin({ user: _signin[i] })
   }
 })
 
@@ -45,6 +55,7 @@ test.serial('add tweet', async t => {
 
   const tw = await twApi.saveTweet({
     user: u._id,
+    secure: u.secure,
     description: 'Hello guys. #goodDay. How are you @juaniviola ?'
   })
 
@@ -62,6 +73,7 @@ test.serial('tweet with desc > 280', async t => {
   try {
     tw = await twApi.saveTweet({
       user: u._id,
+      secure: u.secure,
       description: desc
     })
   } catch (err) {
@@ -76,12 +88,15 @@ test.serial('tweets by user', async t => {
 
   const tweets = [{
     user: u._id,
+    secure: u.secure,
     description: 'testing1'
   }, {
     user: u._id,
+    secure: u.secure,
     description: 'La banda'
   }, {
     user: u._id,
+    secure: u.secure,
     description: 'Hello guys #hello'
   }]
 
@@ -104,14 +119,27 @@ test.serial('fav tweet', async t => {
 
   const tw = await twApi.saveTweet({
     user: u._id,
+    secure: u.secure,
     description: '#Hello #guys'
   })
 
-  await twApi.favTweet(tw._id, true, user)
-  const tweet = await twApi.tweetById(tw._id)
+  const tweet = await twApi.favTweet({
+    fav: {
+      tweetId: tw._id,
+      fav: true,
+      userId: user._id,
+      userSecure: user.secure
+    }
+  })
 
-  await twApi.favTweet(tw._id, false, user)
-  const tweet2 = await twApi.tweetById(tw._id)
+  const tweet2 = await twApi.favTweet({
+    fav: {
+      tweetId: tw._id,
+      fav: false,
+      userId: user._id,
+      userSecure: user.secure
+    }
+  })
 
   t.deepEqual(tweet.favs.length, 1)
   t.deepEqual(tweet.favs[0]._id, user._id)
@@ -126,10 +154,18 @@ test.serial('edit tweet', async t => {
 
   const tweet = await twApi.saveTweet({
     user: u._id,
+    secure: u.secure,
     description: 'Hola como va'
   })
 
-  const up = await twApi.updateTweet(tweet._id, 'Hola #brother')
+  const up = await twApi.updateTweet({
+    tw: {
+      _id: tweet._id,
+      description: 'Hola #brother',
+      secure: u.secure,
+      userId: u._id
+    }
+  })
 
   t.deepEqual(tweet.user.username, 'juaniviola')
   t.deepEqual(tweet.description, 'Hola como va')
@@ -144,11 +180,19 @@ test.serial('add answer', async t => {
 
   const tw = await twApi.saveTweet({
     user: u._id,
+    secure: u.secure,
     description: 'Hola prueba'
   })
 
   const user = await userSchema.findOne({ username: 'viola' })
-  const ans = await twApi.addAnswer(tw._id, user, 'Prueba')
+  const ans = await twApi.addAnswer({
+    answer: {
+      tweetId: tw._id,
+      userId: user._id,
+      userSecure: user.secure,
+      description: 'Prueba'
+    }
+  })
 
   t.deepEqual(ans.answers.length, 1)
   t.deepEqual(ans.answers[0].user.username, 'viola')
@@ -160,12 +204,28 @@ test.serial('delete answer', async t => {
 
   const tw = await twApi.saveTweet({
     user: u._id,
+    secure: u.secure,
     description: 'Hola prueba'
   })
 
   const user = await userSchema.findOne({ username: 'viola' })
-  const addAns = await twApi.addAnswer(tw._id, user, 'Prueba')
-  const delAns = await twApi.deleteAnswer(tw._id, addAns.answers[0]._id)
+  const addAns = await twApi.addAnswer({
+    answer: {
+      tweetId: tw._id,
+      userId: user._id,
+      userSecure: user.secure,
+      description: 'Prueba'
+    }
+  })
+
+  const delAns = await twApi.deleteAnswer({
+    answer: {
+      tweetId: tw._id,
+      userId: user._id,
+      userSecure: user.secure,
+      answerId: addAns.answers[0]._id
+    }
+  })
 
   t.deepEqual(addAns.answers.length, 1)
   t.deepEqual(addAns.answers[0].user.username, 'viola')
@@ -178,10 +238,17 @@ test.serial('delete tweet', async t => {
 
   const tweet = await twApi.saveTweet({
     user: u._id,
+    secure: u.secure,
     description: 'Hola como andas'
   })
 
-  const remove = await twApi.deleteTweet(tweet._id)
+  const remove = await twApi.deleteTweet({
+    tw: {
+      tweetId: tweet._id,
+      userId: u._id,
+      userSecure: u.secure
+    }
+  })
   const find = await twSchema.findOne({ _id: remove._id })
 
   t.deepEqual(find, null)
@@ -192,6 +259,7 @@ test.serial('tweets by hashtag', async t => {
 
   const tweet = await twApi.saveTweet({
     user: u._id,
+    secure: u.secure,
     description: 'fucking #test'
   })
 
@@ -210,10 +278,17 @@ test.serial('tweets by following users', async t => {
 
   const tweet2 = await twApi.saveTweet({
     user: user._id,
+    secure: user.secure,
     description: 'Hola broder x2'
   })
 
-  await userApi.addFollower(u, user)
+  await userApi.addFollower({
+    follow: {
+      userFromId: u._id,
+      userFromSecure: u.secure,
+      userToId: user._id
+    }
+  })
   const f = await twApi.tweetByFollowingUsers(u._id)
 
   t.deepEqual(f[0].user.username, 'viola')

@@ -1,11 +1,13 @@
 'use strict'
 
-const mongoose = require('mongoose')
 const { Tweet, User } = require('../models')
 const utils = require('../utils')
 
 module.exports = {
   async saveTweet (payload) {
+    const sec = await User.findOne({ _id: payload.user })
+    if (!sec.secure || (sec.secure !== payload.secure)) return { error: { message: 'Unhauthorized' } }
+
     const hashtags = utils.getHashtag(payload.description)
     const mentions = utils.getMentions(payload.description)
 
@@ -52,29 +54,39 @@ module.exports = {
       .populate({ path: 'answers.user', options: { select: { username: 1, fullName: 1 } } })
   },
 
-  async favTweet (tId, fav, user) {
+  async favTweet (payload) {
+    const { tweetId, fav, userId, userSecure } = payload.fav
+
+    const sec = await User.findOne({ _id: userId })
+    if (!sec.secure || (sec.secure !== userSecure)) throw new Error('Unhauthorized')
+
     if (fav) {
-      await Tweet.findOneAndUpdate({ _id: tId }, {
+      await Tweet.findOneAndUpdate({ _id: tweetId }, {
         $push: {
-          favs: user._id
+          favs: userId
         }
       }, { multi: true })
     } else {
-      await Tweet.findOneAndUpdate({ _id: tId }, {
+      await Tweet.findOneAndUpdate({ _id: tweetId }, {
         $pull: {
-          favs: user._id
+          favs: userId
         }
       }, { multi: true })
     }
 
     return Tweet
-      .findOne({ _id: tId })
+      .findOne({ _id: tweetId })
       .populate({ path: 'user', options: { select: { username: 1, fullName: 1 } } })
       .populate({ path: 'favs', options: { select: { username: 1, fullName: 1 } } })
       .populate({ path: 'answers.user', options: { select: { username: 1, fullName: 1 } } })
   },
 
-  async updateTweet (_id, description) {
+  async updateTweet (payload) {
+    const { _id, description, secure, userId } = payload.tw
+
+    const user = await User.findOne({ _id: userId })
+    if (user.secure !== secure) throw new Error('Unhauthorized')
+
     const hashtags = utils.getHashtag(description)
     const mentions = utils.getMentions(description)
 
@@ -91,38 +103,53 @@ module.exports = {
       .populate({ path: 'answers.user', options: { select: { username: 1, fullName: 1 } } })
   },
 
-  deleteTweet (_id) {
-    return Tweet.findOneAndRemove({ _id })
+  async deleteTweet (payload) {
+    const { tweetId, userId, userSecure } = payload.tw
+
+    const user = await User.findOne({ _id: userId })
+    if (user.secure !== userSecure) throw new Error('Unhauthorized')
+
+    return Tweet.findOneAndRemove({ _id: tweetId })
   },
 
-  async addAnswer (tId, user, description) {
-    await Tweet.findOneAndUpdate({ _id: tId }, {
+  async addAnswer (payload) {
+    const { tweetId, userId, userSecure, description } = payload.answer
+
+    const user = await User.findOne({ _id: userId })
+    if (user.secure !== userSecure) throw new Error('Unhauthorized')
+
+    await Tweet.findOneAndUpdate({ _id: tweetId }, {
       $push: {
         answers: {
-          user: user._id,
+          user: userId,
           description
         }
       }
     })
 
     return Tweet
-      .findOne({ _id: tId })
+      .findOne({ _id: tweetId })
       .populate({ path: 'user', options: { select: { username: 1, fullName: 1 } } })
       .populate({ path: 'favs', options: { select: { username: 1, fullName: 1 } } })
       .populate({ path: 'answers.user', options: { select: { username: 1, fullName: 1 } } })
   },
 
-  async deleteAnswer (tId, aId) {
-    await Tweet.findOneAndUpdate({ _id: tId }, {
+  async deleteAnswer (payload) {
+    const { tweetId, answerId, userId, userSecure } = payload.answer
+
+    const user = await User.findOne({ _id: userId })
+    if (user.secure !== userSecure) throw new Error('Unhauthorized')
+
+    await Tweet.findOneAndUpdate({ _id: tweetId }, {
       $pull: {
         answers: {
-          _id: aId
+          _id: answerId
         }
       }
     })
 
     return Tweet
-      .findOne({ _id: tId })
+      .findOne({ _id: tweetId })
       .populate({ path: 'user', options: { select: { username: 1, fullName: 1 } } })
       .populate({ path: 'favs', options: { select: { username: 1, fullName: 1 } } })
       .populate({ path: 'answers.user', options: { select: { username: 1, fullName: 1 } } })
@@ -133,7 +160,7 @@ module.exports = {
     return Tweet
       .find({ user: { $in: f.following } })
       .sort({ createdAt: -1 })
-      .limit(100)
+      .limit(30)
       .populate({ path: 'user', options: { select: { username: 1, fullName: 1 } } })
       .populate({ path: 'favs', options: { select: { username: 1, fullName: 1 } } })
       .populate({ path: 'answers.user', options: { select: { username: 1, fullName: 1 } } })

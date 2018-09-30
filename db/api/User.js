@@ -2,12 +2,14 @@
 
 const { User } = require('../models')
 const { hashSync, compareSync } = require('bcryptjs')
+const uuid = require('uuid/v4')
 
 module.exports = {
   saveUser (payload) {
     if (payload.password) {
       payload.password = hashSync(payload.password, 8)
     }
+
     const user = new User(payload)
 
     return user.save()
@@ -50,37 +52,70 @@ module.exports = {
       .populate({ path: 'followers', options: { select: { username: 1, fullName: 1 } } })
   },
 
-  async addFollower (userFrom, userTo) {
-    await User.findOneAndUpdate({ _id: userFrom._id }, {
-      $push: { following: userTo._id }
+  async addFollower (payload) {
+    const { userFromId, userFromSecure, userToId } = payload.follow
+
+    const user = await User.findOne({ _id: userFromId })
+    if (user.secure !== userFromSecure) throw new Error('Unhauthorized')
+
+    await User.findOneAndUpdate({ _id: userFromId }, {
+      $push: { following: userToId }
     })
 
-    await User.findOneAndUpdate({ _id: userTo._id }, {
-      $push: { followers: userFrom._id }
+    await User.findOneAndUpdate({ _id: userToId }, {
+      $push: { followers: userFromId }
     })
 
     return User
-      .findOne({ _id: userFrom._id })
+      .findOne({ _id: userFromId })
       .populate({ path: 'following', options: { select: { username: 1, fullName: 1 } } })
       .populate({ path: 'followers', options: { select: { username: 1, fullName: 1 } } })
   },
 
-  async deleteFollower (userFrom, userTo) {
-    await User.findOneAndUpdate({ _id: userFrom._id }, {
-      $pull: { following: userTo._id }
+  async deleteFollower (payload) {
+    const { userFromId, userFromSecure, userToId } = payload.follow
+
+    const user = await User.findOne({ _id: userFromId })
+    if (user.secure !== userFromSecure) throw new Error('Unhauthorized')
+
+    await User.findOneAndUpdate({ _id: userFromId }, {
+      $pull: { following: userToId }
     })
 
-    await User.findOneAndUpdate({ _id: userTo._id }, {
-      $pull: { followers: userFrom._id }
+    await User.findOneAndUpdate({ _id: userToId }, {
+      $pull: { followers: userFromId }
     })
 
     return User
-      .findOne({ _id: userFrom._id })
+      .findOne({ _id: userFromId })
       .populate({ path: 'following', options: { select: { username: 1, fullName: 1 } } })
       .populate({ path: 'followers', options: { select: { username: 1, fullName: 1 } } })
   },
 
   setSecure (_id, secure) {
     return User.findOneAndUpdate({ _id }, { secure })
+  },
+
+  async signin (payload) {
+    let u = null
+    let secure = null
+
+    try {
+      u = await User.findOne({ username: payload.user.username })
+
+      if (!compareSync(payload.user.password, u.password)) {
+        throw new Error('User and password do not match')
+      }
+
+      secure = uuid()
+      const h = await this.setSecure(u._id, secure)
+    } catch (err) {
+      return { error: { message: 'User and password do not match' } }
+    }
+
+    return {
+      user: u,
+      secure
+    }
   }
 }
