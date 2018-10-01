@@ -1,29 +1,31 @@
 'use strict'
 
 const { Tweet, User } = require('../models')
+const mongoose = require('mongoose')
 const utils = require('../utils')
 
 module.exports = {
   async saveTweet (payload) {
-    const sec = await User.findOne({ _id: payload.user })
-    if (!sec.secure || (sec.secure !== payload.secure)) return { error: { message: 'Unhauthorized' } }
+    const { user, secure, description } = payload
+    if (!user || !secure || !description) return { error: { message: 'Invalid parameters' } }
 
-    const hashtags = utils.getHashtag(payload.description)
-    const mentions = utils.getMentions(payload.description)
+    if (!mongoose.Types.ObjectId.isValid(user)) return { error: { message: 'Invalid user id' } }
+
+    const sec = await User.findOne({ _id: user })
+    if (!sec.secure || (sec.secure !== secure)) return { error: { message: 'Unhauthorized' } }
+
+    if (description.length > 280) return { error: { message: 'Maximum of characters exceeded' } }
+    const hashtags = utils.getHashtag(description)
+    const mentions = utils.getMentions(description)
 
     const tweet = new Tweet({
-      user: payload.user,
-      description: payload.description,
+      user,
+      description,
       hashtags: hashtags ? hashtags : [],
       mentions: mentions ? mentions : []
     })
 
-    try {
-      await tweet.save()
-    } catch (err) {
-      console.log(err)
-      return err
-    }
+    await tweet.save()
 
     return Tweet
       .findOne({ _id: tweet._id })
@@ -31,6 +33,8 @@ module.exports = {
   },
 
   tweetsByUser (userId) {
+    if (!mongoose.Types.ObjectId.isValid(userId)) return { error: { message: 'Invalid user id' } }
+
     return Tweet
       .find({ user: userId })
       .populate({ path: 'user', options: { select: { username: 1, fullName: 1 } } })
@@ -39,6 +43,8 @@ module.exports = {
   },
 
   tweetById (id) {
+    if (!mongoose.Types.ObjectId.isValid(id)) return { error: { message: 'Invalid id' } }
+
     return Tweet
       .findOne({ _id: id })
       .populate({ path: 'user', options: { select: { username: 1, fullName: 1 } } })
@@ -56,9 +62,12 @@ module.exports = {
 
   async favTweet (payload) {
     const { tweetId, fav, userId, userSecure } = payload.fav
+    if (!tweetId || !userId || !userSecure || fav === null || fav === undefined) return { error: { message: 'Invalid parameters' } }
+
+    if (!mongoose.Types.ObjectId.isValid(userId) || !mongoose.Types.ObjectId.isValid(tweetId)) return { error: { message: 'Invalid id' } }
 
     const sec = await User.findOne({ _id: userId })
-    if (!sec.secure || (sec.secure !== userSecure)) throw new Error('Unhauthorized')
+    if (!sec.secure || (sec.secure !== userSecure)) return { error: { message: 'Unhauthorized' } }
 
     if (fav) {
       await Tweet.findOneAndUpdate({ _id: tweetId }, {
@@ -83,9 +92,15 @@ module.exports = {
 
   async updateTweet (payload) {
     const { _id, description, secure, userId } = payload.tw
+    if (!_id || !description || !secure || !userId) return { error: { message: 'Invalid parameters' }}
+
+    if (!mongoose.Types.ObjectId.isValid(userId) || !mongoose.Types.ObjectId.isValid(_id)) return { error: { message: 'Invalid id' } }
 
     const user = await User.findOne({ _id: userId })
-    if (user.secure !== secure) throw new Error('Unhauthorized')
+    if (user.secure !== secure) return { error: { message: 'Unhauthorized' } }
+
+    const tw = await Tweet.findOne({ _id })
+    if (!tw.user || tw.user.toString().trim() !== userId.toString().trim()) return { error: { message: 'Unhauthorized' } }
 
     const hashtags = utils.getHashtag(description)
     const mentions = utils.getMentions(description)
@@ -105,18 +120,27 @@ module.exports = {
 
   async deleteTweet (payload) {
     const { tweetId, userId, userSecure } = payload.tw
+    if (!tweetId || !userId || !userSecure) return { error: { message: 'Invalid parameters' } }
+
+    if (!mongoose.Types.ObjectId.isValid(tweetId) || !mongoose.Types.ObjectId.isValid(userId)) return { error: { message: 'Invalid id' } }
 
     const user = await User.findOne({ _id: userId })
-    if (user.secure !== userSecure) throw new Error('Unhauthorized')
+    if (user.secure !== userSecure) return { error: { message: 'Unhauthorized' } }
+
+    const tw = await Tweet.findOne({ _id: tweetId })
+    if (!tw.user || (tw.user.toString().trim() !== userId.toString().trim())) return { error: { message: 'Unhauthorized' } }
 
     return Tweet.findOneAndRemove({ _id: tweetId })
   },
 
   async addAnswer (payload) {
     const { tweetId, userId, userSecure, description } = payload.answer
+    if (!tweetId || !userId || !userSecure || !description) return { error: { message: 'Invalid parameters' } }
+
+    if (!mongoose.Types.ObjectId.isValid(tweetId) || !mongoose.Types.ObjectId.isValid(userId)) return { error: { message: 'Invalid id' } }
 
     const user = await User.findOne({ _id: userId })
-    if (user.secure !== userSecure) throw new Error('Unhauthorized')
+    if (user.secure !== userSecure) return { error: { message: 'Unhauthorized' } }
 
     await Tweet.findOneAndUpdate({ _id: tweetId }, {
       $push: {
@@ -136,9 +160,19 @@ module.exports = {
 
   async deleteAnswer (payload) {
     const { tweetId, answerId, userId, userSecure } = payload.answer
+    if (!tweetId || !answerId || !userId || !userSecure) return { error: { message: 'Invalid parameters' } }
+
+    if (!mongoose.Types.ObjectId.isValid(tweetId) || !mongoose.Types.ObjectId.isValid(userId) || !mongoose.Types.ObjectId.isValid(answerId)) return { error: { message: 'Invalid id' } }
 
     const user = await User.findOne({ _id: userId })
-    if (user.secure !== userSecure) throw new Error('Unhauthorized')
+    if (user.secure !== userSecure) return { error: { message: 'Unhauthorized' } }
+
+    const tw = await Tweet
+      .findOne({ _id: tweetId })
+      .select({ answers: { $elemMatch: { _id: answerId } } })
+
+    if ((tw.answers.length === 0) || !tw) return { error: { message: 'Answer not found' } }
+    if (!tw.answers[0].user || (tw.answers[0].user.toString().trim() !== userId.toString().trim())) return { error: { message: 'Unhauthorized' } }
 
     await Tweet.findOneAndUpdate({ _id: tweetId }, {
       $pull: {
@@ -156,7 +190,11 @@ module.exports = {
   },
 
   async tweetByFollowingUsers (userId) {
+    if (!mongoose.Types.ObjectId.isValid(userId)) return { error: { message: 'Invalid id' } }
+
     const f = await User.findOne({ _id: userId })
+    if (!f) return { error: { message: 'User not found' } }
+
     return Tweet
       .find({ user: { $in: f.following } })
       .sort({ createdAt: -1 })

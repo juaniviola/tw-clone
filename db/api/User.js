@@ -2,6 +2,7 @@
 
 const { User } = require('../models')
 const { hashSync, compareSync } = require('bcryptjs')
+const mongoose = require('mongoose')
 const uuid = require('uuid/v4')
 
 module.exports = {
@@ -32,6 +33,8 @@ module.exports = {
   },
 
   getUserById (id) {
+    if (!mongoose.Types.ObjectId.isValid(id)) return { error: { message: 'Invalid id' } }
+
     return User
       .findOne({ _id: id })
       .populate({ path: 'following', options: { select: { username: 1, fullName: 1 } } })
@@ -55,8 +58,10 @@ module.exports = {
   async addFollower (payload) {
     const { userFromId, userFromSecure, userToId } = payload.follow
 
+    if (!mongoose.Types.ObjectId.isValid(userFromId) || !mongoose.Types.ObjectId.isValid(userToId)) return { error: { message: 'Invalid id' } }
+
     const user = await User.findOne({ _id: userFromId })
-    if (user.secure !== userFromSecure) throw new Error('Unhauthorized')
+    if (user.secure !== userFromSecure) return { error: { message: 'Invalid id' } }
 
     await User.findOneAndUpdate({ _id: userFromId }, {
       $push: { following: userToId }
@@ -75,8 +80,10 @@ module.exports = {
   async deleteFollower (payload) {
     const { userFromId, userFromSecure, userToId } = payload.follow
 
+    if (!mongoose.Types.ObjectId.isValid(userFromId) || !mongoose.Types.ObjectId.isValid(userToId)) return { error: { message: 'Invalid id' } }
+
     const user = await User.findOne({ _id: userFromId })
-    if (user.secure !== userFromSecure) throw new Error('Unhauthorized')
+    if (user.secure !== userFromSecure) return { error: { message: 'Invalid id' } }
 
     await User.findOneAndUpdate({ _id: userFromId }, {
       $pull: { following: userToId }
@@ -97,14 +104,16 @@ module.exports = {
   },
 
   async signin (payload) {
+    const { username, password } = payload.user
+
     let u = null
     let secure = null
 
     try {
-      u = await User.findOne({ username: payload.user.username })
+      u = await User.findOne({ username: username })
 
-      if (!compareSync(payload.user.password, u.password)) {
-        throw new Error('User and password do not match')
+      if (!compareSync(password, u.password)) {
+        return { error: { message: 'User and password do not match' } }
       }
 
       secure = uuid()
