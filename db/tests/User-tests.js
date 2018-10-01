@@ -25,15 +25,36 @@ test.serial('save user', async t => {
     password: 'null'
   })
 
+  const failUser = await userApi.saveUser({
+    username: 'userTest',
+    fullName: 'Foo Test',
+    password: 'null'
+  })
+
   userId = user._id
   t.deepEqual(user.username, 'foo_user')
   t.deepEqual(user.email, 'foo@gmail.com')
   t.deepEqual(user.fullName, 'Foo Test')
   t.deepEqual(user.followers[0], undefined)
   t.deepEqual(user.following[0], undefined)
+
+  t.deepEqual(failUser.error.message, 'Invalid parameters')
 })
 
 test.serial('signin', async t => {
+  const fail1 = await userApi.signin({ user: { username: 'juaniviola' } })
+  const fail2 = await userApi.signin({ user: { username: 'juaniviola123', password: 'null' } })
+  const fail3 = await userApi.signin({ user: { username: 'foo_user', password: 'test' } })
+  const signin = await userApi.signin({ user: { username: 'foo_user', password: 'null' } })
+
+  t.deepEqual(fail1.error.message, 'Invalid parameters')
+  t.deepEqual(fail2.error.message, 'User not found')
+  t.deepEqual(fail3.error.message, 'User and password do not match')
+  t.deepEqual(signin.user.username, 'foo_user')
+  t.deepEqual(typeof signin.secure, 'string')
+})
+
+test.serial('compare passwords', async t => {
   const result = await userApi.comparePassword({ _id: userId, password: 'null' })
   const error = await userApi.comparePassword({ _id: userId, password: 'foobar' })
   const nullUser = await userApi.comparePassword({ _id: `...${userId}...`,  password: 'null'})
@@ -45,11 +66,14 @@ test.serial('signin', async t => {
 
 test.serial('get user by id', async t => {
   const user = await userApi.getUserById(userId)
+  const failUser = await userApi.getUserById('foobar')
 
   t.deepEqual(user.username, 'foo_user')
   t.deepEqual(user.fullName, 'Foo Test')
   t.deepEqual(user.followers.length, 0)
   t.deepEqual(user.following.length, 0)
+
+  t.deepEqual(failUser.error.message, 'Invalid id')
 })
 
 test.serial('get user by username', async t => {
@@ -99,7 +123,7 @@ test.serial('add and delete followers', async t => {
     users[i].secure = secure.secure
   }
 
-  await userApi.addFollower({
+  const follow = await userApi.addFollower({
     follow: {
       userFromId: users[0]._id,
       userFromSecure: users[0].secure,
@@ -107,10 +131,56 @@ test.serial('add and delete followers', async t => {
     }
   })
 
+  const failFollow = await userApi.addFollower({
+    follow: {
+      userFromId: 'anyId',
+      userFromSecure: users[0].secure,
+      userToId: users[1]._id
+    }
+  })
+
+  const failFollow2 = await userApi.addFollower({
+    follow: {
+      userFromId: users[0]._id,
+      userFromSecure: users[1].secure,
+      userToId: users[1]._id
+    }
+  })
+
+  const failFollow3 = await userApi.addFollower({
+    follow: {
+      userFromId: users[0]._id,
+      userToId: users[1]._id
+    }
+  })
+
   const userFrom = await userApi.getUserByUsername('juaniviola1')
   const userTo = await userApi.getUserByUsername('violanacho')
 
-  await userApi.deleteFollower({
+  const failDelFollow = await userApi.deleteFollower({
+    follow: {
+      userFromId: 'anyId',
+      userFromSecure: users[0].secure,
+      userToId: users[1]._id
+    }
+  })
+
+  const failDelFollow2 = await userApi.deleteFollower({
+    follow: {
+      userFromId: users[0]._id,
+      userFromSecure: users[1].secure,
+      userToId: users[1]._id
+    }
+  })
+
+  const failDelFollow3 = await userApi.deleteFollower({
+    follow: {
+      userFromSecure: users[0].secure,
+      userToId: users[1]._id
+    }
+  })
+
+  const delFollow = await userApi.deleteFollower({
     follow: {
       userFromId: users[0]._id,
       userFromSecure: users[0].secure,
@@ -129,6 +199,11 @@ test.serial('add and delete followers', async t => {
 
   t.deepEqual(_userFrom.following[0], undefined)
   t.deepEqual(_userTo.followers[0], undefined)
-})
 
-test.todo('errors')
+  t.deepEqual(failFollow.error.message, 'Invalid id')
+  t.deepEqual(failFollow2.error.message, 'Unhauthorized')
+  t.deepEqual(failFollow3.error.message, 'Invalid parameters')
+  t.deepEqual(failDelFollow.error.message, 'Invalid id')
+  t.deepEqual(failDelFollow2.error.message, 'Unhauthorized')
+  t.deepEqual(failDelFollow3.error.message, 'Invalid parameters')
+})

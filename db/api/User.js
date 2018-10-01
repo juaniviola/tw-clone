@@ -7,10 +7,9 @@ const uuid = require('uuid/v4')
 
 module.exports = {
   saveUser (payload) {
-    if (payload.password) {
-      payload.password = hashSync(payload.password, 8)
-    }
+    if (!payload.password || !payload.username || !payload.fullName || !payload.email) return { error: { message: 'Invalid parameters' } }
 
+    payload.password = hashSync(payload.password, 8)
     const user = new User(payload)
 
     return user.save()
@@ -41,14 +40,18 @@ module.exports = {
       .populate({ path: 'followers', options: { select: { username: 1, fullName: 1 } } })
   },
 
-  getUserByUsername (username) {
+  getUserByUsername (usname) {
+    const username = usname.toString().trim()
+
     return User
       .findOne({ username })
       .populate({ path: 'following', options: { select: { username: 1, fullName: 1 } } })
       .populate({ path: 'followers', options: { select: { username: 1, fullName: 1 } } })
   },
 
-  getUsersByUsername (username) {
+  getUsersByUsername (usname) {
+    const username = usname.toString().trim()
+
     return User
       .find({ username: new RegExp(username, 'i') })
       .populate({ path: 'following', options: { select: { username: 1, fullName: 1 } } })
@@ -57,11 +60,12 @@ module.exports = {
 
   async addFollower (payload) {
     const { userFromId, userFromSecure, userToId } = payload.follow
+    if (!userFromId || !userFromSecure || !userToId) return { error: { message: 'Invalid parameters' } }
 
     if (!mongoose.Types.ObjectId.isValid(userFromId) || !mongoose.Types.ObjectId.isValid(userToId)) return { error: { message: 'Invalid id' } }
 
     const user = await User.findOne({ _id: userFromId })
-    if (user.secure !== userFromSecure) return { error: { message: 'Invalid id' } }
+    if (user.secure !== userFromSecure) return { error: { message: 'Unhauthorized' } }
 
     await User.findOneAndUpdate({ _id: userFromId }, {
       $push: { following: userToId }
@@ -79,11 +83,12 @@ module.exports = {
 
   async deleteFollower (payload) {
     const { userFromId, userFromSecure, userToId } = payload.follow
+    if (!userFromId || !userFromSecure || !userToId) return { error: { message: 'Invalid parameters' } }
 
     if (!mongoose.Types.ObjectId.isValid(userFromId) || !mongoose.Types.ObjectId.isValid(userToId)) return { error: { message: 'Invalid id' } }
 
     const user = await User.findOne({ _id: userFromId })
-    if (user.secure !== userFromSecure) return { error: { message: 'Invalid id' } }
+    if (user.secure !== userFromSecure) return { error: { message: 'Unhauthorized' } }
 
     await User.findOneAndUpdate({ _id: userFromId }, {
       $pull: { following: userToId }
@@ -105,22 +110,18 @@ module.exports = {
 
   async signin (payload) {
     const { username, password } = payload.user
+    if (!username || !password) return { error: { message: 'Invalid parameters' } }
 
-    let u = null
-    let secure = null
+    const usname = username.toString().trim()
+    const u = await User.findOne({ username: usname })
+    if (!u) return { error: { message: 'User not found' } }
 
-    try {
-      u = await User.findOne({ username: username })
-
-      if (!compareSync(password, u.password)) {
-        return { error: { message: 'User and password do not match' } }
-      }
-
-      secure = uuid()
-      const h = await this.setSecure(u._id, secure)
-    } catch (err) {
+    if (!compareSync(password, u.password)) {
       return { error: { message: 'User and password do not match' } }
     }
+
+    const secure = uuid()
+    const h = await this.setSecure(u._id, secure)
 
     return {
       user: u,
