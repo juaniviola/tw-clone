@@ -100,6 +100,7 @@ module.exports = {
     if (user.secure !== secure) return { error: { message: 'Unhauthorized' } }
 
     const tw = await Tweet.findOne({ _id })
+    if (!tw) return { error: { message: 'Tweet not found' } }
     if (!tw.user || tw.user.toString().trim() !== userId.toString().trim()) return { error: { message: 'Unhauthorized' } }
 
     const hashtags = utils.getHashtag(description)
