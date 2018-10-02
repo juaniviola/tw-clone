@@ -4,12 +4,13 @@
   "description": "Server for twitter clone app",
   "main": "index.js",
   "scripts": {
-    "test": "ava tests/ --verbose",
+    "test": "nyc --reporter=lcov ava tests/ --verbose",
     "dev": "NODE_ENV=development nodemon index.js"
   },
   "author": "Juani Viola <juaniviola1297@gmail.com> (https://twitter.com/juanviola)",
   "license": "MIT",
   "dependencies": {
+    "apollo-server": "^2.1.0",
     "apollo-server-express": "^1.1.0",
     "body-parser": "^1.18.3",
     "db": "file:../db",

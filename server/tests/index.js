@@ -636,4 +636,247 @@ test.serial('tweets by hashtags', async t => {
   t.deepEqual(data.tweetsByHashtags[1].hashtags[0], '#goodMorning')
 })
 
-test.todo('errors')
+test.serial('test errors parameters in addTweet', async t => {
+  const query = `
+    mutation add ($tw: newTweet!) {
+      addTweet(tw: $tw) {
+        _id
+        description
+        user {
+          username
+        }
+      }
+    }
+  `
+
+  const variables = {
+    tw: {
+      secure: users[1].secure,
+      description: 'asd'
+    }
+  }
+
+  const result = await graphql(schema, query, null, null, variables)
+
+  t.deepEqual(result.errors[0].message, 'Invalid parameters')
+})
+
+test.serial('testing errors adding an existing user', async t => {
+  const query = `
+    mutation add ($u: newUser!) {
+      addUser(u: $u) {
+        _id
+        username
+      }
+    }
+  `
+
+  const variables = {
+    u: {
+      username: 'juaniviola',
+      email: 'aaa@s.com',
+      fullName: 'jaja',
+      password: 'aaa'
+    }
+  }
+
+  const result = await graphql(schema, query, null, null, variables)
+
+  t.deepEqual(result.errors[0].message, 'User with username already exists')
+})
+
+test.serial('testing errors adding an existing user with email', async t => {
+  const query = `
+    mutation add ($u: newUser!) {
+      addUser(u: $u) {
+        _id
+        username
+      }
+    }
+  `
+
+  const variables = {
+    u: {
+      username: 'elJuaniViola',
+      email: 'jv@gmail.com',
+      fullName: 'jaja',
+      password: 'aaa'
+    }
+  }
+
+  const result = await graphql(schema, query, null, null, variables)
+
+  t.deepEqual(result.errors[0].message, 'User with email already exists')
+})
+
+test.serial('testing error signin user', async t => {
+  const query = `
+    mutation signin($user: login!) {
+      signin(user: $user) {
+        secure
+      }
+    }
+  `
+
+  const variables = { user: { username: 'juaniviola', password: 'null_password...' } }
+
+  const result = await graphql(schema, query, null, null, variables)
+
+  t.deepEqual(result.errors[0].message, 'User and password do not match')
+})
+
+test.serial('testing error edit tweet', async t => {
+  const query = `
+    mutation editTweet ($tw: editTweet!) {
+      editTweet(tw: $tw) {
+        _id
+        description
+        hashtags
+        mentions
+        user {
+          username
+        }
+      }
+    }
+  `
+
+  const variables = {
+    tw: {
+      _id: twId,
+      description: 'Hello @juaniviola how are you?? #Question',
+      userId: twUserId,
+      secure: twUserSecure
+    }
+  }
+
+  const result = await graphql(schema, query, null, null, variables)
+
+  t.deepEqual(result.errors[0].message, 'Tweet not found')
+})
+
+test.serial('testing error fav tweet and delete tweet', async t => {
+  // add tweet
+  const query = `
+    mutation favTw ($fav: favTweet!) {
+      favTweet(fav: $fav) {
+        description
+        user {
+          username
+        }
+        favs {
+          username
+          fullName
+        }
+      }
+    }
+  `
+
+  const variables = {
+    fav: {
+      tweetId: twId,
+      userId: uId,
+      userSecure: 'asddsa'
+    }
+  }
+
+  const result = await graphql(schema, query, null, null, variables)
+  t.deepEqual(result.errors[0].message, 'Unhauthorized')
+
+  // delete tweet
+  const query2 = `
+    mutation favTw ($fav: favTweet!) {
+      delFav(fav: $fav) {
+        description
+        user {
+          username
+        }
+        favs {
+          username
+          fullName
+        }
+      }
+    }
+  `
+
+  const variables2 = {
+    fav: {
+      userId: uId,
+      userSecure: twUserSecure
+    }
+  }
+
+  const result2 = await graphql(schema, query2, null, null, variables2)
+  t.deepEqual(result2.errors[0].message, 'Invalid parameters')
+})
+
+test.serial('testing error answer', async t => {
+  // add answer
+  const query = `
+    mutation addAnswer($answer: addAnswer!) {
+      addAnswer(answer: $answer) {
+        description
+      }
+    }
+  `
+
+  const variables = {
+    answer: {
+      tweetId: 'foobar',
+      userId: uId,
+      userSecure: twUserSecure,
+      description: 'Test!!'
+    }
+  }
+
+  const result = await graphql(schema, query, null, null, variables)
+  t.deepEqual(result.errors[0].message, 'Invalid id')
+
+  // delete answer
+  const query2 = `
+    mutation delAnswer($answer: delAnswer!) {
+      delAnswer(answer: $answer) {
+        description
+      }
+    }
+  `
+
+  const variables2 = {
+    answer: {
+      tweetId: uId,
+      userId: uId,
+      userSecure: twUserSecure
+    }
+  }
+
+  const result2 = await graphql(schema, query2, null, null, variables2)
+  t.deepEqual(result2.errors[0].message, 'Invalid parameters')
+})
+
+test.serial('testing error follow', async t => {
+  const query = `
+    mutation addFollow($follow: userFollow!) {
+      addFollow(follow: $follow) {
+        username
+
+        following {
+          username
+        }
+
+        followers {
+          username
+        }
+      }
+    }
+  `
+
+  const variables = {
+    follow: {
+      userFromId: 'foobar',
+      userFromSecure: 'foobar2',
+      userToId: 'foobar3'
+    }
+  }
+
+  const result = await graphql(schema, query, null, null, variables)
+  t.deepEqual(result.errors[0].message, 'Invalid id')
+})
