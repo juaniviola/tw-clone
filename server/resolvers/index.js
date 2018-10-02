@@ -93,8 +93,14 @@ module.exports = {
 
       if (login.error) throw new ApolloError(login.error.message)
 
-      const payload = login.user
-      payload.secure = login.secure
+      const payload = {
+        user: {
+          _id: login.user._id,
+          username: login.user.username,
+          fullName: login.user.fullName,
+        },
+        secure: login.secure
+      }
 
       const token = jwt.sign(payload, secret)
       return token
