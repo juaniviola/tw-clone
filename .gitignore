@@ -2,6 +2,8 @@
 
 server/node_modules
 server/package-lock.json
+server/.nyc_output
+server/coverage
 
 db/node_modules
 db/package-lock.json
