@@ -9,3 +9,6 @@ db/node_modules
 db/package-lock.json
 db/.nyc_output
 db/coverage
+
+client/node_modules
+client/package-lock.json
