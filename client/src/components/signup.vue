@@ -1,9 +1,9 @@
 <template>
-  <div class="signin">
+  <div class="signup">
     <v-container>
       <v-flex>
         <div class="title">
-          <span>Login with your account</span>
+          <span>Create an account</span>
         </div>
       </v-flex>
 
@@ -12,28 +12,43 @@
       </v-flex>
 
       <div class="login">
-        <form @submit.prevent="signin">
+        <form @submit.prevent="signup">
           <v-flex>
             <v-text-field
               placeholder="Username"
               solo
+              v-model="username"
+            ></v-text-field>
+
+            <v-text-field
+              placeholder="Full name"
+              solo
+              v-model="fullName"
+            ></v-text-field>
+
+            <v-text-field
+              placeholder="email"
+              solo
+              type="email"
+              v-model="email"
             ></v-text-field>
 
             <v-text-field
               placeholder="password"
               solo
               type="password"
+              v-model="password"
             ></v-text-field>
           </v-flex>
 
           <v-flex>
-            <v-btn block color="secondary" type="submit" dark>Login</v-btn>
+            <v-btn block color="secondary" dark type="submit">Create</v-btn>
           </v-flex>
         </form>
 
         <v-flex>
           <div class="create">
-            <router-link to="/signup">Create an account. It's free</router-link>
+            <router-link to="/signin">Have an account? Login</router-link>
           </div>
         </v-flex>
       </div>
@@ -43,20 +58,22 @@
 
 <script>
 export default {
-  name: 'Signin',
+  name: 'Signup',
 
   data () {
     return {
       error: false,
       username: '',
+      fullName: '',
+      email: '',
       password: ''
     }
   },
 
   methods: {
-    signin () {
+    signup () {
       // eslint-disable-next-line
-      console.log('Hello...')
+      console.log('signup')
     }
   }
 }
@@ -71,4 +88,3 @@ export default {
   margin-top: 15px;
 }
 </style>
-
