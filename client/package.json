@@ -9,6 +9,8 @@
   },
   "dependencies": {
     "@babel/polyfill": "^7.0.0-rc.1",
+    "request": "^2.88.0",
+    "request-promise": "^4.2.2",
     "vue": "^2.5.17",
     "vue-router": "^3.0.1",
     "vuetify": "^1.2.0"

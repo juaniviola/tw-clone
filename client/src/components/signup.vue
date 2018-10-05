@@ -57,6 +57,8 @@
 </template>
 
 <script>
+import userUtils from '../utils/userLogin'
+
 export default {
   name: 'Signup',
 
@@ -71,10 +73,21 @@ export default {
   },
 
   methods: {
-    signup () {
+    async signup () {
+      const result = await userUtils.signup({
+        username: this.username,
+        fullName: this.fullName,
+        email: this.email,
+        password: this.password
+      })
+
       // eslint-disable-next-line
-      console.log('signup')
+      console.log(result)
     }
+  },
+
+  mounted () {
+    if (userUtils.isUserLogged()) return this.$router.push({ name: 'home' })
   }
 }
 </script>

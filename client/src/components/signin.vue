@@ -17,12 +17,14 @@
             <v-text-field
               placeholder="Username"
               solo
+              v-model="username"
             ></v-text-field>
 
             <v-text-field
               placeholder="password"
               solo
               type="password"
+              v-model="password"
             ></v-text-field>
           </v-flex>
 
@@ -42,6 +44,8 @@
 </template>
 
 <script>
+import userUtils from '../utils/userLogin'
+
 export default {
   name: 'Signin',
 
@@ -54,10 +58,21 @@ export default {
   },
 
   methods: {
-    signin () {
-      // eslint-disable-next-line
-      console.log('Hello...')
+    async signin () {
+      const u = await userUtils.login({
+        username: this.username,
+        password: this.password
+      })
+   
+      const token = u.data.login
+
+      const dec = atob(token.substring(token.indexOf('.')+1, token.lastIndexOf('.')))
+      localStorage.setItem('token', dec)
     }
+  },
+
+  mounted () {
+    if (userUtils.isUserLogged()) return this.$router.push({ name: 'home' })
   }
 }
 </script>
