@@ -18,6 +18,7 @@
               placeholder="Username"
               solo
               v-model="username"
+              :disabled="loading"
             ></v-text-field>
 
             <v-text-field
@@ -25,11 +26,18 @@
               solo
               type="password"
               v-model="password"
+              :disabled="loading"
             ></v-text-field>
           </v-flex>
 
           <v-flex>
-            <v-btn block color="secondary" type="submit" dark>Login</v-btn>
+            <v-btn
+              block
+              color="secondary"
+              type="submit"
+              :loading="loading"
+              :disabled="loading"
+              >Login</v-btn>
           </v-flex>
         </form>
 
@@ -51,6 +59,7 @@ export default {
 
   data () {
     return {
+      loading: false,
       error: false,
       username: '',
       password: ''
@@ -59,15 +68,22 @@ export default {
 
   methods: {
     async signin () {
-      const u = await userUtils.login({
+      if (this.username === '' || this.password === '') return this.error = true
+
+      const payload = {
         username: this.username,
         password: this.password
-      })
-   
-      const token = u.data.login
+      }
 
-      const dec = atob(token.substring(token.indexOf('.')+1, token.lastIndexOf('.')))
-      localStorage.setItem('token', dec)
+      this.loading = true
+      const u = await userUtils.login(payload)
+      this.loading = false
+
+      if (!u || !u.data || u.errors) return this.error = true
+
+      const token = u.data.login
+      localStorage.setItem('token', token)
+      this.$router.push({ name: 'home' })
     }
   },
 
@@ -86,4 +102,3 @@ export default {
   margin-top: 15px;
 }
 </style>
-

@@ -32,6 +32,7 @@ module.exports = {
     const query = `
       mutation signup($u: newUser!) {
         addUser(u: $u) {
+          _id
           username
         }
       }

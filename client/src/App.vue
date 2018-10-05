@@ -10,9 +10,22 @@
           <v-btn icon>
             <v-icon>search</v-icon>
           </v-btn>
-          <v-btn icon>
-            <v-icon>more_vert</v-icon>
-          </v-btn>
+
+          <v-menu bottom origin="center center" transition="scale-transition">
+            <v-btn icon slot="activator">
+              <v-icon>more_vert</v-icon>
+            </v-btn>
+
+            <v-list>
+              <v-list-tile @click="test">
+                <v-list-tile-title>Juani Viola</v-list-tile-title>
+              </v-list-tile>
+
+              <v-list-tile @click="test">
+                <v-list-tile-title>Salir <v-icon>close</v-icon></v-list-tile-title>
+              </v-list-tile>
+            </v-list>
+          </v-menu>
         </div>
       </v-toolbar>
 
@@ -30,6 +43,12 @@ export default {
   data () {
     return {
       logged: false
+    }
+  },
+
+  methods: {
+    test () {
+      console.log('test...')
     }
   },
 

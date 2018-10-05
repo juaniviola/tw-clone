@@ -31,6 +31,7 @@
               solo
               type="email"
               v-model="email"
+              :disabled="loading"
             ></v-text-field>
 
             <v-text-field
@@ -38,11 +39,18 @@
               solo
               type="password"
               v-model="password"
+              :disabled="loading"
             ></v-text-field>
           </v-flex>
 
           <v-flex>
-            <v-btn block color="secondary" dark type="submit">Create</v-btn>
+            <v-btn
+              block
+              color="secondary"
+              dark
+              type="submit"
+              :disabled="loading"
+              :loading="loading">Create</v-btn>
           </v-flex>
         </form>
 
@@ -51,6 +59,14 @@
             <router-link to="/signin">Have an account? Login</router-link>
           </div>
         </v-flex>
+
+        <v-snackbar
+          v-model="snackbar"
+          :timeout="6500"
+          >
+          User created!  😄😄
+          <v-btn dark flat @click="snackbar = false"><v-icon>close</v-icon></v-btn>
+        </v-snackbar>
       </div>
     </v-container>
   </div>
@@ -64,6 +80,8 @@ export default {
 
   data () {
     return {
+      snackbar: false,
+      loading: false,
       error: false,
       username: '',
       fullName: '',
@@ -74,15 +92,23 @@ export default {
 
   methods: {
     async signup () {
-      const result = await userUtils.signup({
+      if (this.username === '' || this.fullName === '' || this.email === '' || this.password === '') return this.error = true
+
+      const payload = {
         username: this.username,
         fullName: this.fullName,
         email: this.email,
         password: this.password
-      })
+      }
 
-      // eslint-disable-next-line
-      console.log(result)
+      this.loading = true
+      const result = await userUtils.signup(payload)
+      this.loading = false
+
+      if (!result.data.addUser || !result.data.addUser._id || Array.isArray(result.errors)) return this.error = true
+
+      this.snackbar = true
+      this.$router.push({ name: 'signin' })
     }
   },
 
