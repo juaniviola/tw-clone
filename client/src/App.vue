@@ -1,12 +1,12 @@
 <template>
   <div id="app">
     <v-app>
-      <v-toolbar dark class="secondary">
+      <v-toolbar v-show="isLogged" dark class="secondary">
         <v-toolbar-title class="white--text">🐦</v-toolbar-title>
 
         <v-spacer></v-spacer>
 
-        <div v-show="isLogged">
+        <div>
           <v-btn icon>
             <v-icon>search</v-icon>
           </v-btn>

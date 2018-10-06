@@ -53,7 +53,7 @@
 
 <script>
 import userUtils from '../utils/userLogin'
-import { mapState } from 'vuex';
+import { mapState } from 'vuex'
 
 export default {
   name: 'Signin',
