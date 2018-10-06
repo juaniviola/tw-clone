@@ -53,6 +53,7 @@
 
 <script>
 import userUtils from '../utils/userLogin'
+import { mapState } from 'vuex';
 
 export default {
   name: 'Signin',
@@ -83,12 +84,17 @@ export default {
 
       const token = u.data.login
       localStorage.setItem('token', token)
+      this.$store.commit('setLogged', true)
       this.$router.push({ name: 'home' })
     }
   },
 
+  computed: {
+    ...mapState(['isLogged'])
+  },
+
   mounted () {
-    if (userUtils.isUserLogged()) return this.$router.push({ name: 'home' })
+    if (this.isLogged) return this.$router.push({ name: 'home' })
   }
 }
 </script>

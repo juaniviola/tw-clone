@@ -6,7 +6,7 @@
 
         <v-spacer></v-spacer>
 
-        <div v-show="logged">
+        <div v-show="isLogged">
           <v-btn icon>
             <v-icon>search</v-icon>
           </v-btn>
@@ -21,7 +21,7 @@
                 <v-list-tile-title>Juani Viola</v-list-tile-title>
               </v-list-tile>
 
-              <v-list-tile @click="test">
+              <v-list-tile @click="logout">
                 <v-list-tile-title>Salir <v-icon>close</v-icon></v-list-tile-title>
               </v-list-tile>
             </v-list>
@@ -36,24 +36,29 @@
 
 <script>
 import userUtil from './utils/userLogin'
+import { mapState } from 'vuex'
 
 export default {
   name: 'app',
 
-  data () {
-    return {
-      logged: false
-    }
-  },
-
   methods: {
     test () {
       console.log('test...')
+    },
+
+    logout () {
+      localStorage.clear()
+      this.$store.commit('setLogged', false)
+      this.$router.push('signin')
     }
   },
 
+  computed: {
+    ...mapState(['isLogged'])
+  },
+
   created () {
-    this.logged = userUtil.isUserLogged()
+    this.$store.commit('setLogged', userUtil.isUserLogged())
   }
 }
 </script>

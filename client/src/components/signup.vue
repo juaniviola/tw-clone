@@ -74,6 +74,7 @@
 
 <script>
 import userUtils from '../utils/userLogin'
+import { mapState } from 'vuex';
 
 export default {
   name: 'Signup',
@@ -112,8 +113,12 @@ export default {
     }
   },
 
+  computed: {
+    ...mapState(['isLogged'])
+  },
+
   mounted () {
-    if (userUtils.isUserLogged()) return this.$router.push({ name: 'home' })
+    if (this.isLogged) return this.$router.push({ name: 'home' })
   }
 }
 </script>
