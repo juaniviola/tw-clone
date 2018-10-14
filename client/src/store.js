@@ -13,6 +13,10 @@ const store = new Vuex.Store({
   mutations: {
     setLogged (state, value) {
       state.isLogged = value
+    },
+
+    setUser (state, payload) {
+      state.user = payload
     }
   },
 

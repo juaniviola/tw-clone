@@ -163,5 +163,106 @@ module.exports = {
       body: { query, variables },
       json: true
     })
+  },
+
+  addFollow (payload) {
+    const query = `
+      mutation addF ($follow: userFollow!) {
+        addFollow (follow: $follow) {
+          username
+        }
+      }
+    `
+
+    const variables = {
+      follow: {
+        userFromId: payload.userFromId,
+        userFromSecure: payload.userFromSecure,
+        userToId: payload.userToId,
+      }
+    }
+
+    return rp({
+      method: 'POST',
+      uri,
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: { query, variables },
+      json: true
+    })
+  },
+
+  delFollow (payload) {
+    const query = `
+      mutation delF ($follow: userFollow!) {
+        delFollow (follow: $follow) {
+          username
+        }
+      }
+    `
+
+    const variables = {
+      follow: {
+        userFromId: payload.userFromId,
+        userFromSecure: payload.userFromSecure,
+        userToId: payload.userToId,
+      }
+    }
+
+    return rp({
+      method: 'POST',
+      uri,
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: { query, variables },
+      json: true
+    })
+  },
+
+  twByFollowingUsers (id) {
+    const query = `
+      query tws ($id: objectId!) {
+        tweetsByFollowingUsers(id: $id) {
+          user {
+            _id
+            username
+            fullName
+          }
+          description
+          hashtags
+          mentions
+          favs {
+            username
+          }
+          answers {
+            description
+            user {
+              _id
+              username
+              fullName
+            }
+          }
+        }
+      }
+    `
+
+    const variables = {
+      id
+    }
+
+    return rp({
+      method: 'POST',
+      uri,
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: { query, variables },
+      json: true
+    })
   }
 }

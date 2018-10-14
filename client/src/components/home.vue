@@ -1,9 +1,7 @@
 <template>
   <div class="home">
     <div class="feed">
-      <v-container fluid grid-list-lg>
-        <tweet-card :tweets="tweets"></tweet-card>
-      </v-container>
+      <tweet-card :tweets="tweets"></tweet-card>
     </div>
 
     <v-dialog v-model="dialog" persistent max-width="500px">
@@ -61,8 +59,8 @@
 </template>
 
 <script>
-import userUtils from '../utils/userLogin'
 import utils from '../utils/utils'
+import userUtils from '../utils/userLogin'
 import { mapState } from 'vuex';
 import TweetCard from './tweet-card.vue'
 
@@ -108,33 +106,19 @@ export default {
     }
   },
 
-  mounted () {
+  async mounted () {
     if (!this.isLogged) return this.$router.push({ name: 'signin' })
 
-    // TODO: get tweets
-    this.tweets = [
-      {
-        _id: 'asd123',
-        user: {username: 'elPepo'},
-        description: 'Hola este es un texto de prueba para saber como se ve.',
-        favs: [{username: 'juan'}, {username: 'pipo'}],
-        answers: []
-      },
-      {
-        _id: '123asd',
-        user: {username: 'juaniviola'},
-        description: 'Hola como andas, espero que bien... !!! @viola #goodMorning',
-        favs: [{username: 'juan'}],
-        answers: [{username: 'papa'}]
-      },
-      {
-        _id: '1as23',
-        user: {username: 'quierounpaty'},
-        description: 'Esta tarde me siento genial #GreatDay',
-        favs: [],
-        answers: [{us: 'a'}, {us: 'b'}, {us: 'c'}]
-      }
-    ]
+    const user = utils.getUserInfo()
+    const id = user.user._id
+
+    this.loading = true
+    const tw = await userUtils.twByFollowingUsers(id)
+    this.loading = false
+
+    if (!tw || !tw.data || tw.errors) return
+
+    this.tweets = tw.data.tweetsByFollowingUsers
   }
 }
 </script>

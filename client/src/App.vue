@@ -17,7 +17,7 @@
             </v-btn>
 
             <v-list>
-              <v-list-tile @click="test">
+              <v-list-tile @click="profile">
                 <v-list-tile-title>Juani Viola</v-list-tile-title>
               </v-list-tile>
 
@@ -36,14 +36,19 @@
 
 <script>
 import userUtil from './utils/userLogin'
+import utils from './utils/utils'
 import { mapState } from 'vuex'
 
 export default {
   name: 'app',
 
   methods: {
-    test () {
-      console.log('test...')
+    profile () {
+      if (!this.user) return
+
+      const user = this.user.username
+
+      return this.$router.push({ name: 'user', params: { username: user } })
     },
 
     logout () {
@@ -53,11 +58,16 @@ export default {
   },
 
   computed: {
-    ...mapState(['isLogged'])
+    ...mapState(['isLogged', 'user'])
   },
 
   created () {
     this.$store.commit('setLogged', userUtil.isUserLogged())
+
+    const user = utils.getUserInfo()
+    if (!user || !user.user || !user.user.username) return
+
+    this.$store.commit('setUser', user.user)
   }
 }
 </script>

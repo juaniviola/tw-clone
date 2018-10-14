@@ -30,5 +30,17 @@ module.exports = {
 
   tweetsProfile (payload) {
     return requests.tweetsProfile(payload)
+  },
+
+  addFollow (payload) {
+    return requests.addFollow(payload)
+  },
+
+  delFollow (payload) {
+    return requests.delFollow(payload)
+  },
+
+  twByFollowingUsers (id) {
+    return requests.twByFollowingUsers(id)
   }
 }
