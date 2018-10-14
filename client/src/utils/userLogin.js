@@ -22,5 +22,13 @@ module.exports = {
 
   login (payload) {
     return requests.login(payload)
+  },
+
+  userProfile (payload) {
+    return requests.userProfile(payload)
+  },
+
+  tweetsProfile (payload) {
+    return requests.tweetsProfile(payload)
   }
 }

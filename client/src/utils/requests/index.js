@@ -89,5 +89,79 @@ module.exports = {
       body: { query, variables },
       json: true
     })
+  },
+
+  userProfile (payload) {
+    const query = `
+      query userInfo ($username: String!) {
+        userByUsername(username: $username) {
+          _id
+          username
+          fullName
+          followers {
+            username
+          }
+          following {
+            username
+          }
+        }
+      }
+    `
+
+    const variables = {
+      username: payload
+    }
+
+    return rp({
+      method: 'POST',
+      uri,
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: { query, variables },
+      json: true
+    })
+  },
+
+  tweetsProfile (payload) {
+    const query = `
+      query tweets ($id: objectId!) {
+        tweetsByUsername(id: $id) {
+          _id
+          user {
+            username
+            fullName
+          }
+          description
+          hashtags
+          mentions
+          favs {
+            username
+          }
+          answers {
+            description
+            user {
+              username
+            }
+          }
+        }
+      }
+    `
+
+    const variables = {
+      id: payload
+    }
+
+    return rp({
+      method: 'POST',
+      uri,
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: { query, variables },
+      json: true
+    })
   }
 }

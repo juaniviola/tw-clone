@@ -73,7 +73,6 @@
 </template>
 
 <script>
-import userUtils from '../utils/userLogin'
 import { mapState } from 'vuex';
 
 export default {
@@ -103,12 +102,11 @@ export default {
       }
 
       this.loading = true
-      const result = await userUtils.signup(payload)
+      const h = this.$store.dispatch('signup', payload)
       this.loading = false
 
-      if (!result.data.addUser || !result.data.addUser._id || Array.isArray(result.errors)) return this.error = true
+      if (h === 'error') this.snackbar = true // temp
 
-      this.snackbar = true
       this.$router.push({ name: 'signin' })
     }
   },

@@ -47,8 +47,7 @@ export default {
     },
 
     logout () {
-      localStorage.clear()
-      this.$store.commit('setLogged', false)
+      this.$store.dispatch('logout')
       this.$router.push('signin')
     }
   },

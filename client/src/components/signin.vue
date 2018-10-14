@@ -52,7 +52,6 @@
 </template>
 
 <script>
-import userUtils from '../utils/userLogin'
 import { mapState } from 'vuex'
 
 export default {
@@ -77,14 +76,9 @@ export default {
       }
 
       this.loading = true
-      const u = await userUtils.login(payload)
+      const u = await this.$store.dispatch('login', payload)
       this.loading = false
 
-      if (!u || !u.data || u.errors) return this.error = true
-
-      const token = u.data.login
-      localStorage.setItem('token', token)
-      this.$store.commit('setLogged', true)
       this.$router.push({ name: 'home' })
     }
   },

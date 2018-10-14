@@ -1,6 +1,10 @@
 <template>
   <div class="home">
-    <span>You are logged</span>
+    <div class="feed">
+      <v-container fluid grid-list-lg>
+        <tweet-card :tweets="tweets"></tweet-card>
+      </v-container>
+    </div>
 
     <v-dialog v-model="dialog" persistent max-width="500px">
       <v-card>
@@ -47,7 +51,7 @@
         bottom
         right
         fab
-        style="right: 20px; bottom: 20px;"
+        style="right: 20px; bottom: 20px; position: fixed;"
         @click="dialog = !dialog"
       >
         <v-icon>add</v-icon>
@@ -60,14 +64,20 @@
 import userUtils from '../utils/userLogin'
 import utils from '../utils/utils'
 import { mapState } from 'vuex';
+import TweetCard from './tweet-card.vue'
 
 export default {
+  components: {
+    TweetCard
+  },
+
   data () {
     return {
       loading: false,
       dialog: false,
       tweet: '',
-      twLength: 0
+      twLength: 0,
+      tweets: null
     }
   },
 
@@ -77,7 +87,7 @@ export default {
       const tw = await utils.addTweet(this.tweet)
       this.loading = false
 
-      if (tw.errors) return console.log('error')
+      if (!tw.data || tw.errors) return console.log('error')
 
       this.tweet = ''
       this.dialog = false
@@ -94,12 +104,37 @@ export default {
     },
 
     dialog: function (val) {
-      this.tweet = ''
+      if (!val) this.tweet = ''
     }
   },
 
   mounted () {
     if (!this.isLogged) return this.$router.push({ name: 'signin' })
+
+    // TODO: get tweets
+    this.tweets = [
+      {
+        _id: 'asd123',
+        user: {username: 'elPepo'},
+        description: 'Hola este es un texto de prueba para saber como se ve.',
+        favs: [{username: 'juan'}, {username: 'pipo'}],
+        answers: []
+      },
+      {
+        _id: '123asd',
+        user: {username: 'juaniviola'},
+        description: 'Hola como andas, espero que bien... !!! @viola #goodMorning',
+        favs: [{username: 'juan'}],
+        answers: [{username: 'papa'}]
+      },
+      {
+        _id: '1as23',
+        user: {username: 'quierounpaty'},
+        description: 'Esta tarde me siento genial #GreatDay',
+        favs: [],
+        answers: [{us: 'a'}, {us: 'b'}, {us: 'c'}]
+      }
+    ]
   }
 }
 </script>
