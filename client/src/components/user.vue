@@ -42,7 +42,7 @@
         </v-flex>
     </v-card>
 
-    <tweet-card v-if="!loading && !error" :tweets="tweets"></tweet-card>
+    <tweet-card v-if="!loading && !error" :tweets="tweets" @favTweet="favTweet" @delFav="delFav"></tweet-card>
 
     <v-progress-circular
       v-if="loading"
@@ -57,6 +57,12 @@
     >
       {{ errorMessage }}
     </v-alert>
+    <v-btn
+      v-show="error"
+      flat
+      color="info"
+      @click="goHome"
+    >Back home</v-btn>
   </div>
 </template>
 
@@ -87,7 +93,10 @@
 
       isFollowingFn (val) {
         if (!val || !val.username) return
-        if (!this.$store.state.user || !this.$store.state.user.username) return
+
+        if (!this.$store.state.user || !this.$store.state.user.username) {
+          return
+        }
 
         const s = val.followers.find((user) => user.username === this.$store.state.user.username)
 
@@ -107,9 +116,23 @@
           userToId: this.user._id
         }
 
-        this.loading_ = true
-        const h = await userUtils.addFollow(payload)
-        this.loading_ = false
+        let h = null
+        try {
+          this.loading_ = true
+          h = await userUtils.addFollow(payload)
+          this.loading_ = false
+        } catch (err) {
+          this.loading_ = false
+          this.error = true
+          this.errorMessage = 'An error ocurred :('
+          return
+        }
+
+        if (!h || !h.data || !h.data.addFollow || h.errors) {
+          this.error = true
+          this.errorMessage = 'An error ocurred :('
+          return
+        }
 
         this.isFollowing = true
       },
@@ -123,35 +146,89 @@
           userToId: this.user._id
         }
 
-        this.loading_ = true
-        const h = await userUtils.delFollow(payload)
-        this.loading_ = false
+        let h = null
+        try {
+          this.loading_ = true
+          h = await userUtils.delFollow(payload)
+          this.loading_ = false
+        } catch (err) {
+          this.loading_ = false
+          this.error = true
+          this.errorMessage = 'An error ocurred :('
+          return
+        }
+
+        if (!h || !h.data || !h.data.delFollow || h.errors) {
+          this.error = true
+          this.errorMessage = 'An error ocurred :('
+          return
+        }
 
         this.isFollowing = false
+      },
+
+      goHome () {
+        return this.$router.push({ name: 'home' })
+      },
+
+      favTweet (fav) {
+        const tw = this.tweets.find(({ _id }) => _id === fav._id)
+        if (!tw) return
+
+        const find = this.tweets.indexOf(tw)
+        if (find === -1) return
+
+        return this.tweets[find].favs = fav.favs
+      },
+
+      delFav (fav) {
+        const tw = this.tweets.find(({ _id }) => _id === fav._id)
+        if (!tw) return
+
+        const find = this.tweets.indexOf(tw)
+        if (find === -1) return
+
+        return this.tweets[find].favs = fav.favs
       }
     },
 
     async created () {
       const user = this.$route.params.username
 
-      this.loading = true
-      const u = await userUtils.userProfile(user)
-      this.loading = false
+      let u = null
+      try {
+        this.loading = true
+        u = await userUtils.userProfile(user)
+        this.loading = false
+      } catch (err) {
+        this.loading = false
+        this.error = true
+        this.errorMessage = 'Error trying to load user info, or user does not exist'
+        return
+      }
 
       if (!u || !u.data || u.errors || !u.data.userByUsername) {
         this.error = true
-        this.errorMessage = 'User does not exist'
+        this.errorMessage = 'Error trying to load user info, or user does not exist'
         return
       }
 
       this.user = u.data.userByUsername
 
       // tw
-      this.loading = true
-      const t = await userUtils.tweetsProfile(this.user._id)
-      this.loading = false
+      let t = null
+      try {
+        this.loading = true
+        t = await userUtils.tweetsProfile(this.user._id)
+        this.loading = false
+      } catch (err) {
+        this.loading = false
+        this.error = true
+        this.errorMessage = 'Error trying load tweets'
+        return
+      }
 
-      if (!t || !t.data || t.errors) {
+      if (!t || !t.data || !t.data.tweetsByUsername || t.errors) {
         this.error = true
         this.errorMessage = 'Error trying load tweets'
         return

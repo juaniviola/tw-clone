@@ -1,7 +1,14 @@
 <template>
   <div class="home">
+    <v-progress-circular
+      v-if="loading"
+      style="margin-top: 35px;"
+      indeterminate
+    >
+    </v-progress-circular>
+
     <div class="feed">
-      <tweet-card :tweets="tweets"></tweet-card>
+      <tweet-card :tweets="tweets" @favTweet="favTweet" @delFav="delFav"></tweet-card>
     </div>
 
     <v-dialog v-model="dialog" persistent max-width="500px">
@@ -30,16 +37,23 @@
 
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn :disabled="loading" color="green darken-1" flat="flat" @click="dialog = false">Cancel</v-btn>
+          <v-btn :disabled="loading_" color="green darken-1" flat="flat" @click="dialog = false">Cancel</v-btn>
           <v-btn
-            :disabled="loading || tweet.length === 0 || tweet.length > 280"
-            :loading="loading"
+            :disabled="loading_ || tweet.length === 0 || tweet.length >= 280"
+            :loading="loading_"
             color="green darken-1"
             flat="flat"
             @click="sendTweet">Send</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
+
+    <v-alert
+      :value="error"
+      type="error"
+    >
+      {{ errorMessage }}
+    </v-alert>
 
     <v-fab-transition>
       <v-btn
@@ -55,6 +69,17 @@
         <v-icon>add</v-icon>
       </v-btn>
     </v-fab-transition>
+
+    <v-dialog v-model="error_" width="500">
+      <v-card>
+        <v-card-title class="headline">Error ☹</v-card-title>
+        <v-card-text>An error ocurred trying this operation.</v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="red" flat @click.native="error_ = false">Close</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -71,7 +96,11 @@ export default {
 
   data () {
     return {
+      error_: false,
+      error: false,
+      errorMessage: '',
       loading: false,
+      loading_: false,
       dialog: false,
       tweet: '',
       twLength: 0,
@@ -81,14 +110,45 @@ export default {
 
   methods: {
     async sendTweet () {
-      this.loading = true
-      const tw = await utils.addTweet(this.tweet)
-      this.loading = false
+      let tw = null
 
-      if (!tw.data || tw.errors) return console.log('error')
+      try {
+        this.loading_ = true
+        tw = await utils.addTweet(this.tweet)
+        this.loading_ = false
+      } catch (err) {
+        this.loading_ = false
+        this.error_ = true
+        return
+      }
+
+      if (!tw || !tw.data || !tw.data.addTweet || tw.errors) {
+        this.error_ = true
+        return
+      }
 
       this.tweet = ''
       this.dialog = false
+    },
+
+    favTweet (fav) {
+      const tw = this.tweets.find(({ _id }) => _id === fav._id)
+      if (!tw) return
+
+      const find = this.tweets.indexOf(tw)
+      if (find === -1) return
+
+      return this.tweets[find].favs = fav.favs
+    },
+
+    delFav (fav) {
+      const tw = this.tweets.find(({ _id }) => _id === fav._id)
+      if (!tw) return
+
+      const find = this.tweets.indexOf(tw)
+      if (find === -1) return
+
+      return this.tweets[find].favs = fav.favs
     }
   },
 
@@ -110,13 +170,31 @@ export default {
     if (!this.isLogged) return this.$router.push({ name: 'signin' })
 
     const user = utils.getUserInfo()
+    if (!user || !user.user || !user.user._id) {
+      this.error = true
+      this.errorMessage = 'An error ocurred :('
+      return
+    }
+
     const id = user.user._id
 
-    this.loading = true
-    const tw = await userUtils.twByFollowingUsers(id)
-    this.loading = false
+    let tw = null
+    try {
+      this.loading = true
+      tw = await userUtils.twByFollowingUsers(id)
+      this.loading = false
+    } catch (err) {
+      this.loading = false
+      this.error = true
+      this.errorMessage = 'Error ocurred loading tweets'
+      return
+    }
 
-    if (!tw || !tw.data || tw.errors) return
+    if (!tw || !tw.data || !tw.data.tweetsByFollowingUsers || tw.errors) {
+      this.error = true
+      this.errorMessage = 'Error ocurred loading tweets'
+      return
+    }
 
     this.tweets = tw.data.tweetsByFollowingUsers
   }

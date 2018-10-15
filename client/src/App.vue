@@ -2,7 +2,7 @@
   <div id="app">
     <v-app>
       <v-toolbar v-show="isLogged" dark class="secondary">
-        <v-toolbar-title class="white--text">🐦</v-toolbar-title>
+        <v-toolbar-title class="white--text"><span class="bird" @click="home">🐦</span></v-toolbar-title>
 
         <v-spacer></v-spacer>
 
@@ -22,7 +22,7 @@
               </v-list-tile>
 
               <v-list-tile @click="logout">
-                <v-list-tile-title>Salir <v-icon>close</v-icon></v-list-tile-title>
+                <v-list-tile-title>Salir</v-list-tile-title>
               </v-list-tile>
             </v-list>
           </v-menu>
@@ -43,6 +43,10 @@ export default {
   name: 'app',
 
   methods: {
+    home () {
+      return this.$router.push({ name: 'home' })
+    },
+
     profile () {
       if (!this.user) return
 
@@ -79,5 +83,9 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
+}
+
+.bird:hover {
+  cursor: pointer;
 }
 </style>

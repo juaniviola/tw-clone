@@ -4,7 +4,7 @@
       <v-card>
         <v-card-title primary-title>
           <div class="headline">
-            <a>{{ tweet.user.username }}</a>
+            <a @click="username(tweet.user.username)">{{ tweet.user.username }}</a>
           </div>
         </v-card-title>
         <v-card-text>
@@ -17,32 +17,120 @@
         <v-card-actions>
           <v-spacer></v-spacer>
 
-          <v-btn flat icon @click="favoriteado = !favoriteado">
-            <v-icon v-if="!favoriteado">favorite_border</v-icon>
-            <v-icon color="red" v-else>favorite</v-icon>
-          </v-btn>{{ tweet.favs.length }}
-          <v-btn flat icon color="blue"><v-icon>comment</v-icon></v-btn>{{ tweet.answers.length }}
+          <v-btn :disabled="loading" flat icon v-if="!favoriteado(tweet)" @click="setFav(tweet._id)">
+            <v-icon>favorite_border</v-icon> {{ tweet.favs.length }}
+          </v-btn>
+
+          <v-btn :disabled="loading" flat icon v-else @click="delFav(tweet._id)">
+            <v-icon color="red">favorite</v-icon> {{ tweet.favs.length }}
+          </v-btn>
+
+          <v-btn flat icon><v-icon>comment</v-icon></v-btn>{{ tweet.answers.length }}
         </v-card-actions>
       </v-card>
     </v-flex>
+
+    <v-dialog v-model="error_" width="500">
+      <v-card>
+        <v-card-title class="headline">Error ☹</v-card-title>
+        <v-card-text>An error ocurred trying this operation.</v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="red" flat @click.native="error_ = false">Close</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
 <script>
-export default {
-  props: ['tweets'],
+import utils from '../utils/utils'
+import userUtils from '../utils/userLogin'
 
+export default {
   data () {
     return {
-      favoriteado: false
+      loading: false,
+      error_: false
     }
   },
 
+  props: ['tweets'],
+
   methods: {
+    favoriteado (tweet) {
+      if (!this.$store.state.user || !this.$store.state.user._id) return false
+
+      const find = tweet.favs.find(({ _id }) => _id === this.$store.state.user._id)
+      if (find) {
+        return true
+      } else {
+        return false
+      }
+    },
+
     hashtagTweet (text) {
       let repl = text.replace(/#(\w+)/g, '<a class="htg" href="/hashtag/$1">#$1</a>')
       repl = repl.replace(/@(\w+)/g, '<a class="htg" href="/user/$1">@$1</a>')
       return repl
+    },
+
+    username (username) {
+      return this.$router.push({ name: 'user', params: { username } })
+    },
+
+    async setFav (twId) {
+      if (!this.$store.state.isLogged || !this.$store.state.user) return this.error_ = true
+
+      const user = utils.getUserInfo()
+      if (!user || !user.user || !user.user._id || !user.secure) return this.error_ = true
+
+      const payload = {
+        tweetId: twId,
+        userId: user.user._id,
+        userSecure: user.secure
+      }
+
+      let f = null
+      try {
+        this.loading = true
+        f = await userUtils.favTweet(payload)
+        this.loading = false
+      } catch (err) {
+        this.loading = false
+        return this.error_ = true
+      }
+
+      if (!f || !f.data || !f.data.favTweet || f.errors) return this.error_ = true
+
+      this.$emit('favTweet', f.data.favTweet)
+    },
+
+    async delFav (twId) {
+      if (!this.$store.state.isLogged || !this.$store.state.user) return this.error_ = true
+
+      const user = utils.getUserInfo()
+      if (!user || !user.user || !user.user._id || !user.secure) return this.error_ = true
+
+      const payload = {
+        tweetId: twId,
+        userId: user.user._id,
+        userSecure: user.secure
+      }
+
+      let f = null
+      try {
+        this.loading = true
+        f = await userUtils.delFav(payload)
+        this.loading = false
+      } catch (err) {
+        this.loading = false
+        return this.error_ = true
+      }
+
+      if (!f || !f.data || !f.data.delFav || f.errors) return this.error_ = true
+
+      this.$emit('delFav', f.data.delFav)
     }
   }
 }

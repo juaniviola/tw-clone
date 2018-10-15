@@ -137,6 +137,7 @@ module.exports = {
           hashtags
           mentions
           favs {
+            _id
             username
           }
           answers {
@@ -227,6 +228,7 @@ module.exports = {
     const query = `
       query tws ($id: objectId!) {
         tweetsByFollowingUsers(id: $id) {
+          _id
           user {
             _id
             username
@@ -236,6 +238,7 @@ module.exports = {
           hashtags
           mentions
           favs {
+            _id
             username
           }
           answers {
@@ -252,6 +255,104 @@ module.exports = {
 
     const variables = {
       id
+    }
+
+    return rp({
+      method: 'POST',
+      uri,
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: { query, variables },
+      json: true
+    })
+  },
+
+  favTweet (payload) {
+    const query = `
+      mutation ft ($fav: favTweet!) {
+        favTweet(fav: $fav) {
+          _id
+          user {
+            _id
+            username
+            fullName
+          }
+          description
+          hashtags
+          mentions
+          favs {
+            _id
+            username
+          }
+          answers {
+            description
+            user {
+              _id
+              username
+              fullName
+            }
+          }
+        }
+      }
+    `
+
+    const variables = {
+      fav: {
+        tweetId: payload.tweetId,
+        userId: payload.userId,
+        userSecure: payload.userSecure
+      }
+    }
+
+    return rp({
+      method: 'POST',
+      uri,
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: { query, variables },
+      json: true
+    })
+  },
+
+  delFav (payload) {
+    const query = `
+      mutation dft ($fav: favTweet!) {
+        delFav(fav: $fav) {
+          _id
+          user {
+            _id
+            username
+            fullName
+          }
+          description
+          hashtags
+          mentions
+          favs {
+            _id
+            username
+          }
+          answers {
+            description
+            user {
+              _id
+              username
+              fullName
+            }
+          }
+        }
+      }
+    `
+
+    const variables = {
+      fav: {
+        tweetId: payload.tweetId,
+        userId: payload.userId,
+        userSecure: payload.userSecure
+      }
     }
 
     return rp({

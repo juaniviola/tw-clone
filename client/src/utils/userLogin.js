@@ -42,5 +42,13 @@ module.exports = {
 
   twByFollowingUsers (id) {
     return requests.twByFollowingUsers(id)
+  },
+
+  favTweet (payload) {
+    return requests.favTweet(payload)
+  },
+
+  delFav (payload) {
+    return requests.delFav(payload)
   }
 }
