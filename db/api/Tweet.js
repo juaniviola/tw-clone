@@ -199,7 +199,7 @@ module.exports = {
     if (!f) return { error: { message: 'User not found' } }
 
     return Tweet
-      .find({ user: { $in: f.following } })
+      .find({ $or: [ { user: { $in: f.following } }, { user: userId } ] })
       .sort({ createdAt: -1 })
       .limit(30)
       .populate({ path: 'user', options: { select: { username: 1, fullName: 1 } } })
