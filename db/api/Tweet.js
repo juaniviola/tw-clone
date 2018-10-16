@@ -21,6 +21,7 @@ module.exports = {
     const tweet = new Tweet({
       user,
       description,
+      createdAt: new Date(),
       hashtags: hashtags ? hashtags : [],
       mentions: mentions ? mentions : []
     })
@@ -37,6 +38,7 @@ module.exports = {
 
     return Tweet
       .find({ user: userId })
+      .sort({ createdAt: -1 })
       .populate({ path: 'user', options: { select: { username: 1, fullName: 1 } } })
       .populate({ path: 'favs', options: { select: { username: 1, fullName: 1 } } })
       .populate({ path: 'answers.user', options: { select: { username: 1, fullName: 1 } } })
