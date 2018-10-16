@@ -63,9 +63,25 @@ module.exports = {
     const query = `
       mutation addTw ($tw: newTweet!) {
         addTweet(tw: $tw) {
+          _id
+          createdAt
           description
+          mentions
+          hashtags
           user {
+            _id
             username
+            fullName
+          }
+          favs {
+            username
+            fullName
+          }
+          answers {
+            description
+            user {
+              username
+            }
           }
         }
       }
@@ -353,6 +369,33 @@ module.exports = {
 
     const variables = {
       fav: {
+        tweetId: payload.tweetId,
+        userId: payload.userId,
+        userSecure: payload.userSecure
+      }
+    }
+
+    return rp({
+      method: 'POST',
+      uri,
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: { query, variables },
+      json: true
+    })
+  },
+
+  deleteTweet (payload) {
+    const query = `
+      mutation delTw ($tw: deleteTweet!) {
+        deleteTweet(tw: $tw)
+      }
+    `
+
+    const variables = {
+      tw: {
         tweetId: payload.tweetId,
         userId: payload.userId,
         userSecure: payload.userSecure

@@ -8,7 +8,11 @@
     </v-progress-circular>
 
     <div class="feed">
-      <tweet-card :tweets="tweets" @favTweet="favTweet" @delFav="delFav"></tweet-card>
+      <tweet-card
+        :tweets="tweets"
+        @favTweet="favTweet"
+        @delFav="delFav"
+        @deleteTweet="deleteTweet"></tweet-card>
     </div>
 
     <v-dialog v-model="dialog" persistent max-width="500px">
@@ -127,6 +131,8 @@ export default {
         return
       }
 
+      this.tweets.unshift(tw.data.addTweet)
+
       this.tweet = ''
       this.dialog = false
     },
@@ -149,6 +155,16 @@ export default {
       if (find === -1) return
 
       return this.tweets[find].favs = fav.favs
+    },
+
+    deleteTweet (twId) {
+      const tw = this.tweets.find(({ _id }) => _id === twId)
+      if (!tw) return
+
+      const find = this.tweets.indexOf(tw)
+      if (find === -1) return
+
+      return this.tweets.splice(find, 1)
     }
   },
 

@@ -18,14 +18,15 @@
           <v-spacer></v-spacer>
 
           <v-btn :disabled="loading" flat icon v-if="!favoriteado(tweet)" @click="setFav(tweet._id)">
-            <v-icon>favorite_border</v-icon> {{ tweet.favs.length }}
+            <v-icon>favorite_border</v-icon>{{ tweet.favs.length }}
           </v-btn>
 
           <v-btn :disabled="loading" flat icon v-else @click="delFav(tweet._id)">
-            <v-icon color="red">favorite</v-icon> {{ tweet.favs.length }}
+            <v-icon color="red">favorite</v-icon>{{ tweet.favs.length }}
           </v-btn>
 
           <v-btn flat icon><v-icon>comment</v-icon></v-btn>{{ tweet.answers.length }}
+          <v-btn v-if="isOwner(tweet.user._id)" flat icon @click="deleteTweet(tweet._id)" :disabled="loading"><v-icon>delete</v-icon></v-btn>
         </v-card-actions>
       </v-card>
     </v-flex>
@@ -58,6 +59,16 @@ export default {
   props: ['tweets'],
 
   methods: {
+    isOwner (userId) {
+      if (!this.$store.state.user || !this.$store.state.user._id) return false
+
+      if (this.$store.state.user._id === userId) {
+        return true
+      } else {
+        return false
+      }
+    },
+
     favoriteado (tweet) {
       if (!this.$store.state.user || !this.$store.state.user._id) return false
 
@@ -77,6 +88,31 @@ export default {
 
     username (username) {
       return this.$router.push({ name: 'user', params: { username } })
+    },
+
+    async deleteTweet (twId) {
+      const user = utils.getUserInfo()
+      if (!user || !user.user || !user.secure || !user.user._id) return this.error_ = true
+
+      const payload = {
+        userId: user.user._id,
+        userSecure: user.secure,
+        tweetId: twId
+      }
+
+      let d = null
+      try {
+        this.loading = true
+        d = await userUtils.deleteTweet(payload)
+        this.loading = false
+      } catch (err) {
+        this.loading = false
+        this.error_ = true
+      }
+
+      if (!d || !d.data || !d.data.deleteTweet || d.errors) return this.error_ = true
+
+      this.$emit('deleteTweet', twId)
     },
 
     async setFav (twId) {

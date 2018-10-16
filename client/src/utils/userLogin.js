@@ -50,5 +50,9 @@ module.exports = {
 
   delFav (payload) {
     return requests.delFav(payload)
+  },
+
+  deleteTweet (payload) {
+    return requests.deleteTweet(payload)
   }
 }
