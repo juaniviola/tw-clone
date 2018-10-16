@@ -4,7 +4,7 @@
       <v-card>
         <v-card-title primary-title>
           <div class="headline">
-            <a @click="username(tweet.user.username)">{{ tweet.user.username }}</a>
+            <a @click="username(tweet.user.username)">{{ tweet.user.username }}</a><span class="ca"> {{ tweet.createdAt | moment('from') }}</span>
           </div>
         </v-card-title>
         <v-card-text>
@@ -139,5 +139,10 @@ export default {
 <style>
 .htg {
   text-decoration: none;
+}
+
+.ca {
+  color: #8a8484;
+  font-size: 16px;
 }
 </style>

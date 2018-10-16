@@ -18,7 +18,7 @@
 
             <v-list>
               <v-list-tile @click="profile">
-                <v-list-tile-title>Juani Viola</v-list-tile-title>
+                <v-list-tile-title>{{ $store.state.user.username }}</v-list-tile-title>
               </v-list-tile>
 
               <v-list-tile @click="logout">
@@ -57,7 +57,7 @@ export default {
 
     logout () {
       this.$store.dispatch('logout')
-      this.$router.push('signin')
+      this.$router.push({ name: 'signin'})
     }
   },
 

@@ -146,6 +146,7 @@ module.exports = {
               username
             }
           }
+          createdAt
         }
       }
     `
@@ -249,6 +250,7 @@ module.exports = {
               fullName
             }
           }
+          createdAt
         }
       }
     `
@@ -294,6 +296,7 @@ module.exports = {
               fullName
             }
           }
+          createdAt
         }
       }
     `
@@ -343,6 +346,7 @@ module.exports = {
               fullName
             }
           }
+          createdAt
         }
       }
     `

@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import userUtils from './utils/userLogin'
+import utils from './utils/utils'
 
 Vue.use(Vuex)
 
@@ -16,7 +17,13 @@ const store = new Vuex.Store({
     },
 
     setUser (state, payload) {
-      state.user = payload
+      return Object.assign(state.user, payload)
+    },
+
+    unsetUser (state) {
+      delete state.user._id
+      delete state.user.fullName
+      delete state.user.username
     }
   },
 
@@ -28,13 +35,18 @@ const store = new Vuex.Store({
       const token = u.data.login
       localStorage.setItem('token', token)
 
+      const user = utils.getUserInfo()
+      if (!user || !user.user) return
+
       context.commit('setLogged', true)
+      context.commit('setUser', user.user)
 
       return u
     },
 
     logout (context) {
       context.commit('setLogged', false)
+      context.commit('unsetUser')
       localStorage.clear()
       return
     },
