@@ -54,5 +54,9 @@ module.exports = {
 
   deleteTweet (payload) {
     return requests.deleteTweet(payload)
+  },
+
+  tweetById (id) {
+    return requests.tweetById(id)
   }
 }

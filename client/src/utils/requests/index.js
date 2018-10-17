@@ -146,6 +146,7 @@ module.exports = {
         tweetsByUsername(id: $id) {
           _id
           user {
+            _id
             username
             fullName
           }
@@ -400,6 +401,53 @@ module.exports = {
         userId: payload.userId,
         userSecure: payload.userSecure
       }
+    }
+
+    return rp({
+      method: 'POST',
+      uri,
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: { query, variables },
+      json: true
+    })
+  },
+
+  tweetById (id) {
+    const query = `
+      query twById ($id: objectId!) {
+        tweetById(id: $id) {
+          _id
+          description
+          createdAt
+          hashtags
+          mentions
+          favs {
+            _id
+            username
+            fullName
+          }
+          answers {
+            description
+            user {
+              _id
+              username
+              fullName
+            }
+          }
+          user {
+            _id
+            username
+            fullName
+          }
+        }
+      }
+    `
+
+    const variables = {
+      id
     }
 
     return rp({

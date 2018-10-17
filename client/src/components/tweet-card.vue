@@ -26,7 +26,7 @@
           </v-btn>
 
           <v-btn flat icon><v-icon>comment</v-icon></v-btn>{{ tweet.answers.length }}
-          <v-btn v-if="isOwner(tweet.user._id)" flat icon @click="deleteTweet(tweet._id)" :disabled="loading"><v-icon>delete</v-icon></v-btn>
+          <v-btn flat icon @click="goToTweet(tweet)" :disabled="loading"><v-icon>keyboard_arrow_right</v-icon></v-btn>
         </v-card-actions>
       </v-card>
     </v-flex>
@@ -59,6 +59,10 @@ export default {
   props: ['tweets'],
 
   methods: {
+    goToTweet (tw) {
+      return this.$router.push({ name: 'tweet', params: { tweetId: tw._id } })
+    },
+
     isOwner (userId) {
       if (!this.$store.state.user || !this.$store.state.user._id) return false
 
