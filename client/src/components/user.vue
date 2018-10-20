@@ -47,7 +47,8 @@
       :tweets="tweets"
       @favTweet="favTweet"
       @delFav="delFav"
-      @deleteTweet="deleteTweet"></tweet-card>
+      @deleteTweet="deleteTweet"
+      @addAnswer="addAnswer"></tweet-card>
 
     <v-progress-circular
       v-if="loading"
@@ -204,6 +205,17 @@
         if (find === -1) return
 
         return this.tweets.splice(find, 1)
+      },
+
+      addAnswer (tweet) {
+        const twId = tweet._id
+        const tw = this.tweets.find(({ _id }) => _id === twId)
+        if (!tw) return
+
+        const find = this.tweets.indexOf(tw)
+        if (find === -1) return
+
+        this.tweets[find].answers = tweet.answers
       }
     },
 

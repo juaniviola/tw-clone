@@ -78,6 +78,7 @@ module.exports = {
             fullName
           }
           answers {
+            _id
             description
             user {
               username
@@ -158,6 +159,7 @@ module.exports = {
             username
           }
           answers {
+            _id
             description
             user {
               username
@@ -260,6 +262,7 @@ module.exports = {
             username
           }
           answers {
+            _id
             description
             user {
               _id
@@ -306,6 +309,7 @@ module.exports = {
             username
           }
           answers {
+            _id
             description
             user {
               _id
@@ -356,6 +360,7 @@ module.exports = {
             username
           }
           answers {
+            _id
             description
             user {
               _id
@@ -430,6 +435,7 @@ module.exports = {
             fullName
           }
           answers {
+            _id
             description
             user {
               _id
@@ -448,6 +454,112 @@ module.exports = {
 
     const variables = {
       id
+    }
+
+    return rp({
+      method: 'POST',
+      uri,
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: { query, variables },
+      json: true
+    })
+  },
+
+  addAnswer (payload) {
+    const query = `
+      mutation addAns ($answer: addAnswer!) {
+        addAnswer(answer: $answer) {
+          _id
+          description
+          createdAt
+          hashtags
+          mentions
+          favs {
+            _id
+            username
+            fullName
+          }
+          answers {
+            _id
+            description
+            user {
+              _id
+              username
+              fullName
+            }
+          }
+          user {
+            _id
+            username
+            fullName
+          }
+        }
+      }
+    `
+
+    const variables = {
+      answer: {
+        tweetId: payload.tweetId,
+        userId: payload.userId,
+        userSecure: payload.userSecure,
+        description: payload.description
+      }
+    }
+
+    return rp({
+      method: 'POST',
+      uri,
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: { query, variables },
+      json: true
+    })
+  },
+
+  delAnswer (payload) {
+    const query = `
+      mutation delAns ($answer: delAnswer!) {
+        delAnswer(answer: $answer) {
+          _id
+          description
+          createdAt
+          hashtags
+          mentions
+          favs {
+            _id
+            username
+            fullName
+          }
+          answers {
+            _id
+            description
+            user {
+              _id
+              username
+              fullName
+            }
+          }
+          user {
+            _id
+            username
+            fullName
+          }
+        }
+      }
+    `
+
+    const variables = {
+      answer: {
+        tweetId: payload.tweetId,
+        userId: payload.userId,
+        userSecure: payload.userSecure,
+        answerId: payload.answerId
+      }
     }
 
     return rp({

@@ -58,5 +58,13 @@ module.exports = {
 
   tweetById (id) {
     return requests.tweetById(id)
+  },
+
+  addAnswer (payload) {
+    return requests.addAnswer(payload)
+  },
+
+  delAnswer (payload) {
+    return requests.delAnswer(payload)
   }
 }
