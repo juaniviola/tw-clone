@@ -17,6 +17,8 @@
         <v-card-actions>
           <v-spacer></v-spacer>
 
+          <v-btn flat icon><v-icon>comment</v-icon></v-btn>{{ tweet.answers.length }}
+
           <v-btn :disabled="loading" flat icon v-if="!favoriteado(tweet)" @click="setFav(tweet._id)">
             <v-icon>star_border</v-icon>{{ tweet.favs.length }}
           </v-btn>
@@ -25,7 +27,6 @@
             <v-icon color="orange">star</v-icon>{{ tweet.favs.length }}
           </v-btn>
 
-          <v-btn flat icon @click="setComment(tweet._id)"><v-icon>comment</v-icon></v-btn>{{ tweet.answers.length }}
           <v-btn flat icon @click="goToTweet(tweet)" :disabled="loading"><v-icon>keyboard_arrow_right</v-icon></v-btn>
         </v-card-actions>
       </v-card>
@@ -38,40 +39,6 @@
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn color="red" flat @click.native="error_ = false">Close</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-
-    <v-dialog v-model="dialogAnswer" persistent max-width="500px">
-      <v-card>
-        <v-card-title>
-          <span class="headline">Add answer</span>
-        </v-card-title>
-
-        <v-card-text>
-          <v-container grid-list-md>
-            <v-layout wrap>
-              <v-flex>
-                <v-textarea
-                  :disabled="loading"
-                  v-model="answer"
-                  auto-grow
-                  box
-                  label="What are you thinking?..."></v-textarea>
-              </v-flex>
-            </v-layout>
-          </v-container>
-        </v-card-text>
-
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn :disabled="loading" color="green darken-1" flat="flat" @click="setComment()">Cancel</v-btn>
-          <v-btn
-            :disabled="loading || answer.length === 0"
-            :loading="loading"
-            color="green darken-1"
-            flat="flat"
-            @click="addComment">Send</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -88,7 +55,6 @@ export default {
       loading: false,
       error_: false,
       answer: '',
-      dialogAnswer: false,
       tweetId: ''
     }
   },
@@ -208,62 +174,6 @@ export default {
       if (!f || !f.data || !f.data.delFav || f.errors) return this.error_ = true
 
       this.$emit('delFav', f.data.delFav)
-    },
-
-    async addComment () {
-      if (!this.$store.state.isLogged || !this.$store.state.user) return this.error_ = true
-
-      const user = utils.getUserInfo()
-      if (!user || !user.user || !user.user._id || !user.secure) return this.error_ = true
-
-      if (this.tweetId === 'null' || this.tweetId === '') return
-
-      const payload = {
-        tweetId: this.tweetId,
-        userId: user.user._id,
-        userSecure: user.secure,
-        description: this.answer
-      }
-
-      let a = null
-      try {
-        this.loading = true
-        a = await userUtils.addAnswer(payload)
-        this.loading = false
-      } catch (err) {
-        this.dialogAnswer = false
-        this.answer = ''
-        this.tweetId = ''
-        this.loading = false
-        this.error_ = true
-        return
-      }
-
-      if (!a || !a.data || !a.data.addAnswer || a.errors) {
-        this.dialogAnswer = false
-        this.answer = ''
-        this.tweetId = ''
-        this.error_ = true
-        return
-      }
-
-      this.dialogAnswer = false
-      this.answer = ''
-      this.tweetId = ''
-
-      this.$emit('addAnswer', a.data.addAnswer)
-    },
-
-    setComment (twId = 'null') {
-      if (twId !== 'null') {
-        this.dialogAnswer = true
-        this.tweetId = twId
-        return
-      }
-
-      this.dialogAnswer = false
-      this.tweetId = ''
-      this.answer = ''
     }
   }
 }

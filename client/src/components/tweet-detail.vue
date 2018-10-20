@@ -9,27 +9,44 @@
     <div style="text-align: right; margin-top: -10px;" v-if="tweet">
       <v-divider></v-divider>
 
+      <v-btn flat icon :disabled="loading"><v-icon>comment</v-icon> {{ tweet.answers.length }}</v-btn>
+
       <v-btn flat icon v-if="isFaved()" :disabled="loading" @click="delFav"><v-icon color="orange">star</v-icon> {{ tweet.favs.length }}</v-btn>
       <v-btn flat icon v-else :disabled="loading" @click="setFav"><v-icon>star_border</v-icon> {{ tweet.favs.length }}</v-btn>
 
-      <v-btn flat icon :disabled="loading"><v-icon>comment</v-icon> {{ tweet.answers.length }}</v-btn>
       <v-btn flat icon v-if="isOwner()" :disabled="loading"><v-icon>edit</v-icon></v-btn>
       <v-btn flat icon v-if="isOwner()" :disabled="loading" @click="deleteTweet"><v-icon>delete</v-icon></v-btn>
 
       <v-divider></v-divider>
     </div>
-    <div v-if="tweet">
-      <v-flex style="margin-bottom: 5px;" v-for="answer in tweet.answers" :key="answer._id">
+    <div v-if="tweet" style="margin-bottom: 80px;">
+      <v-flex v-for="answer in tweet.answers" :key="answer._id">
         <v-card>
           <v-card-title style="font-size:16px; margin-bottom: -30px;"><a style="text-decoration: none;">{{ answer.user.username }}</a></v-card-title>
           <v-card-text style="text-align: left; margin-bottom: -10px;">{{ answer.description }}</v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn flat icon @click="deleteAnswer(answer._id)"><v-icon>delete</v-icon></v-btn>
+            <v-btn v-if="isOwner_(answer.user._id)" flat icon @click="deleteAnswer(answer._id)"><v-icon>delete</v-icon></v-btn>
           </v-card-actions>
         </v-card>
+        <v-divider></v-divider>
       </v-flex>
     </div>
+
+    <v-flex>
+      <v-text-field
+        :append-icon="loading_ ? 'sync' : 'send'"
+        solo
+        block
+        dark
+        v-model="answer"
+        placeholder="Enter a comment"
+        style="position: fixed; bottom: -30px; width: 100%;"
+        @click:append="addComment"
+        :loading="loading_"
+        :disabled="loading_"
+      ></v-text-field>
+    </v-flex>
   </div>
 </template>
 
@@ -41,8 +58,10 @@
     data () {
       return {
         loading: false,
+        loading_: false,
         error: false,
-        tweet: null
+        tweet: null,
+        answer: ''
       }
     },
 
@@ -62,6 +81,16 @@
         if (!this.$store.state.user || !this.$store.state.user._id) return false
 
         if (this.$store.state.user._id === this.tweet.user._id) {
+          return true
+        } else {
+          return false
+        }
+      },
+
+      isOwner_ (id) {
+        if (!this.$store.state.user || !this.$store.state.user._id) return false
+
+        if (this.$store.state.user._id === id) {
           return true
         } else {
           return false
@@ -183,6 +212,42 @@
 
         const i = this.tweet.answers.indexOf(find)
         this.tweet.answers.splice(i, 1)
+      },
+
+      async addComment () {
+        if (!this.$store.state.isLogged || !this.$store.state.user) return this.error = true
+
+        const user = utils.getUserInfo()
+        if (!user || !user.user || !user.user._id || !user.secure) return this.error = true
+
+        const payload = {
+          tweetId: this.tweet._id,
+          userId: user.user._id,
+          userSecure: user.secure,
+          description: this.answer
+        }
+
+        let a = null
+        try {
+          this.loading_ = true
+          a = await userUtils.addAnswer(payload)
+          this.loading_ = false
+        } catch (err) {
+          this.answer = ''
+          this.loading_ = false
+          this.error = true
+          return
+        }
+
+        if (!a || !a.data || !a.data.addAnswer || a.errors) {
+          this.answer = ''
+          this.error = true
+          return
+        }
+
+        this.answer = ''
+
+        this.tweet.answers = a.data.addAnswer.answers
       }
     },
 
