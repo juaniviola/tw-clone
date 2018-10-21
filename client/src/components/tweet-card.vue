@@ -88,7 +88,7 @@ export default {
     },
 
     hashtagTweet (text) {
-      let repl = text.replace(/#(\w+)/g, '<a class="htg" href="/hashtag/$1">#$1</a>')
+      let repl = text.replace(/#(\w+)/g, '<a class="htg">#$1</a>')
       repl = repl.replace(/@(\w+)/g, '<a class="htg" href="/user/$1">@$1</a>')
       return repl
     },

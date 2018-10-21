@@ -61,7 +61,6 @@
 
     <v-fab-transition>
       <v-btn
-        color="green"
         dark
         absolute
         bottom

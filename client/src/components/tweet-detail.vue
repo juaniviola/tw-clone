@@ -1,5 +1,12 @@
 <template>
   <div id="detail">
+    <v-progress-circular
+      v-if="loading  && !tweet"
+      style="margin-top: 35px;"
+      indeterminate
+    >
+    </v-progress-circular>
+
     <div v-if="!tweet && !loading">
       <v-alert
         value="true"
@@ -132,7 +139,7 @@
           text = desc
         }
 
-        let repl = text.replace(/#(\w+)/g, '<a class="htg" href="/hashtag/$1">#$1</a>')
+        let repl = text.replace(/#(\w+)/g, '<a class="htg">#$1</a>')
         repl = repl.replace(/@(\w+)/g, '<a class="htg" href="/user/$1">@$1</a>')
         return repl
       },
