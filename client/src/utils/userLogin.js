@@ -66,5 +66,9 @@ module.exports = {
 
   delAnswer (payload) {
     return requests.delAnswer(payload)
+  },
+
+  editTweet (tw) {
+    return requests.editTweet(tw)
   }
 }

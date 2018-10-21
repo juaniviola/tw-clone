@@ -572,5 +572,58 @@ module.exports = {
       body: { query, variables },
       json: true
     })
+  },
+
+  editTweet (tw) {
+    const query = `
+      mutation edTw ($tw: editTweet!) {
+        editTweet(tw: $tw) {
+          _id
+          description
+          createdAt
+          hashtags
+          mentions
+          favs {
+            _id
+            username
+            fullName
+          }
+          answers {
+            _id
+            description
+            user {
+              _id
+              username
+              fullName
+            }
+          }
+          user {
+            _id
+            username
+            fullName
+          }
+        }
+      }
+    `
+
+    const variables = {
+      tw: {
+        _id: tw._id,
+        userId: tw.userId,
+        secure: tw.secure,
+        description: tw.description
+      }
+    }
+
+    return rp({
+      method: 'POST',
+      uri,
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: { query, variables },
+      json: true
+    })
   }
 }
