@@ -671,5 +671,36 @@ module.exports = {
       body: { query, variables },
       json: true
     })
+  },
+
+  usersByUsername (username) {
+    const query = `
+      query usByUs ($username: String!) {
+        usersByUsername (username: $username) {
+          _id
+          username
+          fullName
+          following {
+            username
+          }
+          followers {
+            username
+          }
+        }
+      }
+    `
+
+    const variables = { username }
+
+    return rp({
+      method: 'POST',
+      uri,
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: { query, variables },
+      json: true
+    })
   }
 }
