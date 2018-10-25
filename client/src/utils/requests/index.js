@@ -625,5 +625,51 @@ module.exports = {
       body: { query, variables },
       json: true
     })
+  },
+
+  tweetsByHashtag (hashtag) {
+    const query = `
+      query edTw ($hashtag: String!) {
+        tweetsByHashtags(hashtag: $hashtag) {
+          _id
+          description
+          createdAt
+          hashtags
+          mentions
+          favs {
+            _id
+            username
+            fullName
+          }
+          answers {
+            _id
+            description
+            user {
+              _id
+              username
+              fullName
+            }
+          }
+          user {
+            _id
+            username
+            fullName
+          }
+        }
+      }
+    `
+
+    const variables = { hashtag }
+
+    return rp({
+      method: 'POST',
+      uri,
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: { query, variables },
+      json: true
+    })
   }
 }
