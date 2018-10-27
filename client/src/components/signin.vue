@@ -3,6 +3,9 @@
     <v-container>
       <v-flex>
         <div class="title">
+          <span>Welcome to 🐦!</span><br>
+        </div>
+        <div class="subtitle">
           <span>Login with your account</span>
         </div>
       </v-flex>
@@ -43,7 +46,7 @@
 
         <v-flex>
           <div class="create">
-            <router-link to="/signup">Create an account. It's free</router-link>
+            <router-link to="/signup" style="text-decoration: none;">Create an account. It's free</router-link>
           </div>
         </v-flex>
       </div>
@@ -75,9 +78,15 @@ export default {
         password: this.password
       }
 
-      this.loading = true
-      const u = await this.$store.dispatch('login', payload)
-      this.loading = false
+      try {
+        this.loading = true
+        await this.$store.dispatch('login', payload)
+        this.loading = false
+      } catch (err) {
+        this.loading = false
+        this.error = true
+        return
+      }
 
       this.$router.push({ name: 'home' })
     }
@@ -100,5 +109,10 @@ export default {
 
 .title {
   margin-top: 15px;
+}
+
+.subtitle {
+  margin-top: 30px;
+  font-size: 16px;
 }
 </style>

@@ -182,6 +182,7 @@ export default {
   },
 
   async mounted () {
+    // TODO: go to welcome screen
     if (!this.isLogged) return this.$router.push({ name: 'signin' })
 
     const user = utils.getUserInfo()
