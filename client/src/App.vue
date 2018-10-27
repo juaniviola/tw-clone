@@ -106,7 +106,7 @@ export default {
 
     logout () {
       this.$store.dispatch('logout')
-      this.$router.push({ name: 'signin'})
+      this.$router.push({ name: 'welcome'})
     },
 
     async searchUser (user) {
