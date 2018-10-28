@@ -33,11 +33,18 @@ module.exports = {
       .populate({ path: 'user', options: { select: { username: 1, fullName: 1 } } })
   },
 
-  tweetsByUser (username) {
+  async tweetsByUser (username) {
     if (!username || typeof username !== 'string') return { error: { message: 'Invalid user id' } }
 
+    let id
+    try {
+      id = await User.findOne({ username })
+    } catch (err) {
+      return { error: { message: 'User not found' } }
+    }
+
     return Tweet
-      .find({ username })
+      .find({ user: id })
       .sort({ createdAt: -1 })
       .populate({ path: 'user', options: { select: { username: 1, fullName: 1 } } })
       .populate({ path: 'favs', options: { select: { username: 1, fullName: 1 } } })
