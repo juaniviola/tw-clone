@@ -46,6 +46,9 @@
         <v-card>
           <v-card-title style="font-size:16px; margin-bottom: -30px;"><a style="text-decoration: none;" @click="goToUser(answer.user.username)">{{ answer.user.username }}</a></v-card-title>
           <v-card-text style="text-align: left; margin-bottom: -10px;" v-html="hashtagTweet(answer.description)"></v-card-text>
+          <div style="text-align: left; margin-left: 15px; color: #717171;">
+            <span> {{ answer.createdAt | moment('from') }} </span>
+          </div>
           <v-card-actions>
             <v-spacer></v-spacer>
             <v-btn v-if="isOwner_(answer.user._id)" flat icon @click="deleteAnswer(answer._id)"><v-icon>delete</v-icon></v-btn>

@@ -156,7 +156,8 @@ module.exports = {
       $push: {
         answers: {
           user: userId,
-          description
+          description,
+          createdAt: new Date()
         }
       }
     })

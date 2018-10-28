@@ -83,6 +83,7 @@ module.exports = {
             user {
               username
             }
+            createdAt
           }
         }
       }
@@ -143,6 +144,7 @@ module.exports = {
             user {
               username
             }
+            createdAt
           }
           createdAt
         }
@@ -248,6 +250,7 @@ module.exports = {
               username
               fullName
             }
+            createdAt
           }
           createdAt
         }
@@ -295,6 +298,7 @@ module.exports = {
               username
               fullName
             }
+            createdAt
           }
           createdAt
         }
@@ -346,6 +350,7 @@ module.exports = {
               username
               fullName
             }
+            createdAt
           }
           createdAt
         }
@@ -421,6 +426,7 @@ module.exports = {
               username
               fullName
             }
+            createdAt
           }
           user {
             _id
@@ -469,6 +475,7 @@ module.exports = {
               username
               fullName
             }
+            createdAt
           }
           user {
             _id
@@ -522,6 +529,7 @@ module.exports = {
               username
               fullName
             }
+            createdAt
           }
           user {
             _id
@@ -575,6 +583,7 @@ module.exports = {
               username
               fullName
             }
+            createdAt
           }
           user {
             _id
@@ -628,6 +637,7 @@ module.exports = {
               username
               fullName
             }
+            createdAt
           }
           user {
             _id
