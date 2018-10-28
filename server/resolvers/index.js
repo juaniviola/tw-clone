@@ -51,7 +51,16 @@ module.exports = {
       return Tweet.tweetsByUser(username)
     },
 
-    tweetsByFollowingUsers (rootValue, { id }) {
+    async tweetsByFollowingUsers (rootValue, { token }) {
+      let id = null
+
+      try {
+        const dec = await verifyToken(token, secret)
+        id = dec.user._id
+      } catch (err) {
+        throw new ApolloError(err.message)
+      }
+
       return Tweet.tweetByFollowingUsers(id)
     },
 
@@ -136,7 +145,23 @@ module.exports = {
     },
 
     async editTweet(_, args) {
-      const tw = await Tweet.updateTweet(args)
+      const token = args.tw.token
+      let tw = null
+
+      try {
+        const dec = await verifyToken(token, secret)
+
+        tw = await Tweet.updateTweet({
+          tw: {
+            _id: args.tw._id,
+            description: args.tw.description,
+            secure: dec.secure,
+            userId: dec.user._id
+          }
+        })
+      } catch (err) {
+        throw new ApolloError(err.message)
+      }
 
       if (tw.error) throw new ApolloError(tw.error.message)
 
@@ -144,18 +169,42 @@ module.exports = {
     },
 
     async deleteTweet(_, args) {
+      const token = args.tw.token
+
       try {
-        await Tweet.deleteTweet(args)
+        const dec = await verifyToken(token, secret)
+
+        await Tweet.deleteTweet({
+          tw: {
+            tweetId: args.tw.tweetId,
+            userId: dec.user._id,
+            userSecure: dec.secure
+          }
+        })
         return 'success'
       } catch (err) {
-        console.log(err)
-        return 'error'
+        throw new ApolloError(err.message)
       }
     },
 
     async favTweet(_, args) {
-      args.fav.fav = true
-      const tw = await Tweet.favTweet(args)
+      const token = args.fav.token
+      let tw = null
+
+      try {
+        const dec = await verifyToken(token, secret)
+
+        tw = await Tweet.favTweet({
+          fav: {
+            fav: true,
+            tweetId: args.fav.tweetId,
+            userId: dec.user._id,
+            userSecure: dec.secure
+          }
+        })
+      } catch (err) {
+        throw new ApolloError(err.message)
+      }
 
       if (tw.error) throw new ApolloError(tw.error.message)
 
@@ -163,8 +212,23 @@ module.exports = {
     },
 
     async delFav(_, args) {
-      args.fav.fav = false
-      const tw = await Tweet.favTweet(args)
+      const token = args.fav.token
+      let tw = null
+
+      try {
+        const dec = await verifyToken(token, secret)
+
+        tw = await Tweet.favTweet({
+          fav: {
+            fav: false,
+            tweetId: args.fav.tweetId,
+            userId: dec.user._id,
+            userSecure: dec.secure
+          }
+        })
+      } catch (err) {
+        throw new ApolloError(err.message)
+      }
 
       if (tw.error) throw new ApolloError(tw.error.message)
 
@@ -172,7 +236,24 @@ module.exports = {
     },
 
     async addAnswer(_, args) {
-      const ans = await Tweet.addAnswer(args)
+      const token = args.answer.token
+      let ans = null
+
+      try {
+        const dec = await verifyToken(token, secret)
+
+        ans = await Tweet.addAnswer({
+          answer: {
+            tweetId: args.answer.tweetId,
+            description: args.answer.description,
+            userId: dec.user._id,
+            userSecure: dec.secure
+          }
+        })
+      } catch (err) {
+        throw new ApolloError(err.message)
+      }
+
 
       if (ans.error) throw new ApolloError(ans.error.message)
 
@@ -180,7 +261,23 @@ module.exports = {
     },
 
     async delAnswer(_, args) {
-      const ans = await Tweet.deleteAnswer(args)
+      const token = args.answer.token
+      let ans = null
+
+      try {
+        const dec = await verifyToken(token, secret)
+
+        ans = await Tweet.deleteAnswer({
+          answer:{
+            tweetId: args.answer.tweetId,
+            answerId: args.answer.answerId,
+            userId: dec.user._id,
+            userSecure: dec.secure
+          }
+        })
+      } catch (err) {
+        throw new ApolloError(err.message)
+      }
 
       if (ans.error) throw new ApolloError(ans.error.message)
 
@@ -188,7 +285,22 @@ module.exports = {
     },
 
     async addFollow(_, args) {
-      const follow = await User.addFollower(args)
+      const token = args.follow.token
+      let follow = null
+
+      try {
+        const dec = await verifyToken(token, secret)
+
+        follow = await User.addFollower({
+          follow: {
+            userFromId: dec.user._id,
+            userFromSecure: dec.secure,
+            userToId: args.follow.userToId
+          }
+        })
+      } catch (err) {
+        throw new ApolloError(err.message)
+      }
 
       if (follow.error) throw new ApolloError(follow.error.message)
 
@@ -196,7 +308,22 @@ module.exports = {
     },
 
     async delFollow(_, args) {
-      const follow = await User.deleteFollower(args)
+      const token = args.follow.token
+      let follow = null
+
+      try {
+        const dec = await verifyToken(token, secret)
+
+        follow = await User.deleteFollower({
+          follow: {
+            userFromId: dec.user._id,
+            userFromSecure: dec.secure,
+            userToId: args.follow.userToId
+          }
+        })
+      } catch (err) {
+        throw new ApolloError(err.message)
+      }
 
       if (follow.error) throw new ApolloError(follow.error.message)
 

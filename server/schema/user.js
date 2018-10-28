@@ -30,8 +30,7 @@ module.exports = `
   }
 
   input userFollow {
-    userFromId: objectId
-    userFromSecure: String
+    token: String
     userToId: objectId
   }
 `
