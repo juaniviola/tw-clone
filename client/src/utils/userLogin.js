@@ -28,10 +28,6 @@ module.exports = {
     return requests.userProfile(payload)
   },
 
-  tweetsProfile (payload) {
-    return requests.tweetsProfile(payload)
-  },
-
   addFollow (payload) {
     return requests.addFollow(payload)
   },
@@ -70,5 +66,13 @@ module.exports = {
 
   editTweet (tw) {
     return requests.editTweet(tw)
+  },
+
+  tweetsByHashtag (hashtag) {
+    return requests.tweetsByHashtag(hashtag)
+  },
+
+  usersByUsername (username) {
+    return requests.usersByUsername(username)
   }
 }

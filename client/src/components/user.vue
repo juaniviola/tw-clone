@@ -222,34 +222,14 @@
         return
       }
 
-      if (!u || !u.data || u.errors || !u.data.userByUsername) {
+      if (!u || !u.data || u.errors || !u.data.userByUsername || !u.data.tweetsByUsername) {
         this.error = true
         this.errorMessage = 'Error trying to load user info, or user does not exist'
         return
       }
 
       this.user = u.data.userByUsername
-
-      // tw
-      let t = null
-      try {
-        this.loading = true
-        t = await userUtils.tweetsProfile(this.user._id)
-        this.loading = false
-      } catch (err) {
-        this.loading = false
-        this.error = true
-        this.errorMessage = 'Error trying load tweets'
-        return
-      }
-
-      if (!t || !t.data || !t.data.tweetsByUsername || t.errors) {
-        this.error = true
-        this.errorMessage = 'Error trying load tweets'
-        return
-      }
-
-      this.tweets = t.data.tweetsByUsername
+      this.tweets = u.data.tweetsByUsername
     },
 
     watch: {

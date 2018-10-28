@@ -23,7 +23,7 @@
     </div>
 
     <v-container v-if="tweet" style="text-align: left;">
-      <span style="text-align: rigth;"><a class="username" @click="goToUser">{{ tweet.user.username }}</a></span><br>
+      <span style="text-align: rigth;"><a class="username" @click="goToUser()">{{ tweet.user.username }}</a></span><br>
       <span v-html="hashtagTweet()" class="description"></span><br>
       <div style="margin-bottom: 25px;"></div>
       <span> {{ tweet.createdAt | moment('from') }} </span>
@@ -46,6 +46,9 @@
         <v-card>
           <v-card-title style="font-size:16px; margin-bottom: -30px;"><a style="text-decoration: none;" @click="goToUser(answer.user.username)">{{ answer.user.username }}</a></v-card-title>
           <v-card-text style="text-align: left; margin-bottom: -10px;" v-html="hashtagTweet(answer.description)"></v-card-text>
+          <div style="text-align: left; margin-left: 15px; color: #717171;">
+            <span> {{ answer.createdAt | moment('from') }} </span>
+          </div>
           <v-card-actions>
             <v-spacer></v-spacer>
             <v-btn v-if="isOwner_(answer.user._id)" flat icon @click="deleteAnswer(answer._id)"><v-icon>delete</v-icon></v-btn>
@@ -107,6 +110,17 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+
+    <v-dialog v-model="error" width="500">
+      <v-card>
+        <v-card-title class="headline">Error ☹</v-card-title>
+        <v-card-text>An error ocurred trying this operation.</v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="red" flat @click.native="error = false">Close</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -139,7 +153,7 @@
           text = desc
         }
 
-        let repl = text.replace(/#(\w+)/g, '<a class="htg">#$1</a>')
+        let repl = text.replace(/#(\w+)/g, '<a class="htg" href="/hashtag/$1">#$1</a>')
         repl = repl.replace(/@(\w+)/g, '<a class="htg" href="/user/$1">@$1</a>')
         return repl
       },
@@ -233,7 +247,7 @@
           this.loading = false
         } catch (err) {
           this.loading = false
-          return this.error_ = true
+          return this.error = true
         }
 
         if (!f || !f.data || !f.data.delFav || f.errors) return this.error_ = true

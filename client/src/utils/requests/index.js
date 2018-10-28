@@ -83,6 +83,7 @@ module.exports = {
             user {
               username
             }
+            createdAt
           }
         }
       }
@@ -122,29 +123,8 @@ module.exports = {
             username
           }
         }
-      }
-    `
 
-    const variables = {
-      username: payload
-    }
-
-    return rp({
-      method: 'POST',
-      uri,
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json'
-      },
-      body: { query, variables },
-      json: true
-    })
-  },
-
-  tweetsProfile (payload) {
-    const query = `
-      query tweets ($id: objectId!) {
-        tweetsByUsername(id: $id) {
+        tweetsByUsername(username: $username) {
           _id
           user {
             _id
@@ -164,6 +144,7 @@ module.exports = {
             user {
               username
             }
+            createdAt
           }
           createdAt
         }
@@ -171,7 +152,7 @@ module.exports = {
     `
 
     const variables = {
-      id: payload
+      username: payload
     }
 
     return rp({
@@ -269,6 +250,7 @@ module.exports = {
               username
               fullName
             }
+            createdAt
           }
           createdAt
         }
@@ -316,6 +298,7 @@ module.exports = {
               username
               fullName
             }
+            createdAt
           }
           createdAt
         }
@@ -367,6 +350,7 @@ module.exports = {
               username
               fullName
             }
+            createdAt
           }
           createdAt
         }
@@ -442,6 +426,7 @@ module.exports = {
               username
               fullName
             }
+            createdAt
           }
           user {
             _id
@@ -490,6 +475,7 @@ module.exports = {
               username
               fullName
             }
+            createdAt
           }
           user {
             _id
@@ -543,6 +529,7 @@ module.exports = {
               username
               fullName
             }
+            createdAt
           }
           user {
             _id
@@ -596,6 +583,7 @@ module.exports = {
               username
               fullName
             }
+            createdAt
           }
           user {
             _id
@@ -614,6 +602,84 @@ module.exports = {
         description: tw.description
       }
     }
+
+    return rp({
+      method: 'POST',
+      uri,
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: { query, variables },
+      json: true
+    })
+  },
+
+  tweetsByHashtag (hashtag) {
+    const query = `
+      query edTw ($hashtag: String!) {
+        tweetsByHashtags(hashtag: $hashtag) {
+          _id
+          description
+          createdAt
+          hashtags
+          mentions
+          favs {
+            _id
+            username
+            fullName
+          }
+          answers {
+            _id
+            description
+            user {
+              _id
+              username
+              fullName
+            }
+            createdAt
+          }
+          user {
+            _id
+            username
+            fullName
+          }
+        }
+      }
+    `
+
+    const variables = { hashtag }
+
+    return rp({
+      method: 'POST',
+      uri,
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: { query, variables },
+      json: true
+    })
+  },
+
+  usersByUsername (username) {
+    const query = `
+      query usByUs ($username: String!) {
+        usersByUsername (username: $username) {
+          _id
+          username
+          fullName
+          following {
+            username
+          }
+          followers {
+            username
+          }
+        }
+      }
+    `
+
+    const variables = { username }
 
     return rp({
       method: 'POST',
