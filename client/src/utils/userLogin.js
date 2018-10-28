@@ -28,10 +28,6 @@ module.exports = {
     return requests.userProfile(payload)
   },
 
-  tweetsProfile (payload) {
-    return requests.tweetsProfile(payload)
-  },
-
   addFollow (payload) {
     return requests.addFollow(payload)
   },

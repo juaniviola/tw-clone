@@ -122,29 +122,8 @@ module.exports = {
             username
           }
         }
-      }
-    `
 
-    const variables = {
-      username: payload
-    }
-
-    return rp({
-      method: 'POST',
-      uri,
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json'
-      },
-      body: { query, variables },
-      json: true
-    })
-  },
-
-  tweetsProfile (payload) {
-    const query = `
-      query tweets ($id: objectId!) {
-        tweetsByUsername(id: $id) {
+        tweetsByUsername(username: $username) {
           _id
           user {
             _id
@@ -171,7 +150,7 @@ module.exports = {
     `
 
     const variables = {
-      id: payload
+      username: payload
     }
 
     return rp({
