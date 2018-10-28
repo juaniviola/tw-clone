@@ -113,11 +113,10 @@
       },
 
       async addFollow () {
-        const user = utils.getUserInfo()
+        const token = utils.getToken()
 
         const payload = {
-          userFromId: user.user._id,
-          userFromSecure: user.secure,
+          token,
           userToId: this.user._id
         }
 
@@ -143,11 +142,10 @@
       },
 
       async delFollow () {
-        const user = utils.getUserInfo()
+        const token = utils.getToken()
 
         const payload = {
-          userFromId: user.user._id,
-          userFromSecure: user.secure,
+          token,
           userToId: this.user._id
         }
 

@@ -184,19 +184,12 @@ export default {
   async mounted () {
     if (!this.isLogged) return this.$router.push({ name: 'welcome' })
 
-    const user = utils.getUserInfo()
-    if (!user || !user.user || !user.user._id) {
-      this.error = true
-      this.errorMessage = 'An error ocurred :('
-      return
-    }
-
-    const id = user.user._id
+    const token = utils.getToken()
 
     let tw = null
     try {
       this.loading = true
-      tw = await userUtils.twByFollowingUsers(id)
+      tw = await userUtils.twByFollowingUsers(token)
       this.loading = false
     } catch (err) {
       this.loading = false

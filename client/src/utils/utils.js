@@ -21,5 +21,16 @@ module.exports = {
     j = JSON.parse(atob(j))
 
     return j
+  },
+
+  getToken () {
+    const token = localStorage.getItem('token')
+
+    if (!token) {
+      this.$store.dispatch('logout')
+      return this.$router.push({ name: 'signin' })
+    }
+
+    return token
   }
 }

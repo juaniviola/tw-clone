@@ -98,12 +98,10 @@ export default {
     },
 
     async deleteTweet (twId) {
-      const user = utils.getUserInfo()
-      if (!user || !user.user || !user.secure || !user.user._id) return this.error_ = true
+      const token = utils.getToken()
 
       const payload = {
-        userId: user.user._id,
-        userSecure: user.secure,
+        token,
         tweetId: twId
       }
 
@@ -125,13 +123,11 @@ export default {
     async setFav (twId) {
       if (!this.$store.state.isLogged || !this.$store.state.user) return this.error_ = true
 
-      const user = utils.getUserInfo()
-      if (!user || !user.user || !user.user._id || !user.secure) return this.error_ = true
+      const token = utils.getToken()
 
       const payload = {
         tweetId: twId,
-        userId: user.user._id,
-        userSecure: user.secure
+        token
       }
 
       let f = null
@@ -152,13 +148,11 @@ export default {
     async delFav (twId) {
       if (!this.$store.state.isLogged || !this.$store.state.user) return this.error_ = true
 
-      const user = utils.getUserInfo()
-      if (!user || !user.user || !user.user._id || !user.secure) return this.error_ = true
+      const token = utils.getToken()
 
       const payload = {
         tweetId: twId,
-        userId: user.user._id,
-        userSecure: user.secure
+        token
       }
 
       let f = null

@@ -177,8 +177,7 @@ module.exports = {
 
     const variables = {
       follow: {
-        userFromId: payload.userFromId,
-        userFromSecure: payload.userFromSecure,
+        token: payload.token,
         userToId: payload.userToId,
       }
     }
@@ -206,8 +205,7 @@ module.exports = {
 
     const variables = {
       follow: {
-        userFromId: payload.userFromId,
-        userFromSecure: payload.userFromSecure,
+        token: payload.token,
         userToId: payload.userToId,
       }
     }
@@ -224,10 +222,10 @@ module.exports = {
     })
   },
 
-  twByFollowingUsers (id) {
+  twByFollowingUsers (token) {
     const query = `
-      query tws ($id: objectId!) {
-        tweetsByFollowingUsers(id: $id) {
+      query tws ($token: String!) {
+        tweetsByFollowingUsers(token: $token) {
           _id
           user {
             _id
@@ -257,7 +255,7 @@ module.exports = {
     `
 
     const variables = {
-      id
+      token
     }
 
     return rp({
@@ -307,8 +305,7 @@ module.exports = {
     const variables = {
       fav: {
         tweetId: payload.tweetId,
-        userId: payload.userId,
-        userSecure: payload.userSecure
+        token: payload.token
       }
     }
 
@@ -359,8 +356,7 @@ module.exports = {
     const variables = {
       fav: {
         tweetId: payload.tweetId,
-        userId: payload.userId,
-        userSecure: payload.userSecure
+        token: payload.token
       }
     }
 
@@ -386,8 +382,7 @@ module.exports = {
     const variables = {
       tw: {
         tweetId: payload.tweetId,
-        userId: payload.userId,
-        userSecure: payload.userSecure
+        token: payload.token
       }
     }
 
@@ -488,8 +483,7 @@ module.exports = {
     const variables = {
       answer: {
         tweetId: payload.tweetId,
-        userId: payload.userId,
-        userSecure: payload.userSecure,
+        token: payload.token,
         description: payload.description
       }
     }
@@ -542,8 +536,7 @@ module.exports = {
     const variables = {
       answer: {
         tweetId: payload.tweetId,
-        userId: payload.userId,
-        userSecure: payload.userSecure,
+        token: payload.token,
         answerId: payload.answerId
       }
     }
@@ -596,8 +589,7 @@ module.exports = {
     const variables = {
       tw: {
         _id: tw._id,
-        userId: tw.userId,
-        secure: tw.secure,
+        token: tw.token,
         description: tw.description
       }
     }

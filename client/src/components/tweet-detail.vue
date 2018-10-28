@@ -204,13 +204,11 @@
       async setFav () {
         if (!this.$store.state.isLogged || !this.$store.state.user) return this.error = true
 
-        const user = utils.getUserInfo()
-        if (!user || !user.user || !user.user._id || !user.secure) return this.error_ = true
+        const token = utils.getToken()
 
         const payload = {
           tweetId: this.tweet._id,
-          userId: user.user._id,
-          userSecure: user.secure
+          token
         }
 
         let f = null
@@ -231,13 +229,11 @@
       async delFav () {
         if (!this.$store.state.isLogged || !this.$store.state.user) return this.error = true
 
-        const user = utils.getUserInfo()
-        if (!user || !user.user || !user.user._id || !user.secure) return this.error = true
+        const token = utils.getToken()
 
         const payload = {
           tweetId: this.tweet._id,
-          userId: user.user._id,
-          userSecure: user.secure
+          token
         }
 
         let f = null
@@ -256,15 +252,13 @@
       },
 
       async deleteTweet () {
-        const user = utils.getUserInfo()
-        if (!user || !user.user || !user.secure || !user.user._id) return this.error = true
+        const token = utils.getToken()
 
         const conf = confirm('Are you sure?')
         if (!conf) return
 
         const payload = {
-          userId: user.user._id,
-          userSecure: user.secure,
+          token,
           tweetId: this.tweet._id
         }
 
@@ -285,15 +279,13 @@
       },
 
       async deleteAnswer (ansId) {
-        const user = utils.getUserInfo()
-        if (!user || !user.user || !user.secure || !user.user._id) return this.error = true
+        const token = utils.getToken()
 
         const conf = confirm('Are you sure?')
         if (!conf) return
 
         const payload = {
-          userId: user.user._id,
-          userSecure: user.secure,
+          token,
           tweetId: this.tweet._id,
           answerId: ansId
         }
@@ -323,13 +315,11 @@
 
         if (!this.$store.state.isLogged || !this.$store.state.user) return this.error = true
 
-        const user = utils.getUserInfo()
-        if (!user || !user.user || !user.user._id || !user.secure) return this.error = true
+        const token = utils.getToken()
 
         const payload = {
           tweetId: this.tweet._id,
-          userId: user.user._id,
-          userSecure: user.secure,
+          token,
           description: this.answer
         }
 
@@ -366,14 +356,12 @@
 
         if (!this.$store.state.isLogged || !this.$store.state.user) return this.error = true
 
-        const user = utils.getUserInfo()
-        if (!user || !user.user || !user.user._id || !user.secure) return this.error = true
+        const token = utils.getToken()
 
         const tw = {
           _id: this.tweet._id,
           description: this.newTweet,
-          secure: user.secure,
-          userId: user.user._id
+          token
         }
 
         let e = null
