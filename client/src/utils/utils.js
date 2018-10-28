@@ -2,12 +2,12 @@ const requests = require('./requests')
 
 module.exports = {
   addTweet (description) {
-    const user = this.getUserInfo()
+    const token = localStorage.getItem('token')
+    if (!token) throw new Error('jwt error')
 
     const payload = {
-      id: user.user._id,
       description,
-      secure: user.secure
+      token
     }
 
     return requests.addTweet(payload)

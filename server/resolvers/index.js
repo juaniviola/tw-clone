@@ -3,6 +3,9 @@
 const { ApolloError } = require('apollo-server')
 const db = require('db')
 const jwt = require('jsonwebtoken')
+const { promisify } = require('util')
+
+const verifyToken = promisify(jwt.verify)
 const secret = process.env.SECRET || 'test'
 let Tweet = null
 let User = null
@@ -18,7 +21,9 @@ db.connect({ url: url.url, port: url.port, db: url.db })
     Tweet = api.Tweet
     User = api.User
   })
-  .catch(err => console.log(err))
+  .catch(err => {
+    console.log(err)
+  })
 
 module.exports = {
   Query: {
@@ -107,11 +112,21 @@ module.exports = {
     },
 
     async addTweet(_, args) {
-      const tw = await Tweet.saveTweet({
-        user: args.tw.user,
-        description: args.tw.description,
-        secure: args.tw.secure
-      })
+      const token = args.tw.token
+      let tw = null
+
+      try {
+        const dec = await verifyToken(token, secret)
+
+        tw = await Tweet.saveTweet({
+          user: dec.user._id,
+          description: args.tw.description,
+          secure: dec.secure
+        })
+      } catch (err) {
+        throw new ApolloError(err.message)
+      }
+
 
       if (!tw.error) {
         return tw

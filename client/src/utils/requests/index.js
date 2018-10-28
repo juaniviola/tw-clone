@@ -91,9 +91,8 @@ module.exports = {
 
     const variables = {
       tw: {
-        user: payload.id,
         description: payload.description,
-        secure: payload.secure
+        token: payload.token
       }
     }
 

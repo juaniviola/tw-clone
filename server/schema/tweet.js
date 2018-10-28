@@ -23,10 +23,8 @@ module.exports = `
   }
 
   input newTweet {
-    # userId
-    user: objectId,
+    token: String
     description: String
-    secure: String
   }
 
   input editTweet {

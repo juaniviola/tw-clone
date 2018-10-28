@@ -4,12 +4,14 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const { graphqlExpress, graphiqlExpress } = require('apollo-server-express')
 const cors = require('cors')
+const helmet = require('helmet')
 const chalk = require('chalk')
 
 const app = express()
 const schema = require('./schema')
 
 app.use(cors())
+app.use(helmet())
 app.use('/graphql', bodyParser.json(), graphqlExpress({ schema }))
 
 if (process.env.NODE_ENV === 'development') {
