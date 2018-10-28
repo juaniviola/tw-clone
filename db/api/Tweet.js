@@ -33,11 +33,11 @@ module.exports = {
       .populate({ path: 'user', options: { select: { username: 1, fullName: 1 } } })
   },
 
-  tweetsByUser (userId) {
-    if (!mongoose.Types.ObjectId.isValid(userId)) return { error: { message: 'Invalid user id' } }
+  tweetsByUser (username) {
+    if (!username || typeof username !== 'string') return { error: { message: 'Invalid user id' } }
 
     return Tweet
-      .find({ user: userId })
+      .find({ username })
       .sort({ createdAt: -1 })
       .populate({ path: 'user', options: { select: { username: 1, fullName: 1 } } })
       .populate({ path: 'favs', options: { select: { username: 1, fullName: 1 } } })

@@ -16,7 +16,7 @@ const rootTypeDef = `
     userByUsername(username: String!): User
     usersByUsername(username: String!): [User!]
     tweetById(id: objectId!): Tweet
-    tweetsByUsername(id: objectId!): [Tweet!]
+    tweetsByUsername(username: String!): [Tweet!]
     tweetsByFollowingUsers(id: objectId!): [Tweet!]
     tweetsByHashtags(hashtag: String!): [Tweet!]
   }

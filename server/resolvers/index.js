@@ -42,8 +42,8 @@ module.exports = {
       return Tweet.tweetById(id)
     },
 
-    tweetsByUsername (rootValue, { id }) {
-      return Tweet.tweetsByUser(id)
+    tweetsByUsername (rootValue, { username }) {
+      return Tweet.tweetsByUser(username)
     },
 
     tweetsByFollowingUsers (rootValue, { id }) {
