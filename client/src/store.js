@@ -31,7 +31,7 @@ const store = new Vuex.Store({
     async login (context, payload) {
       const u = await userUtils.login(payload)
 
-      if (!u || !u.data || u.errors) return 'error'
+      if (!u || !u.data || u.errors) throw new Error(u.errors[0].message)
       const token = u.data.login
       localStorage.setItem('token', token)
 
@@ -52,9 +52,8 @@ const store = new Vuex.Store({
     },
 
     async signup (context, payload) {
-      const result = await userUtils.signup(payload)
-      if (!result.data.addUser || !result.data.addUser._id || Array.isArray(result.errors)) return 'error'
-      return
+      const u = await userUtils.signup(payload)
+      if (!u || !u.data || u.errors) throw new Error(u.errors[0].message)
     }
   }
 })

@@ -70,5 +70,13 @@ module.exports = {
 
   editTweet (tw) {
     return requests.editTweet(tw)
+  },
+
+  tweetsByHashtag (hashtag) {
+    return requests.tweetsByHashtag(hashtag)
+  },
+
+  usersByUsername (username) {
+    return requests.usersByUsername(username)
   }
 }
