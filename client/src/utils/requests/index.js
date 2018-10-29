@@ -28,6 +28,29 @@ module.exports = {
     })
   },
 
+  logout (token) {
+    const query = `
+      mutation logout ($token: String!) {
+        logout(token: $token)
+      }
+    `
+
+    const variables = {
+      token
+    }
+
+    return rp({
+      method: 'POST',
+      uri,
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: { query, variables },
+      json: true
+    })
+  },
+
   signup (payload) {
     const query = `
       mutation signup($u: newUser!) {

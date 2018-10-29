@@ -104,7 +104,19 @@ export default {
       return this.$router.push({ name: 'user', params: { username: user } })
     },
 
-    logout () {
+    async logout () {
+      const token = utils.getToken()
+
+      try {
+        this.loading = true
+        await userUtil.logout(token)
+        this.loading = false
+      } catch (err) {
+        this.loading = false
+        this.error = true
+        return
+      }
+
       this.$store.dispatch('logout')
       this.$router.push({ name: 'welcome'})
     },

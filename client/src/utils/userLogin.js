@@ -74,5 +74,9 @@ module.exports = {
 
   usersByUsername (username) {
     return requests.usersByUsername(username)
+  },
+
+  logout (token) {
+    return requests.logout(token)
   }
 }
