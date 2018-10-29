@@ -4,6 +4,7 @@ const { ApolloError } = require('apollo-server')
 const db = require('db')
 const jwt = require('jsonwebtoken')
 const { promisify } = require('util')
+const ms = require('ms')
 
 const verifyToken = promisify(jwt.verify)
 const secret = process.env.SECRET || 'test'
@@ -116,7 +117,7 @@ module.exports = {
         secure: login.secure
       }
 
-      const token = jwt.sign(payload, secret)
+      const token = jwt.sign(payload, secret, { expiresIn: ms('1w') })
       return token
     },
 
