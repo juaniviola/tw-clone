@@ -25,6 +25,7 @@ const rootTypeDef = `
     addUser(u: newUser!): User
     signin(user: login!): UserLogged @deprecated(reason: "Used for tests")
     login(user: login!): String!
+    logout(token: String!): String
     addTweet(tw: newTweet!): Tweet
     editTweet(tw: editTweet!): Tweet
     deleteTweet(tw: deleteTweet!): String

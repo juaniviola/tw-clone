@@ -125,6 +125,24 @@ module.exports = {
       return token
     },
 
+    async logout (_, args) {
+      const { token } = args
+
+      try {
+        const dec = await verifyToken(token, secret)
+
+        await User.logout({
+          logout: {
+            userId: dec.user._id
+          }
+        })
+      } catch (err) {
+        throw new ApolloError(err.message)
+      }
+
+      return 'success'
+    },
+
     async addTweet(_, args) {
       const token = args.tw.token
       let tw = null
