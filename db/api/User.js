@@ -135,20 +135,23 @@ module.exports = {
       return { error: { message: 'User and password do not match' } }
     }
 
-    const secure = uuid()
-    const h = await this.setSecure(u._id, secure)
+    const secureCode = uuid()
+
+    await User.findOneAndUpdate({ _id: u._id }, {
+      $set: { secure: [ secureCode ] }
+    })
 
     return {
       user: u,
-      secure
+      secure: secureCode
     }
   },
 
   async logout (payload) {
-    const { userId, userSecure } = payload.logout
+    const { userId } = payload.logout
 
-    const user = User.findOneAndUpdate({ _id: userId }, {
-      $pull: { secure: userSecure }
+    await User.findOneAndUpdate({ _id: userId }, {
+      $pull: { secure: [] }
     })
 
     return 'success'
