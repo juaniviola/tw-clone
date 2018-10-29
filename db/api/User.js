@@ -5,6 +5,21 @@ const { hashSync, compareSync } = require('bcryptjs')
 const mongoose = require('mongoose')
 const uuid = require('uuid/v4')
 
+async function checkSecure (id, secure) {
+  try {
+    const user = await User.findOne({ _id: id })
+    if (!user || !user.secure || user.secure.length === 0) return false
+
+    const conf = user.secure.find((sec) => sec === secure)
+    if (conf)
+      return true
+    else
+      return false
+  } catch (err) {
+    console.log(err)
+  }
+}
+
 module.exports = {
   saveUser (payload) {
     if (!payload.password || !payload.username || !payload.fullName || !payload.email) return { error: { message: 'Invalid parameters' } }
@@ -64,8 +79,8 @@ module.exports = {
 
     if (!mongoose.Types.ObjectId.isValid(userFromId) || !mongoose.Types.ObjectId.isValid(userToId)) return { error: { message: 'Invalid id' } }
 
-    const user = await User.findOne({ _id: userFromId })
-    if (user.secure !== userFromSecure) return { error: { message: 'Unhauthorized' } }
+    const sec = await checkSecure(userFromId, userFromSecure)
+    if (!sec) return { error: { message: 'Unhauthorized' } }
 
     await User.findOneAndUpdate({ _id: userFromId }, {
       $push: { following: userToId }
@@ -87,8 +102,8 @@ module.exports = {
 
     if (!mongoose.Types.ObjectId.isValid(userFromId) || !mongoose.Types.ObjectId.isValid(userToId)) return { error: { message: 'Invalid id' } }
 
-    const user = await User.findOne({ _id: userFromId })
-    if (user.secure !== userFromSecure) return { error: { message: 'Unhauthorized' } }
+    const sec = await checkSecure(userFromId, userFromSecure)
+    if (!sec) return { error: { message: 'Unhauthorized' } }
 
     await User.findOneAndUpdate({ _id: userFromId }, {
       $pull: { following: userToId }
@@ -105,7 +120,7 @@ module.exports = {
   },
 
   setSecure (_id, secure) {
-    return User.findOneAndUpdate({ _id }, { secure })
+    return User.findOneAndUpdate({ _id }, { $push: { secure } })
   },
 
   async signin (payload) {
@@ -127,5 +142,15 @@ module.exports = {
       user: u,
       secure
     }
+  },
+
+  async logout (payload) {
+    const { userId, userSecure } = payload.logout
+
+    const user = User.findOneAndUpdate({ _id: userId }, {
+      $pull: { secure: userSecure }
+    })
+
+    return 'success'
   }
 }

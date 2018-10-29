@@ -36,9 +36,9 @@ const userSchema = new mongoose.Schema({
 
   following: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
 
-  secure: {
+  secure: [{
     type: String
-  }
+  }]
 })
 
 module.exports = mongoose.model('User', userSchema)

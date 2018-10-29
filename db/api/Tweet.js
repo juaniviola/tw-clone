@@ -4,6 +4,21 @@ const { Tweet, User } = require('../models')
 const mongoose = require('mongoose')
 const utils = require('../utils')
 
+async function checkSecure (id, secure) {
+  try {
+    const user = await User.findOne({ _id: id })
+    if (!user || !user.secure || user.secure.length === 0) return false
+
+    const conf = user.secure.find((sec) => sec === secure)
+    if (conf)
+      return true
+    else
+      return false
+  } catch (err) {
+    console.log(err)
+  }
+}
+
 module.exports = {
   async saveTweet (payload) {
     const { user, secure, description } = payload
@@ -11,8 +26,8 @@ module.exports = {
 
     if (!mongoose.Types.ObjectId.isValid(user)) return { error: { message: 'Invalid user id' } }
 
-    const sec = await User.findOne({ _id: user })
-    if (!sec.secure || (sec.secure !== secure)) return { error: { message: 'Unhauthorized' } }
+    const sec = await checkSecure(user, secure)
+    if (!sec) return { error: { message: 'Unhauthorized' } }
 
     if (description.length > 280) return { error: { message: 'Maximum of characters exceeded' } }
     const hashtags = utils.getHashtag(description)
@@ -75,8 +90,8 @@ module.exports = {
 
     if (!mongoose.Types.ObjectId.isValid(userId) || !mongoose.Types.ObjectId.isValid(tweetId)) return { error: { message: 'Invalid id' } }
 
-    const sec = await User.findOne({ _id: userId })
-    if (!sec.secure || (sec.secure !== userSecure)) return { error: { message: 'Unhauthorized' } }
+    const sec = await checkSecure(userId, userSecure)
+    if (!sec) return { error: { message: 'Unhauthorized' } }
 
     if (fav) {
       await Tweet.findOneAndUpdate({ _id: tweetId }, {
@@ -105,8 +120,8 @@ module.exports = {
 
     if (!mongoose.Types.ObjectId.isValid(userId) || !mongoose.Types.ObjectId.isValid(_id)) return { error: { message: 'Invalid id' } }
 
-    const user = await User.findOne({ _id: userId })
-    if (user.secure !== secure) return { error: { message: 'Unhauthorized' } }
+    const sec = await checkSecure(userId, secure)
+    if (!sec) return { error: { message: 'Unhauthorized' } }
 
     const tw = await Tweet.findOne({ _id })
     if (!tw) return { error: { message: 'Tweet not found' } }
@@ -134,8 +149,8 @@ module.exports = {
 
     if (!mongoose.Types.ObjectId.isValid(tweetId) || !mongoose.Types.ObjectId.isValid(userId)) return { error: { message: 'Invalid id' } }
 
-    const user = await User.findOne({ _id: userId })
-    if (user.secure !== userSecure) return { error: { message: 'Unhauthorized' } }
+    const sec = await checkSecure(userId, userSecure)
+    if (!sec) return { error: { message: 'Unhauthorized' } }
 
     const tw = await Tweet.findOne({ _id: tweetId })
     if (!tw.user || (tw.user.toString().trim() !== userId.toString().trim())) return { error: { message: 'Unhauthorized' } }
@@ -149,8 +164,8 @@ module.exports = {
 
     if (!mongoose.Types.ObjectId.isValid(tweetId) || !mongoose.Types.ObjectId.isValid(userId)) return { error: { message: 'Invalid id' } }
 
-    const user = await User.findOne({ _id: userId })
-    if (user.secure !== userSecure) return { error: { message: 'Unhauthorized' } }
+    const sec = await checkSecure(userId, userSecure)
+    if (!sec) return { error: { message: 'Unhauthorized' } }
 
     await Tweet.findOneAndUpdate({ _id: tweetId }, {
       $push: {
@@ -175,8 +190,8 @@ module.exports = {
 
     if (!mongoose.Types.ObjectId.isValid(tweetId) || !mongoose.Types.ObjectId.isValid(userId) || !mongoose.Types.ObjectId.isValid(answerId)) return { error: { message: 'Invalid id' } }
 
-    const user = await User.findOne({ _id: userId })
-    if (user.secure !== userSecure) return { error: { message: 'Unhauthorized' } }
+    const sec = await checkSecure(userId, userSecure)
+    if (!sec) return { error: { message: 'Unhauthorized' } }
 
     const tw = await Tweet
       .findOne({ _id: tweetId })
