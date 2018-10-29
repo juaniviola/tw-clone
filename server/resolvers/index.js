@@ -14,17 +14,21 @@ const url = {
   url: process.env.DB_URL || '127.0.0.1',
   port: process.env.DB_PORT || '27017',
   db: process.env.DB_NAME || 'tw-clone'
-}
+};
 
-db.connect({ url: url.url, port: url.port, db: url.db })
-  .then(api => {
+(async function () {
+  let api = null
+  try {
+    api = await db.connect({ url: url.url, port: url.port, db: url.db })
     console.log('connected')
-    Tweet = api.Tweet
-    User = api.User
-  })
-  .catch(err => {
+  } catch (err) {
     console.log(err)
-  })
+    return
+  }
+
+  Tweet = api.Tweet
+  User = api.User
+})();
 
 module.exports = {
   Query: {
