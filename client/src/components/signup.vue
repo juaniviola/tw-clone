@@ -95,7 +95,10 @@ export default {
 
   methods: {
     async signup () {
-      if (this.username === '' || this.fullName === '' || this.email === '' || this.password === '') return this.error = true
+      const reg = /^(?=.{8,20}$)(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])$/
+
+      if (this.username === '' || this.fullName === '' || this.email === '' || this.password.length < 8) return this.error = true
+      if (!reg.test(this.username) || !reg.test(this.fullName)) return this.error = true
 
       const payload = {
         username: this.username,
