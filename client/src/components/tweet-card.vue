@@ -3,7 +3,7 @@
     <v-flex v-for="tweet in tweets" :key="tweet._id" style="margin-bottom: 5px;">
       <v-card>
         <v-card-title primary-title>
-          <div class="headline">
+          <div class="headline text_good">
             <a @click="username(tweet.user.username)">{{ tweet.user.username }}</a><span class="ca"> {{ tweet.createdAt | moment('from') }}</span>
           </div>
         </v-card-title>
@@ -11,7 +11,7 @@
           <div
             v-html="hashtagTweet(tweet.description)"
             style="text-align: left; margin-top: -15px;"
-            class="tweet_desc"
+            class="tweet_desc text_good"
           ></div>
         </v-card-text>
         <v-card-actions>
@@ -181,5 +181,11 @@ export default {
 .ca {
   color: #8a8484;
   font-size: 16px;
+}
+
+.text_good {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 </style>

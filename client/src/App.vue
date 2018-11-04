@@ -172,6 +172,10 @@ export default {
 </script>
 
 <style>
+#app {
+  text-align: center;
+}
+
 .bird:hover {
   cursor: pointer;
 }

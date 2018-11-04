@@ -5,7 +5,7 @@
         <v-icon dark>account_circle</v-icon>
       </v-avatar>
         <v-flex>
-          <div>
+          <div style="word-break: break-all;">
             <span class="username text-md-center">{{ user.username }}</span> <br>
             <span class="name">{{ user.fullName }}</span>
           </div>

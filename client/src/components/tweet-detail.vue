@@ -22,7 +22,7 @@
       >Back home</v-btn>
     </div>
 
-    <v-container v-if="tweet" style="text-align: left;">
+    <v-container v-if="tweet" style="text-align: left;" class="wb">
       <span style="text-align: rigth;"><a class="username" @click="goToUser()">{{ tweet.user.username }}</a></span><br>
       <span v-html="hashtagTweet()" class="description"></span><br>
       <div style="margin-bottom: 25px;"></div>
@@ -41,7 +41,7 @@
 
       <v-divider></v-divider>
     </div>
-    <div v-if="tweet" style="margin-bottom: 80px;">
+    <div v-if="tweet" style="margin-bottom: 80px;" class="wb">
       <v-flex v-for="answer in tweet.answers" :key="answer._id">
         <v-card>
           <v-card-title style="font-size:16px; margin-bottom: -30px;"><a style="text-decoration: none;" @click="goToUser(answer.user.username)">{{ answer.user.username }}</a></v-card-title>
@@ -431,5 +431,9 @@
 
 .description {
   font-size: 16px;
+}
+
+.wb {
+  word-break: break-all;
 }
 </style>
