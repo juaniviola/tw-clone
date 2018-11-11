@@ -125,8 +125,8 @@
 </template>
 
 <script>
-  import userUtils from '../utils/userLogin'
-  import utils from '../utils/utils'
+  import userUtils from '../../utils/userLogin'
+  import utils from '../../utils/utils'
 
   export default {
     data () {

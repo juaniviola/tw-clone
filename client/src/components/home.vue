@@ -90,7 +90,7 @@
 import utils from '../utils/utils'
 import userUtils from '../utils/userLogin'
 import { mapState } from 'vuex';
-import TweetCard from './tweet-card.vue'
+import TweetCard from './tweet/tweet-card.vue'
 
 export default {
   components: {

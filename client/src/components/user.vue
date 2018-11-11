@@ -74,7 +74,7 @@
 <script>
   import userUtils from '../utils/userLogin'
   import utils from '../utils/utils'
-  import tweetCard from './tweet-card.vue'
+  import tweetCard from './tweet/tweet-card.vue'
 
   export default {
     components: { tweetCard },

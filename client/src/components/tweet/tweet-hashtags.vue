@@ -33,7 +33,7 @@
 </template>
 
 <script>
-  import userUtils from '../utils/userLogin'
+  import userUtils from '../../utils/userLogin'
   import TweetCard from './tweet-card.vue'
 
   export default {

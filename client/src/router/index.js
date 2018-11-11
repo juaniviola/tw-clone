@@ -1,11 +1,11 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Signin from '../components/signin.vue'
-import Signup from '../components/signup.vue'
+import Signin from '../components/signin/signin.vue'
+import Signup from '../components/signin/signup.vue'
 import Home from '../components/home.vue'
 import User from '../components/user.vue'
-import TweetDetail from '../components/tweet-detail.vue'
-import TweetHashtag from '../components/tweet-hashtags.vue'
+import TweetDetail from '../components/tweet/tweet-detail.vue'
+import TweetHashtag from '../components/tweet/tweet-hashtags.vue'
 import Welcome from '../components/welcome.vue'
 
 Vue.use(Router)
