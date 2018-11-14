@@ -16,7 +16,7 @@
 
             <v-list>
               <v-list-tile @click="profile">
-                <v-list-tile-title>{{ $store.state.user.username }}</v-list-tile-title>
+                <v-list-tile-title>Perfil</v-list-tile-title>
               </v-list-tile>
 
               <v-list-tile @click="logout">
