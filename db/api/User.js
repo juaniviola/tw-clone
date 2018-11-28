@@ -138,7 +138,7 @@ module.exports = {
     const secureCode = uuid()
 
     await User.findOneAndUpdate({ _id: u._id }, {
-      $set: { secure: [ secureCode ] }
+      $push: { secure: secureCode }
     })
 
     return {
