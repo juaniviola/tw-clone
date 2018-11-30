@@ -11,7 +11,7 @@
       </v-flex>
 
       <v-flex style="margin-top: 25px; margin-bottom: 15px;">
-        <v-alert :value="error" type="error">Ocurrió un error</v-alert>
+        <v-alert :value="error" type="error">{{ errMessage }}</v-alert>
       </v-flex>
 
       <div class="login">
@@ -89,7 +89,8 @@ export default {
       username: '',
       fullName: '',
       email: '',
-      password: ''
+      password: '',
+      errMessage: ''
     }
   },
 
@@ -97,7 +98,18 @@ export default {
     async signup () {
       const reg = /^(?=.{5,20}$)(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])$/
 
-      if (this.username === '' || this.fullName === '' || this.email === '' || this.password.length < 8) return this.error = true
+      if (this.username === '' || this.fullName === '' || this.email === '') {
+        this.error = true
+        this.errMessage = 'Complete inputs!'
+        return
+      }
+
+      if (this.password.length < 8) {
+        this.error = true
+        this.errMessage = 'Password with 8 caracters minimum'
+        return
+      }
+
       if (!reg.test(this.username)) return this.error = true
 
       const payload = {
@@ -114,6 +126,7 @@ export default {
       } catch (err) {
         this.loading = false
         this.error = true
+        this.errMessage = err.message
         return
       }
 

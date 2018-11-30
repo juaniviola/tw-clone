@@ -11,7 +11,7 @@
       </v-flex>
 
       <v-flex style="margin-top: 25px; margin-bottom: 15px;">
-        <v-alert :value="error" type="error">Ocurrió un error</v-alert>
+        <v-alert :value="error" type="error">{{ errMessage }}</v-alert>
       </v-flex>
 
       <div class="login">
@@ -39,7 +39,7 @@
               color="secondary"
               type="submit"
               :loading="loading"
-              :disabled="loading"
+              :disabled="loading || (username === '' || password === '')"
               >Login</v-btn>
           </v-flex>
         </form>
@@ -65,13 +65,18 @@ export default {
       loading: false,
       error: false,
       username: '',
-      password: ''
+      password: '',
+      errMessage: ''
     }
   },
 
   methods: {
     async signin () {
-      if (this.username === '' || this.password === '') return this.error = true
+      if (this.username === '' || this.password === '') {
+        this.errMessage = 'Complete the inputs!'
+        this.error = true
+        return
+      }
 
       const payload = {
         username: this.username,
@@ -84,6 +89,7 @@ export default {
         this.loading = false
       } catch (err) {
         this.loading = false
+        this.errMessage = err.message
         this.error = true
         return
       }
