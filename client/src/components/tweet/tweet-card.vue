@@ -17,7 +17,7 @@
         <v-card-actions>
           <v-spacer></v-spacer>
 
-          <v-btn flat icon><v-icon>comment</v-icon></v-btn>{{ tweet.answers.length }}
+          <v-btn flat icon @click="goToTweet(tweet)" :disabled="loading"><v-icon>comment</v-icon></v-btn>{{ tweet.answers.length }}
 
           <v-btn :disabled="loading" flat icon v-if="!favoriteado(tweet)" @click="setFav(tweet._id)">
             <v-icon>star_border</v-icon>{{ tweet.favs.length }}
@@ -26,8 +26,6 @@
           <v-btn :disabled="loading" flat icon v-else @click="delFav(tweet._id)">
             <v-icon color="orange">star</v-icon>{{ tweet.favs.length }}
           </v-btn>
-
-          <v-btn flat icon @click="goToTweet(tweet)" :disabled="loading"><v-icon>keyboard_arrow_right</v-icon></v-btn>
         </v-card-actions>
       </v-card>
     </v-flex>

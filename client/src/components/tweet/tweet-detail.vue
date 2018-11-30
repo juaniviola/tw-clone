@@ -76,37 +76,37 @@
 
     <v-dialog v-model="dialog" persistent max-width="500px">
       <v-card>
-        <v-card-title>
-          <span class="headline">Edit tweet</span>
-        </v-card-title>
-
         <v-card-text>
-          <v-container grid-list-md>
-            <v-layout wrap>
-              <v-flex>
-                <v-textarea
-                  :disabled="loading2"
-                  v-model="newTweet"
-                  auto-grow
-                  ref="upTw"
-                  box></v-textarea>
-              </v-flex>
-            </v-layout>
+          <v-layout wrap>
+            <v-flex>
+              <v-textarea
+                id="edit"
+                :disabled="loading2"
+                v-model="newTweet"
+                auto-grow
+                color="grey darken-1"
+                ref="upTw"
+                box></v-textarea>
+            </v-flex>
+          </v-layout>
 
-            <v-progress-circular v-if="newTweet.length < 280" :value="twLength"></v-progress-circular>
-            <v-progress-circular v-else color="red" :value="twLength"></v-progress-circular>
-          </v-container>
+          <v-progress-circular v-if="newTweet.length < 280" :value="twLength"></v-progress-circular>
+          <v-progress-circular v-else color="red" :value="twLength"></v-progress-circular>
+
+          <div v-if="counter >= 265" style="text-align: center; color: red; font-weight: bold; margin-top: 10px;">
+            <span>{{ 280 - counter }}</span>
+          </div>
         </v-card-text>
 
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn :disabled="loading2" color="green darken-1" flat="flat" @click="dialog = false">Cancel</v-btn>
+          <v-btn :disabled="loading2" color="darken-1" flat="flat" @click="dialog = false">Cancel</v-btn>
           <v-btn
-            :disabled="loading2 || newTweet.length === 0 || tweet.length >= 280"
+            :disabled="loading2 || newTweet.length === 0 || newTweet.length >= 280"
             :loading="loading2"
-            color="green darken-1"
+            color="darken-1"
             flat="flat"
-            @click="updateTweet">Send</v-btn>
+            @click="updateTweet">Edit</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -139,6 +139,7 @@
         answer: '',
         dialog: false,
         twLength: 0,
+        counter: 0,
         newTweet: ''
       }
     },
@@ -394,6 +395,11 @@
     watch: {
       newTweet (val) {
         this.twLength = (val.length / 280) * 100
+        this.counter = val.length
+      },
+
+      dialog (val) {
+        if (val) return setTimeout (() => document.getElementById('edit').focus(), 0)
       }
     },
 

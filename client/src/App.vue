@@ -36,6 +36,7 @@
 
           <v-flex style="margin-bottom: 35px;">
             <v-text-field
+              id="search"
               solo
               placeholder="Search something..."
               clearable
@@ -157,6 +158,10 @@ export default {
       }
 
       if (!val || val === '') this.users = null
+    },
+
+    search (val) {
+      if (val) return setTimeout(() => document.getElementById('search').focus(), 0)
     }
   },
 

@@ -15,40 +15,46 @@
         @deleteTweet="deleteTweet"></tweet-card>
     </div>
 
-    <v-dialog v-model="dialog" persistent max-width="500px">
+    <v-dialog v-model="addtw" fullscreen hide-overlay transition="dialog-bottom-transition">
       <v-card>
-        <v-card-title>
-          <span class="headline">Add new tweet</span>
-        </v-card-title>
+        <v-toolbar dark class="secondary">
+          <v-btn icon dark @click.native="addtw = !addtw" :disabled="loading_"><v-icon>close</v-icon></v-btn>
+          <v-toolbar-title>Add new tweet</v-toolbar-title>
+        </v-toolbar>
 
-        <v-card-text>
-          <v-container grid-list-md>
-            <v-layout wrap>
-              <v-flex>
-                <v-textarea
-                  :disabled="loading"
-                  v-model="tweet"
-                  auto-grow
-                  box
-                  label="What are you thinking?..."></v-textarea>
-              </v-flex>
-            </v-layout>
+        <v-flex>
+          <v-textarea
+            id="tw"
+            :disabled="loading_"
+            v-model="tweet"
+            auto-grow
+            box
+            color="grey darken-1"
+            label="What are you thinking?..."
+          ></v-textarea>
+        </v-flex>
 
-            <v-progress-circular v-if="tweet.length < 280" :value="twLength"></v-progress-circular>
-            <v-progress-circular v-else color="red" :value="twLength"></v-progress-circular>
-          </v-container>
-        </v-card-text>
+        <v-progress-circular v-if="tweet.length < 280" :value="twLength"></v-progress-circular>
+        <v-progress-circular v-else color="red" :value="twLength"></v-progress-circular><br>
 
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn :disabled="loading_" color="green darken-1" flat="flat" @click="dialog = false">Cancel</v-btn>
-          <v-btn
-            :disabled="loading_ || tweet.length === 0 || tweet.length >= 280"
-            :loading="loading_"
-            color="green darken-1"
-            flat="flat"
-            @click="sendTweet">Send</v-btn>
-        </v-card-actions>
+        <div v-if="counter >= 265" style="text-align: center; color: red; font-weight: bold; margin-top: 10px;">
+          <span>{{ 280 - counter }}</span>
+        </div>
+
+        <v-btn :disabled="loading_" color="darken-1" flat="flat" @click="addtw = false">Cancel</v-btn>
+        <v-btn
+          :disabled="loading_ || tweet.length === 0 || tweet.length >= 280"
+          :loading="loading_"
+          color="darken-1"
+          flat="flat"
+          @click="sendTweet"
+        >Send</v-btn>
+
+        <v-alert
+          :value="error"
+          type="error">
+          An error ocurred
+        </v-alert>
       </v-card>
     </v-dialog>
 
@@ -67,7 +73,7 @@
         right
         fab
         style="right: 20px; bottom: 20px; position: fixed;"
-        @click="dialog = !dialog"
+        @click="addtw = !addtw"
       >
         <v-icon>add</v-icon>
       </v-btn>
@@ -99,12 +105,13 @@ export default {
 
   data () {
     return {
+      addtw: false,
+      counter: 0,
       error_: false,
       error: false,
       errorMessage: '',
       loading: false,
       loading_: false,
-      dialog: false,
       tweet: '',
       twLength: 0,
       tweets: null
@@ -133,7 +140,7 @@ export default {
       this.tweets.unshift(tw.data.addTweet)
 
       this.tweet = ''
-      this.dialog = false
+      this.addtw = false
     },
 
     favTweet (fav) {
@@ -174,10 +181,12 @@ export default {
   watch : {
     tweet: function (val) {
       this.twLength = (val.length / 280) * 100
+      this.counter = val.length
     },
 
-    dialog: function (val) {
+    addtw: function (val) {
       if (!val) this.tweet = ''
+      else return setTimeout(() => document.getElementById('tw').focus(), 0)
     }
   },
 
