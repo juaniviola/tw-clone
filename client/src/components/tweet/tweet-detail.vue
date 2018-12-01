@@ -90,7 +90,7 @@
             </v-flex>
           </v-layout>
 
-          <v-progress-circular v-if="newTweet.length < 280" :value="twLength"></v-progress-circular>
+          <v-progress-circular v-if="newTweet.length <= 280" :value="twLength"></v-progress-circular>
           <v-progress-circular v-else color="red" :value="twLength"></v-progress-circular>
 
           <div v-if="counter >= 265" style="text-align: center; color: red; font-weight: bold; margin-top: 10px;">
@@ -102,7 +102,7 @@
           <v-spacer></v-spacer>
           <v-btn :disabled="loading2" color="darken-1" flat="flat" @click="dialog = false">Cancel</v-btn>
           <v-btn
-            :disabled="loading2 || newTweet.length === 0 || newTweet.length >= 280"
+            :disabled="loading2 || newTweet.length === 0 || newTweet.length > 280"
             :loading="loading2"
             color="darken-1"
             flat="flat"
@@ -312,7 +312,7 @@
       },
 
       async addComment () {
-        if (this.answer.length === 0 || this.answer.length >= 140) return
+        if (this.answer.length === 0 || this.answer.length > 140) return
 
         if (!this.$store.state.isLogged || !this.$store.state.user) return this.error = true
 
@@ -350,6 +350,7 @@
       editDialog () {
         this.newTweet = this.tweet.description
         this.dialog = true
+        setTimeout (() => document.getElementById('edit').focus(), 0)
       },
 
       async updateTweet () {
@@ -396,10 +397,6 @@
       newTweet (val) {
         this.twLength = (val.length / 280) * 100
         this.counter = val.length
-      },
-
-      dialog (val) {
-        if (val) return setTimeout (() => document.getElementById('edit').focus(), 0)
       }
     },
 

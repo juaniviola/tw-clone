@@ -7,7 +7,7 @@
         <v-spacer></v-spacer>
 
         <div>
-          <v-btn icon @click="search = !search"><v-icon>search</v-icon></v-btn>
+          <v-btn icon @click="goToSearch"><v-icon>search</v-icon></v-btn>
 
           <v-menu bottom origin="center center" transition="scale-transition">
             <v-btn icon slot="activator">
@@ -93,6 +93,13 @@ export default {
   },
 
   methods: {
+    goToSearch () {
+      this.search = !this.search
+      if (this.search) {
+        return setTimeout(() => document.getElementById('search').focus(), 0)
+      }
+    },
+
     home () {
       return this.$router.push({ name: 'home' })
     },
@@ -159,10 +166,6 @@ export default {
       }
 
       if (!val || val === '') this.users = null
-    },
-
-    search (val) {
-      if (val) return setTimeout(() => document.getElementById('search').focus(), 0)
     }
   },
 

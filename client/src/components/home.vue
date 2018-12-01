@@ -34,7 +34,7 @@
           ></v-textarea>
         </v-flex>
 
-        <v-progress-circular v-if="tweet.length < 280" :value="twLength"></v-progress-circular>
+        <v-progress-circular v-if="tweet.length <= 280" :value="twLength"></v-progress-circular>
         <v-progress-circular v-else color="red" :value="twLength"></v-progress-circular><br>
 
         <div v-if="counter >= 265" style="text-align: center; color: red; font-weight: bold; margin-top: 10px;">
@@ -43,7 +43,7 @@
 
         <v-btn :disabled="loading_" color="darken-1" flat="flat" @click="addtw = false">Cancel</v-btn>
         <v-btn
-          :disabled="loading_ || tweet.length === 0 || tweet.length >= 280"
+          :disabled="loading_ || tweet.length === 0 || tweet.length > 280"
           :loading="loading_"
           color="darken-1"
           flat="flat"
@@ -73,7 +73,7 @@
         right
         fab
         style="right: 20px; bottom: 20px; position: fixed;"
-        @click="addtw = !addtw"
+        @click="goToAdd"
       >
         <v-icon>add</v-icon>
       </v-btn>
@@ -119,6 +119,13 @@ export default {
   },
 
   methods: {
+    goToAdd () {
+      this.addtw = !this.addtw
+      if (this.addtw) {
+        return setTimeout(() => document.getElementById('tw').focus(), 0)
+      }
+    },
+
     async sendTweet () {
       let tw = null
 
@@ -182,11 +189,6 @@ export default {
     tweet: function (val) {
       this.twLength = (val.length / 280) * 100
       this.counter = val.length
-    },
-
-    addtw: function (val) {
-      if (!val) this.tweet = ''
-      else return setTimeout(() => document.getElementById('tw').focus(), 0)
     }
   },
 
