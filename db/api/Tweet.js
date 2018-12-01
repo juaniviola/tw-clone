@@ -77,6 +77,8 @@ module.exports = {
   },
 
   tweetsByHashtag (hashtag) {
+    hashtag = hashtag.toLowerCase()
+
     return Tweet
       .find({ hashtags: hashtag })
       .populate({ path: 'user', options: { select: { username: 1, fullName: 1 } } })
