@@ -154,6 +154,7 @@ export default {
   watch: {
     searchText (val) {
       if (val) {
+        this.error = false
         this.searchUser(val)
       }
 

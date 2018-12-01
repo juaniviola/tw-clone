@@ -202,37 +202,45 @@
         if (find === -1) return
 
         return this.tweets.splice(find, 1)
+      },
+
+      async _created (user) {
+        let u = null
+        try {
+          this.loading = true
+          u = await userUtils.userProfile(user)
+          this.loading = false
+        } catch (err) {
+          this.loading = false
+          this.error = true
+          this.errorMessage = 'Error trying to load user info, or user does not exist'
+          return
+        }
+
+        if (!u || !u.data || u.errors || !u.data.userByUsername || !u.data.tweetsByUsername) {
+          this.error = true
+          this.errorMessage = 'Error trying to load user info, or user does not exist'
+          return
+        }
+
+        this.user = u.data.userByUsername
+        this.tweets = u.data.tweetsByUsername
       }
     },
 
     async created () {
       const user = this.$route.params.username
 
-      let u = null
-      try {
-        this.loading = true
-        u = await userUtils.userProfile(user)
-        this.loading = false
-      } catch (err) {
-        this.loading = false
-        this.error = true
-        this.errorMessage = 'Error trying to load user info, or user does not exist'
-        return
-      }
-
-      if (!u || !u.data || u.errors || !u.data.userByUsername || !u.data.tweetsByUsername) {
-        this.error = true
-        this.errorMessage = 'Error trying to load user info, or user does not exist'
-        return
-      }
-
-      this.user = u.data.userByUsername
-      this.tweets = u.data.tweetsByUsername
+      this._created(user)
     },
 
     watch: {
       user (val) {
         this.isFollowingFn(val)
+      },
+
+      '$route.params.username' (val) {
+        this._created(val)
       }
     }
   }
