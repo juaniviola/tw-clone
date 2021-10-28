@@ -2,10 +2,11 @@
   "name": "db",
   "version": "0.0.1",
   "description": "db-module for twitter app",
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
-    "test": "nyc --reporter=lcov ava tests/ --verbose"
+    "build": "babel src -d dist"
   },
+  "type": "module",
   "author": "Juani Viola <juaniviola1297@gmail.com> (https://twitter.com/juanviola15)",
   "license": "MIT",
   "dependencies": {
@@ -15,6 +16,9 @@
     "validator": "^13.6.0"
   },
   "devDependencies": {
+    "@babel/cli": "^7.15.7",
+    "@babel/core": "^7.15.8",
+    "@babel/preset-env": "^7.15.8",
     "chalk": "^4.1.2",
     "nodemon": "^2.0.14"
   }
