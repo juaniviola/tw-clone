@@ -5,9 +5,10 @@
   "main": "dist/index.js",
   "scripts": {
     "build": "babel src -d dist",
+    "test": "jest",
+    "test:watch": "jest --watchAll",
     "lint": "eslint src"
   },
-  "type": "module",
   "author": "Juani Viola <juaniviola1297@gmail.com> (https://twitter.com/juanviola15)",
   "license": "MIT",
   "dependencies": {
@@ -24,6 +25,7 @@
     "eslint": "^8.1.0",
     "eslint-config-airbnb-base": "^14.2.1",
     "eslint-plugin-import": "^2.25.2",
+    "jest": "^27.3.1",
     "nodemon": "^2.0.14"
   }
 }
