@@ -1,18 +1,12 @@
-'use strict'
+export default {
+  getHashtag(text) {
+    const hashtag = text.match(/#\w+/g);
+    if (hashtag) return hashtag.map((x) => x.toLowerCase());
 
-module.exports = {
-  getHashtag (text) {
-    const hashtag = text.match(/#\w+/g)
-    if (hashtag) {
-      return hashtag.map(x => x.toLowerCase())
-    }
-
-    return hashtag
+    return hashtag;
   },
 
-  getMentions (text) {
-    const mentions = text.match(/@\w+/g)
-
-    return mentions
-  }
-}
+  getMentions(text) {
+    return text.match(/@\w+/g);
+  },
+};
