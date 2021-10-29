@@ -1,57 +1,52 @@
-'use strict'
-
-const mongoose = require('mongoose')
-const { Schema } = mongoose
+import mongoose, { Schema } from 'mongoose';
 
 const tweetSchema = new Schema({
   user: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User'
+    ref: 'User',
   },
 
   description: {
     type: String,
     required: true,
-    validate: (value) => {
-      return value.length <= 280
-    }
+    validate: (value) => value.length <= 280,
   },
 
   createdAt: {
     type: Date,
-    default: new Date()
+    default: new Date(),
   },
 
   favs: [{
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User'
+    ref: 'User',
   }],
 
   hashtags: {
     type: Array,
-    default: []
+    default: [],
   },
 
   mentions: {
     type: Array,
-    default: []
+    default: [],
   },
 
   answers: [{
     user: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'User'
+      ref: 'User',
     },
 
     description: {
       type: String,
-      required: true
+      required: true,
     },
 
     createdAt: {
-      type: Date
-    }
-  }]
-})
+      type: Date,
+    },
+  }],
+});
 
-module.exports = mongoose.model('Tweet', tweetSchema)
+export default mongoose.model('Tweet', tweetSchema);

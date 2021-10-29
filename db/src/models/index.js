@@ -1,9 +1,4 @@
-'use strict'
+import User from './User';
+import Tweet from './Tweet';
 
-const User = require('./User')
-const Tweet = require('./Tweet')
-
-module.exports = {
-  User,
-  Tweet
-}
+export { User, Tweet };

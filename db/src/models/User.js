@@ -1,15 +1,12 @@
-'use strict'
-
-const mongoose = require('mongoose')
-const validator = require('validator')
-const uuid = require('uuid')
+import mongoose from 'mongoose';
+import validator from 'validator';
 
 const userSchema = new mongoose.Schema({
   username: {
     type: String,
     required: true,
     unique: true,
-    lowercase: true
+    lowercase: true,
   },
 
   email: {
@@ -17,19 +14,17 @@ const userSchema = new mongoose.Schema({
     required: true,
     unique: true,
     lowercase: true,
-    validate: (value) => {
-      return validator.isEmail(value)
-    }
+    validate: (value) => validator.isEmail(value),
   },
 
   fullName: {
     type: String,
-    required: true
+    required: true,
   },
 
   password: {
     type: String,
-    required: true
+    required: true,
   },
 
   followers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
@@ -37,8 +32,8 @@ const userSchema = new mongoose.Schema({
   following: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
 
   secure: [{
-    type: String
-  }]
-})
+    type: String,
+  }],
+});
 
-module.exports = mongoose.model('User', userSchema)
+export default mongoose.model('User', userSchema);
