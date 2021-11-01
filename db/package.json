@@ -5,7 +5,7 @@
   "main": "dist/index.js",
   "scripts": {
     "build": "babel src -d dist",
-    "test": "jest",
+    "test": "jest --runInBand",
     "test:watch": "jest --watchAll",
     "lint": "eslint src"
   },
@@ -22,10 +22,12 @@
     "@babel/core": "^7.15.8",
     "@babel/preset-env": "^7.15.8",
     "chalk": "^4.1.2",
+    "core-js": "^3.19.0",
     "eslint": "^8.1.0",
     "eslint-config-airbnb-base": "^14.2.1",
     "eslint-plugin-import": "^2.25.2",
     "jest": "^27.3.1",
-    "nodemon": "^2.0.14"
+    "nodemon": "^2.0.14",
+    "regenerator-runtime": "^0.13.9"
   }
 }
