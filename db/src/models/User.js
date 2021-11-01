@@ -2,6 +2,12 @@ import mongoose from 'mongoose';
 import validator from 'validator';
 
 const userSchema = new mongoose.Schema({
+  id: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+
   username: {
     type: String,
     required: true,
@@ -25,6 +31,10 @@ const userSchema = new mongoose.Schema({
   password: {
     type: String,
     required: true,
+    validate: {
+      validator: (value) => value.length >= 8,
+      message: () => 'Password length should be greather or equal than 8',
+    },
   },
 
   followers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
