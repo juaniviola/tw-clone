@@ -12,10 +12,14 @@ async function checkSecure(id, secure) {
 
 const saveUser = (payload) => {
   if (!payload.password || !payload.username
-    || !payload.fullName || !payload.email) throw Error('Invalid parameters');
+    || !payload.fullName || !payload.email || payload.id) throw Error('Invalid parameters');
 
   const hashPassword = (password) => hashSync(password, 8);
-  const copyPayload = Object.assign(payload, { password: hashPassword(payload.password) });
+  const copyPayload = Object.assign(payload, {
+    id: uuid(),
+    password: hashPassword(payload.password),
+  });
+
   const user = new User(copyPayload);
 
   return user.save();
@@ -25,11 +29,12 @@ const comparePassword = async (user) => {
   // eslint-disable-next-line no-underscore-dangle
   const findUser = await User.findOne({ _id: user._id });
 
-  if (!compareSync(user.password, findUser.password)) throw Error('Login failed');
-  else return { data: { message: 'exit' } };
+  if (!compareSync(user.password, findUser.password)) throw Error('Incorrect password');
+
+  return true;
 };
 
-const getUserById = (id) => {
+const getById = (id) => {
   if (!mongoose.Types.ObjectId.isValid(id)) throw Error('Invalid id');
 
   return User
@@ -144,7 +149,7 @@ export {
   comparePassword,
   addFollower,
   deleteFollower,
-  getUserById,
+  getById,
   getUserByUsername,
   getUsersByUsername,
   setSecure,
