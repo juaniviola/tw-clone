@@ -25,11 +25,12 @@ const saveUser = (payload) => {
   return user.save();
 };
 
-const comparePassword = async (user) => {
-  // eslint-disable-next-line no-underscore-dangle
-  const findUser = await User.findOne({ _id: user._id });
+const comparePassword = async ({ id, password }) => {
+  if (!id || typeof id !== 'string' || !password || typeof password !== 'string') throw Error('Invalid parameters');
 
-  if (!compareSync(user.password, findUser.password)) throw Error('Incorrect password');
+  const findUser = await User.findOne({ id });
+
+  if (!compareSync(password, findUser.password)) throw Error('Incorrect password');
 
   return true;
 };
