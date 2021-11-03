@@ -73,6 +73,24 @@ const deleteFollower = async ({ userFromId, userToId }) => {
   ]);
 };
 
+const getFollowers = async ({ id, offset, limit }) => {
+  const userFollowers = await User.findOne({ _id: id });
+  if (!userFollowers) throw Error('User not found');
+
+  return Promise.all(userFollowers.followers.slice(offset, limit).map((follower) => User
+    .findOne({ _id: follower }))
+    .select('id username fullName'));
+};
+
+const getFollowing = async ({ id, offset, limit }) => {
+  const userFollowing = await User.findOne({ _id: id });
+  if (!userFollowing) throw Error('User not found');
+
+  return Promise.all(userFollowing.following.slice(offset, limit).map((following) => User
+    .findOne({ _id: following }))
+    .select('id username fullName'));
+};
+
 const signin = async (payload) => {
   const { username, password } = payload.user;
   if (!username || !password) throw Error('Invalid parameters');
@@ -114,6 +132,8 @@ export {
   getById,
   getByUsername,
   getUsersByUsername,
+  getFollowers,
+  getFollowing,
   signin,
   logout,
 };
