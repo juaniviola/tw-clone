@@ -96,16 +96,11 @@ describe('Test User Api', () => {
     expect(findUser._id).toEqual(createUser._id);
   });
 
-  it('getById() --> it should return error with invalid id', async () => {
-    let err = null;
+  it('getById() --> it should return user with id', async () => {
+    const getUser = await User.getById(createUser.id);
 
-    try {
-      await User.getById('1234');
-    } catch (error) {
-      err = error;
-    }
-    expect(err).toBeTruthy();
-    expect(err.message).toEqual('Invalid id');
+    expect(getUser).toBeTruthy();
+    expect(getUser.username).toEqual(createUser.username);
   });
 
   it('comparePassword() --> it should return true with valid user', async () => {

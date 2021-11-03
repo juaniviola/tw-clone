@@ -37,7 +37,7 @@ const getById = (id) => {
   if (!id || typeof id !== 'string') throw Error('Invalid parameter');
 
   return User
-    .findOne({ _id: id })
+    .findOne({ id })
     .populate({ path: 'following', options: { select: { username: 1, fullName: 1 } } })
     .populate({ path: 'followers', options: { select: { username: 1, fullName: 1 } } });
 };
