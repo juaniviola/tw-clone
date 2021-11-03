@@ -2,13 +2,6 @@ import { hashSync, compareSync, compare } from 'bcryptjs';
 import { v4 as uuid } from 'uuid';
 import { User } from '../models';
 
-async function checkSecure(id, secure) {
-  const user = await User.findOne({ _id: id });
-  if (!user || !user.secure || user.secure.length === 0) throw Error('Invalid parameters');
-
-  return !!user.secure.find((sec) => sec === secure);
-}
-
 const saveUser = (payload) => {
   if (!payload.password || !payload.username
     || !payload.fullName || !payload.email || payload.id) throw Error('Invalid parameters');
@@ -35,31 +28,25 @@ const comparePassword = async ({ id, password }) => {
 const getById = (id) => {
   if (!id || typeof id !== 'string') throw Error('Invalid parameter');
 
-  return User
-    .findOne({ id });
+  return User.findOne({ id });
 };
 
 const getByUsername = (usname) => {
   if (!usname || typeof usname !== 'string') throw Error('Invalid parameter');
   const username = usname.toString().trim();
 
-  return User
-    .findOne({ username });
+  return User.findOne({ username });
 };
 
 const getUsersByUsername = (usname) => {
   if (!usname || typeof usname !== 'string') throw Error('Invalid parameter');
   const username = usname.toString().trim();
 
-  return User
-    .find({ username: new RegExp(username, 'i') });
+  return User.find({ username: new RegExp(username, 'i') });
 };
 
-const addFollower = async ({ userFromId, userFromSecure, userToId }) => {
-  if (!userFromId || !userFromSecure || !userToId) throw Error('Invalid parameters');
-
-  const isSecure = await checkSecure(userFromId, userFromSecure);
-  if (!isSecure) throw Error('Unhauthorized');
+const addFollower = async ({ userFromId, userToId }) => {
+  if (!userFromId || !userToId) throw Error('Invalid parameters');
 
   return Promise.all([
     User.findOneAndUpdate({ _id: userFromId }, {
