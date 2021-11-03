@@ -1,8 +1,11 @@
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 import User from '../../src/models/User';
+import { create, connect, closeDatabase } from '../db-handler';
 
 describe('User database model', () => {
+  let mongod;
+
   const mockUser = new User({
     id: '123',
     username: 'foobar',
@@ -11,44 +14,50 @@ describe('User database model', () => {
     email: 'foobar-email.com',
   });
 
+  beforeAll(async () => {
+    mongod = await create();
+    await connect(mongod);
+  });
+
+  afterAll(async () => {
+    await closeDatabase(mongod);
+  });
+
   it('it should return error with empty user', async () => {
     const newUser = new User();
     let err = null;
 
     try {
-      await newUser.validate();
+      await newUser.save();
     } catch (error) {
       err = error;
     }
 
-    expect(err.errors.username).toBeTruthy();
-    expect(err.errors.email).toBeTruthy();
-    expect(err.errors.fullName).toBeTruthy();
-    expect(err.errors.password).toBeTruthy();
+    expect(err).toBeTruthy();
   });
 
   it('it should return error with invalid email', async () => {
     let err = null;
 
     try {
-      await mockUser.validate();
+      await mockUser.save();
     } catch (error) {
       err = error;
     }
 
-    expect(err.errors.email).toBeTruthy();
+    expect(err).toBeTruthy();
   });
 
   it('it should return error with password length less than 8', async () => {
     let err = null;
 
     try {
-      await mockUser.validate();
+      await mockUser.save();
     } catch (error) {
       err = error;
     }
 
-    expect(err.errors.password).toBeTruthy();
+    expect(err).toBeTruthy();
   });
 
   it('it should not return error with valid user', async () => {
@@ -62,7 +71,7 @@ describe('User database model', () => {
     let err = null;
 
     try {
-      await userMock.validate();
+      await userMock.save();
     } catch (error) {
       err = error;
     }
