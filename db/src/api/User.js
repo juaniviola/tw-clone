@@ -1,5 +1,4 @@
 import { hashSync, compareSync, compare } from 'bcryptjs';
-import mongoose from 'mongoose';
 import { v4 as uuid } from 'uuid';
 import { User } from '../models';
 
@@ -42,7 +41,8 @@ const getById = (id) => {
     .populate({ path: 'followers', options: { select: { username: 1, fullName: 1 } } });
 };
 
-const getUserByUsername = (usname) => {
+const getByUsername = (usname) => {
+  if (!usname || typeof usname !== 'string') throw Error('Invalid parameter');
   const username = usname.toString().trim();
 
   return User
@@ -52,6 +52,7 @@ const getUserByUsername = (usname) => {
 };
 
 const getUsersByUsername = (usname) => {
+  if (!usname || typeof usname !== 'string') throw Error('Invalid parameter');
   const username = usname.toString().trim();
 
   return User
@@ -60,52 +61,38 @@ const getUsersByUsername = (usname) => {
     .populate({ path: 'followers', options: { select: { username: 1, fullName: 1 } } });
 };
 
-const addFollower = async (payload) => {
-  const { userFromId, userFromSecure, userToId } = payload.follow;
+const addFollower = async ({ userFromId, userFromSecure, userToId }) => {
   if (!userFromId || !userFromSecure || !userToId) throw Error('Invalid parameters');
-
-  if (!mongoose.Types.ObjectId.isValid(userFromId)
-    || !mongoose.Types.ObjectId.isValid(userToId)) throw Error('Invalid id');
 
   const isSecure = await checkSecure(userFromId, userFromSecure);
   if (!isSecure) throw Error('Unhauthorized');
 
-  await User.findOneAndUpdate({ _id: userFromId }, {
-    $push: { following: userToId },
-  });
+  return Promise.all([
+    User.findOneAndUpdate({ _id: userFromId }, {
+      $push: { following: userToId },
+    }),
 
-  await User.findOneAndUpdate({ _id: userToId }, {
-    $push: { followers: userFromId },
-  });
-
-  return User
-    .findOne({ _id: userFromId })
-    .populate({ path: 'following', options: { select: { username: 1, fullName: 1 } } })
-    .populate({ path: 'followers', options: { select: { username: 1, fullName: 1 } } });
+    User.findOneAndUpdate({ _id: userToId }, {
+      $push: { followers: userFromId },
+    }),
+  ]);
 };
 
-const deleteFollower = async (payload) => {
-  const { userFromId, userFromSecure, userToId } = payload.follow;
+const deleteFollower = async ({ userFromId, userFromSecure, userToId }) => {
   if (!userFromId || !userFromSecure || !userToId) throw Error('Invalid parameters');
-
-  if (!mongoose.Types.ObjectId.isValid(userFromId)
-    || !mongoose.Types.ObjectId.isValid(userToId)) throw Error('Invalid id');
 
   const isSecure = await checkSecure(userFromId, userFromSecure);
   if (!isSecure) throw Error('Unhauthorized');
 
-  await User.findOneAndUpdate({ _id: userFromId }, {
-    $pull: { following: userToId },
-  });
+  return Promise.all([
+    User.findOneAndUpdate({ _id: userFromId }, {
+      $pull: { following: userToId },
+    }),
 
-  await User.findOneAndUpdate({ _id: userToId }, {
-    $pull: { followers: userFromId },
-  });
-
-  return User
-    .findOne({ _id: userFromId })
-    .populate({ path: 'following', options: { select: { username: 1, fullName: 1 } } })
-    .populate({ path: 'followers', options: { select: { username: 1, fullName: 1 } } });
+    User.findOneAndUpdate({ _id: userToId }, {
+      $pull: { followers: userFromId },
+    }),
+  ]);
 };
 
 const setSecure = (_id, secure) => User.findOneAndUpdate({ _id }, { $push: { secure } });
@@ -149,7 +136,7 @@ export {
   addFollower,
   deleteFollower,
   getById,
-  getUserByUsername,
+  getByUsername,
   getUsersByUsername,
   setSecure,
   signin,
