@@ -78,8 +78,8 @@ const getFollowers = async ({ id, offset, limit }) => {
   if (!userFollowers) throw Error('User not found');
 
   return Promise.all(userFollowers.followers.slice(offset, limit).map((follower) => User
-    .findOne({ _id: follower }))
-    .select('id username fullName'));
+    .findOne({ _id: follower })
+    .select('id username fullName')));
 };
 
 const getFollowing = async ({ id, offset, limit }) => {
@@ -87,8 +87,8 @@ const getFollowing = async ({ id, offset, limit }) => {
   if (!userFollowing) throw Error('User not found');
 
   return Promise.all(userFollowing.following.slice(offset, limit).map((following) => User
-    .findOne({ _id: following }))
-    .select('id username fullName'));
+    .findOne({ _id: following })
+    .select('id username fullName')));
 };
 
 const signin = async (payload) => {
