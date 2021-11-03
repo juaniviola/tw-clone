@@ -1,4 +1,4 @@
-import { hashSync, compareSync } from 'bcryptjs';
+import { hashSync, compareSync, compare } from 'bcryptjs';
 import mongoose from 'mongoose';
 import { v4 as uuid } from 'uuid';
 import { User } from '../models';
@@ -30,9 +30,7 @@ const comparePassword = async ({ id, password }) => {
 
   const findUser = await User.findOne({ id });
 
-  if (!compareSync(password, findUser.password)) throw Error('Incorrect password');
-
-  return true;
+  return compare(password, findUser.password);
 };
 
 const getById = (id) => {
