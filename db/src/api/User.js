@@ -34,7 +34,7 @@ const comparePassword = async ({ id, password }) => {
 };
 
 const getById = (id) => {
-  if (!mongoose.Types.ObjectId.isValid(id)) throw Error('Invalid id');
+  if (!id || typeof id !== 'string') throw Error('Invalid parameter');
 
   return User
     .findOne({ _id: id })
