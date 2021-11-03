@@ -7,6 +7,8 @@ import { create, connect, closeDatabase } from '../db-handler';
 describe('Test User Api', () => {
   let mongod;
   let userCreated;
+  let userCreated2;
+
   const mockUser = {
     username: 'user_test',
     password: 'passw0rd',
@@ -32,6 +34,7 @@ describe('Test User Api', () => {
 
   it('saveUser() --> should be ok with valid mock user', async () => {
     const newUser = await User.saveUser(mockUser);
+    userCreated2 = newUser;
 
     expect(newUser).toBeTruthy();
     expect(newUser.id).toBeTruthy();
@@ -98,8 +101,8 @@ describe('Test User Api', () => {
     expect(comparePass).toBeFalsy();
   });
 
-  it('getUserByUsername() --> it should return user with valid username', async () => {
-    const getUser = await User.getUserByUsername(userCreated.username);
+  it('getByUsername() --> it should return user with valid username', async () => {
+    const getUser = await User.getByUsername(userCreated.username);
 
     expect(getUser).toBeTruthy();
     expect(getUser.id).toEqual(userCreated.id);
@@ -110,5 +113,30 @@ describe('Test User Api', () => {
 
     expect(getUser).toBeTruthy();
     expect(getUser.length).toEqual(2);
+  });
+
+  it('addFollower() --> mockuser2 should have 1 follower', async () => {
+    const update = await User.addFollower({ userFromId: userCreated._id, userToId: userCreated2._id });
+    const getUser = await User.getById(userCreated.id);
+    const getUser2 = await User.getById(userCreated2.id);
+
+    expect(update).toBeTruthy();
+    expect(getUser).toBeTruthy();
+    expect(getUser2).toBeTruthy();
+    expect(getUser.following.length).toEqual(1);
+    expect(getUser2.followers.length).toEqual(1);
+    expect(getUser.following[0]).toEqual(userCreated2._id);
+    expect(getUser2.followers[0]).toEqual(userCreated._id);
+  });
+
+  it('deleteFollower() --> mockuser2 shouldnt have followers', async () => {
+    await User.deleteFollower({ userFromId: userCreated._id, userToId: userCreated2._id });
+    const getUser = await User.getById(userCreated.id);
+    const getUser2 = await User.getById(userCreated2.id);
+
+    expect(getUser).toBeTruthy();
+    expect(getUser2).toBeTruthy();
+    expect(getUser.following.length).toEqual(0);
+    expect(getUser2.followers.length).toEqual(0);
   });
 });
