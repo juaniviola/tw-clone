@@ -129,6 +129,22 @@ describe('Test User Api', () => {
     expect(getUser2.followers[0]).toEqual(userCreated._id);
   });
 
+  it('getFollowers() --> mockuser2 should have mockuser as follower', async () => {
+    const followers = await User.getFollowers({ id: userCreated2._id, offset: 0, limit: 1 });
+
+    expect(followers).toBeTruthy();
+    expect(followers.length).toBe(1);
+    expect(followers[0].username).toEqual(userCreated.username);
+  });
+
+  it('getFollowing() --> mockuser should have mockuser as following', async () => {
+    const following = await User.getFollowing({ id: userCreated._id, offset: 0, limit: 1 });
+
+    expect(following).toBeTruthy();
+    expect(following.length).toBe(1);
+    expect(following[0].username).toEqual(userCreated2.username);
+  });
+
   it('deleteFollower() --> mockuser2 shouldnt have followers', async () => {
     await User.deleteFollower({ userFromId: userCreated._id, userToId: userCreated2._id });
     const getUser = await User.getById(userCreated.id);
