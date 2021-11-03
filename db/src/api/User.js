@@ -42,7 +42,8 @@ const getById = (id) => {
     .populate({ path: 'followers', options: { select: { username: 1, fullName: 1 } } });
 };
 
-const getUserByUsername = (usname) => {
+const getByUsername = (usname) => {
+  if (!usname || typeof usname !== 'string') throw Error('Invalid parameter');
   const username = usname.toString().trim();
 
   return User
@@ -149,7 +150,7 @@ export {
   addFollower,
   deleteFollower,
   getById,
-  getUserByUsername,
+  getByUsername,
   getUsersByUsername,
   setSecure,
   signin,
