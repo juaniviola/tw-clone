@@ -36,9 +36,7 @@ const getById = (id) => {
   if (!id || typeof id !== 'string') throw Error('Invalid parameter');
 
   return User
-    .findOne({ id })
-    .populate({ path: 'following', options: { select: { username: 1, fullName: 1 } } })
-    .populate({ path: 'followers', options: { select: { username: 1, fullName: 1 } } });
+    .findOne({ id });
 };
 
 const getByUsername = (usname) => {
@@ -46,9 +44,7 @@ const getByUsername = (usname) => {
   const username = usname.toString().trim();
 
   return User
-    .findOne({ username })
-    .populate({ path: 'following', options: { select: { username: 1, fullName: 1 } } })
-    .populate({ path: 'followers', options: { select: { username: 1, fullName: 1 } } });
+    .findOne({ username });
 };
 
 const getUsersByUsername = (usname) => {
@@ -56,9 +52,7 @@ const getUsersByUsername = (usname) => {
   const username = usname.toString().trim();
 
   return User
-    .find({ username: new RegExp(username, 'i') })
-    .populate({ path: 'following', options: { select: { username: 1, fullName: 1 } } })
-    .populate({ path: 'followers', options: { select: { username: 1, fullName: 1 } } });
+    .find({ username: new RegExp(username, 'i') });
 };
 
 const addFollower = async ({ userFromId, userFromSecure, userToId }) => {
@@ -78,11 +72,8 @@ const addFollower = async ({ userFromId, userFromSecure, userToId }) => {
   ]);
 };
 
-const deleteFollower = async ({ userFromId, userFromSecure, userToId }) => {
-  if (!userFromId || !userFromSecure || !userToId) throw Error('Invalid parameters');
-
-  const isSecure = await checkSecure(userFromId, userFromSecure);
-  if (!isSecure) throw Error('Unhauthorized');
+const deleteFollower = async ({ userFromId, userToId }) => {
+  if (!userFromId || !userToId) throw Error('Invalid parameters');
 
   return Promise.all([
     User.findOneAndUpdate({ _id: userFromId }, {
@@ -94,8 +85,6 @@ const deleteFollower = async ({ userFromId, userFromSecure, userToId }) => {
     }),
   ]);
 };
-
-const setSecure = (_id, secure) => User.findOneAndUpdate({ _id }, { $push: { secure } });
 
 const signin = async (payload) => {
   const { username, password } = payload.user;
@@ -138,7 +127,6 @@ export {
   getById,
   getByUsername,
   getUsersByUsername,
-  setSecure,
   signin,
   logout,
 };
