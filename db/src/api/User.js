@@ -1,4 +1,4 @@
-import { hashSync, compareSync, compare } from 'bcryptjs';
+import { hashSync, compare } from 'bcryptjs';
 import { v4 as uuid } from 'uuid';
 import { User } from '../models';
 
@@ -81,39 +81,6 @@ const getFollowers = async (id) => User.findOne({ _id: id })
   .populate({ path: 'following', select: { id: 1, username: 1, fullName: 1 } })
   .populate({ path: 'followers', select: { id: 1, username: 1, fullName: 1 } });
 
-const signin = async (payload) => {
-  const { username, password } = payload.user;
-  if (!username || !password) throw Error('Invalid parameters');
-
-  const usname = username.toString().trim();
-  const findUser = await User.findOne({ username: usname });
-  if (!findUser) throw Error('User not found');
-
-  if (!compareSync(password, findUser.password)) throw Error('User and password do not match');
-
-  const secureCode = uuid();
-
-  // eslint-disable-next-line no-underscore-dangle
-  await User.findOneAndUpdate({ _id: findUser._id }, {
-    $push: { secure: secureCode },
-  });
-
-  return {
-    user: findUser,
-    secure: secureCode,
-  };
-};
-
-const logout = async (payload) => {
-  const { userId } = payload.logout;
-
-  await User.findOneAndUpdate({ _id: userId }, {
-    $pull: { secure: [] },
-  });
-
-  return 'success';
-};
-
 export {
   saveUser,
   comparePassword,
@@ -123,6 +90,4 @@ export {
   getByUsername,
   getUsersByUsername,
   getFollowers,
-  signin,
-  logout,
 };
