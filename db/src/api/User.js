@@ -28,21 +28,24 @@ const comparePassword = async ({ id, password }) => {
 const getById = (id) => {
   if (!id || typeof id !== 'string') throw Error('Invalid parameter');
 
-  return User.findOne({ id });
+  return User.findOne({ id })
+    .select('_id id username fullName email');
 };
 
 const getByUsername = (usname) => {
   if (!usname || typeof usname !== 'string') throw Error('Invalid parameter');
   const username = usname.toString().trim();
 
-  return User.findOne({ username });
+  return User.findOne({ username })
+    .select('_id id username fullName email');
 };
 
 const getUsersByUsername = (usname) => {
   if (!usname || typeof usname !== 'string') throw Error('Invalid parameter');
   const username = usname.toString().trim();
 
-  return User.find({ username: new RegExp(username, 'i') });
+  return User.find({ username: new RegExp(username, 'i') })
+    .select('_id id username fullName email');
 };
 
 const addFollower = async ({ userFromId, userToId }) => {
