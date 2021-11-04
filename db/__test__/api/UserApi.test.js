@@ -117,16 +117,16 @@ describe('Test User Api', () => {
 
   it('addFollower() --> mockuser2 should have 1 follower', async () => {
     const update = await User.addFollower({ userFromId: userCreated._id, userToId: userCreated2._id });
-    const getUser = await User.getById(userCreated.id);
-    const getUser2 = await User.getById(userCreated2.id);
+    const getUser = await User.getFollowers(userCreated._id);
+    const getUser2 = await User.getFollowers(userCreated2._id);
 
     expect(update).toBeTruthy();
     expect(getUser).toBeTruthy();
     expect(getUser2).toBeTruthy();
     expect(getUser.following.length).toEqual(1);
     expect(getUser2.followers.length).toEqual(1);
-    expect(getUser.following[0]).toEqual(userCreated2._id);
-    expect(getUser2.followers[0]).toEqual(userCreated._id);
+    expect(getUser.following[0]._id).toEqual(userCreated2._id);
+    expect(getUser2.followers[0]._id).toEqual(userCreated._id);
   });
 
   it('getFollowers() --> it should return followers of mockuser2 and following of mockuser', async () => {
@@ -143,8 +143,8 @@ describe('Test User Api', () => {
 
   it('deleteFollower() --> mockuser2 shouldnt have followers', async () => {
     await User.deleteFollower({ userFromId: userCreated._id, userToId: userCreated2._id });
-    const getUser = await User.getById(userCreated.id);
-    const getUser2 = await User.getById(userCreated2.id);
+    const getUser = await User.getFollowers(userCreated._id);
+    const getUser2 = await User.getFollowers(userCreated2._id);
 
     expect(getUser).toBeTruthy();
     expect(getUser2).toBeTruthy();
