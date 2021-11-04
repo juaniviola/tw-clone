@@ -8,148 +8,58 @@ const saveTweet = async (payload) => {
   if (!user || !description) throw Error('Invalid parameters');
   if (!mongoose.Types.ObjectId.isValid(user)) throw Error('Invalid user id');
 
-  if (description.length > 280) throw Error('Maximum of characters exceeded');
-  const hashtags = utils.getHashtag(description);
-  const mentions = utils.getMentions(description);
-
   const tweet = new Tweet({
     user,
     description,
     createdAt: new Date(),
-    hashtags: hashtags || [],
-    mentions: mentions || [],
+    hashtags: utils.getHashtag(description) || [],
+    mentions: utils.getMentions(description) || [],
   });
 
-  await tweet.save();
-
-  return Tweet
-    // eslint-disable-next-line no-underscore-dangle
-    .findOne({ _id: tweet._id })
-    .populate({ path: 'user', options: { select: { username: 1, fullName: 1 } } });
+  return tweet.save();
 };
 
-const tweetsByUser = async (username) => {
-  if (!username || typeof username !== 'string') throw Error('Invalid user id');
+const getById = async (id) => Tweet
+  .find({ _id: id })
+  .sort({ createdAt: -1 })
+  .populate({ path: 'user', options: { select: { username: 1, fullName: 1 } } })
+  .populate({ path: 'favs', options: { select: { username: 1, fullName: 1 } } })
+  .populate({ path: 'answers.user', options: { select: { username: 1, fullName: 1 } } });
 
-  const id = await User.findOne({ username });
+const getByHashtags = (hashtag) => Tweet
+  .find({ hashtags: hashtag.toLowerCase() })
+  .sort({ createdAt: -1 })
+  .populate({ path: 'user', options: { select: { username: 1, fullName: 1 } } })
+  .populate({ path: 'favs', options: { select: { username: 1, fullName: 1 } } })
+  .populate({ path: 'answers.user', options: { select: { username: 1, fullName: 1 } } });
 
-  return Tweet
-    .find({ user: id })
-    .sort({ createdAt: -1 })
-    .populate({ path: 'user', options: { select: { username: 1, fullName: 1 } } })
-    .populate({ path: 'favs', options: { select: { username: 1, fullName: 1 } } })
-    .populate({ path: 'answers.user', options: { select: { username: 1, fullName: 1 } } });
+const favorite = async ({ tweetId, fav, userId }) => {
+  if (!fav) throw Error('Invalid parameters');
+  if (!mongoose.Types.ObjectId.isValid(userId) || !mongoose.Types.ObjectId.isValid(tweetId)) throw Error('Invalid id');
+
+  const isFav = fav ? { $push: { favs: userId } } : { $pull: { favs: userId } };
+
+  return Tweet.findOneAndUpdate({ _id: tweetId }, isFav, { multi: true });
 };
 
-const tweetById = (id) => {
-  if (!mongoose.Types.ObjectId.isValid(id)) return { error: { message: 'Invalid id' } };
+const updateTweet = async ({ _id, description }) => {
+  if (!description) throw Error('Invalid parameters');
+  if (!mongoose.Types.ObjectId.isValid(_id)) throw Error('Invalid id');
 
-  return Tweet
-    .findOne({ _id: id })
-    .populate({ path: 'user', options: { select: { username: 1, fullName: 1 } } })
-    .populate({ path: 'favs', options: { select: { username: 1, fullName: 1 } } })
-    .populate({ path: 'answers.user', options: { select: { username: 1, fullName: 1 } } });
-};
-
-const tweetsByHashtag = (hashtag) => {
-  const hashtagLower = hashtag.toLowerCase();
-
-  return Tweet
-    .find({ hashtags: hashtagLower })
-    .populate({ path: 'user', options: { select: { username: 1, fullName: 1 } } })
-    .populate({ path: 'favs', options: { select: { username: 1, fullName: 1 } } })
-    .populate({ path: 'answers.user', options: { select: { username: 1, fullName: 1 } } });
-};
-
-const favTweet = async (payload) => {
-  const {
-    tweetId,
-    fav,
-    userId,
-  } = payload.fav;
-
-  if (!tweetId || !userId
-    || fav === null || fav === undefined) throw Error('Invalid parameters');
-
-  if (!mongoose.Types.ObjectId.isValid(userId)
-    || !mongoose.Types.ObjectId.isValid(tweetId)) throw Error('Invalid id');
-
-  if (fav) {
-    await Tweet.findOneAndUpdate({ _id: tweetId }, {
-      $push: { favs: userId },
-    }, { multi: true });
-  } else {
-    await Tweet.findOneAndUpdate({ _id: tweetId }, {
-      $pull: { favs: userId },
-    }, { multi: true });
-  }
-
-  return Tweet
-    .findOne({ _id: tweetId })
-    .populate({ path: 'user', options: { select: { username: 1, fullName: 1 } } })
-    .populate({ path: 'favs', options: { select: { username: 1, fullName: 1 } } })
-    .populate({ path: 'answers.user', options: { select: { username: 1, fullName: 1 } } });
-};
-
-const updateTweet = async (payload) => {
-  const {
-    _id,
+  return Tweet.findOneAndUpdate({ _id }, {
     description,
-    userId,
-  } = payload.tw;
-
-  if (!_id || !description || !userId) throw Error('Invalid parameters');
-
-  if (!mongoose.Types.ObjectId.isValid(userId)
-    || !mongoose.Types.ObjectId.isValid(_id)) throw Error('Invalid id');
-
-  const tw = await Tweet.findOne({ _id });
-  if (!tw) return { error: { message: 'Tweet not found' } };
-  if (!tw.user
-    || tw.user.toString().trim() !== userId.toString().trim()) throw Error('Unhauthorized');
-
-  const hashtags = utils.getHashtag(description);
-  const mentions = utils.getMentions(description);
-
-  await Tweet.findOneAndUpdate({ _id }, {
-    description,
-    mentions,
-    hashtags,
+    mentions: utils.getHashtag(description),
+    hashtags: utils.getMentions(description),
   });
-
-  return Tweet
-    .findOne({ _id })
-    .populate({ path: 'user', options: { select: { username: 1, fullName: 1 } } })
-    .populate({ path: 'favs', options: { select: { username: 1, fullName: 1 } } })
-    .populate({ path: 'answers.user', options: { select: { username: 1, fullName: 1 } } });
 };
 
-const deleteTweet = async (payload) => {
-  const { tweetId, userId } = payload.tw;
-  if (!tweetId || !userId) throw Error('Invalid parameters');
+const deleteTweet = async ({ tweetId }) => Tweet.findOneAndRemove({ _id: tweetId });
 
-  if (!mongoose.Types.ObjectId.isValid(tweetId)
-    || !mongoose.Types.ObjectId.isValid(userId)) throw Error('Invalid id');
+const addAnswer = async ({ tweetId, userId, description }) => {
+  if (!description) throw Error('Invalid parameters');
+  if (!mongoose.Types.ObjectId.isValid(tweetId) || !mongoose.Types.ObjectId.isValid(userId)) throw Error('Invalid id');
 
-  const tw = await Tweet.findOne({ _id: tweetId });
-  if (!tw.user
-    || (tw.user.toString().trim() !== userId.toString().trim())) throw Error('Unhauthorized');
-
-  return Tweet.findOneAndRemove({ _id: tweetId });
-};
-
-const addAnswer = async (payload) => {
-  const {
-    tweetId,
-    userId,
-    description,
-  } = payload.answer;
-  if (!tweetId || !userId || !description) throw Error('Invalid parameters');
-
-  if (!mongoose.Types.ObjectId.isValid(tweetId)
-    || !mongoose.Types.ObjectId.isValid(userId)) throw Error('Invalid id');
-
-  await Tweet.findOneAndUpdate({ _id: tweetId }, {
+  return Tweet.findOneAndUpdate({ _id: tweetId }, {
     $push: {
       answers: {
         user: userId,
@@ -158,59 +68,39 @@ const addAnswer = async (payload) => {
       },
     },
   });
-
-  return Tweet
-    .findOne({ _id: tweetId })
-    .populate({ path: 'user', options: { select: { username: 1, fullName: 1 } } })
-    .populate({ path: 'favs', options: { select: { username: 1, fullName: 1 } } })
-    .populate({ path: 'answers.user', options: { select: { username: 1, fullName: 1 } } });
 };
 
-const deleteAnswer = async (payload) => {
-  const {
-    tweetId,
-    answerId,
-    userId,
-  } = payload.answer;
-  if (!tweetId || !answerId || !userId) throw Error('Invalid parameters');
-
+const deleteAnswer = async ({ tweetId, answerId }) => {
   if (!mongoose.Types.ObjectId.isValid(tweetId)
-    || !mongoose.Types.ObjectId.isValid(userId)
-    || !mongoose.Types.ObjectId.isValid(answerId)) throw Error('Invalid id');
+    || !mongoose.Types.ObjectId.isValid(answerId)) throw Error('Invalid ids');
 
-  const tw = await Tweet
-    .findOne({ _id: tweetId })
-    .select({ answers: { $elemMatch: { _id: answerId } } });
-
-  if ((tw.answers.length === 0) || !tw) throw Error('Answer not found');
-  if (!tw.answers[0].user
-    || (tw.answers[0].user.toString().trim() !== userId.toString().trim())) throw Error('Unhauthorized');
-
-  await Tweet.findOneAndUpdate({ _id: tweetId }, {
+  return Tweet.findOneAndUpdate({ _id: tweetId }, {
     $pull: {
       answers: {
         _id: answerId,
       },
     },
   });
-
-  return Tweet
-    .findOne({ _id: tweetId })
-    .populate({ path: 'user', options: { select: { username: 1, fullName: 1 } } })
-    .populate({ path: 'favs', options: { select: { username: 1, fullName: 1 } } })
-    .populate({ path: 'answers.user', options: { select: { username: 1, fullName: 1 } } });
 };
 
-const tweetByFollowingUsers = async (userId) => {
+const updateAnswer = async ({ tweetId, answerId, description }) => {
+  if (!mongoose.Types.ObjectId.isValid(tweetId)
+    || !mongoose.Types.ObjectId.isValid(answerId)) throw Error('Invalid ids');
+
+  return Tweet.findOneAndUpdate({ 'answers._id': answerId }, { $set: { 'answers.$.description': description } });
+};
+
+const tweetByFollowingUsers = async (userId, offset = 0, limit = 30) => {
   if (!mongoose.Types.ObjectId.isValid(userId)) throw Error('Invalid id');
 
-  const findUser = await User.findOne({ _id: userId });
-  if (!findUser) throw Error('User not found');
+  const user = await User.findOne({ _id: userId });
+  if (!user) throw Error('User not found');
 
   return Tweet
-    .find({ $or: [{ user: { $in: findUser.following } }, { user: userId }] })
+    .find({ user: { $in: user.following } })
     .sort({ createdAt: -1 })
-    .limit(30)
+    .skip(offset)
+    .limit(limit)
     .populate({ path: 'user', options: { select: { username: 1, fullName: 1 } } })
     .populate({ path: 'favs', options: { select: { username: 1, fullName: 1 } } })
     .populate({ path: 'answers.user', options: { select: { username: 1, fullName: 1 } } });
@@ -218,13 +108,13 @@ const tweetByFollowingUsers = async (userId) => {
 
 export {
   saveTweet,
-  tweetsByUser,
-  tweetById,
-  tweetsByHashtag,
-  favTweet,
+  getById,
+  getByHashtags,
+  favorite,
   updateTweet,
   deleteTweet,
   addAnswer,
   deleteAnswer,
+  updateAnswer,
   tweetByFollowingUsers,
 };
