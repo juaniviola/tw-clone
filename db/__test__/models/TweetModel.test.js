@@ -2,11 +2,23 @@ import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 import mongoose from 'mongoose';
 import Tweet from '../../src/models/Tweet';
+import { create, connect, closeDatabase } from '../db-handler';
 
 describe('Tweet database model', () => {
+  let mongod;
+
   const mockTweet = new Tweet({
     user: '1238723',
     description: 'hola mundo',
+  });
+
+  beforeAll(async () => {
+    mongod = await create();
+    await connect(mongod);
+  });
+
+  afterAll(async () => {
+    await closeDatabase(mongod);
   });
 
   it('should return error with empty tweet', async () => {
@@ -14,7 +26,7 @@ describe('Tweet database model', () => {
     let err = null;
 
     try {
-      await newTweet.validate();
+      await newTweet.save();
     } catch (error) {
       err = error;
     }
@@ -27,7 +39,7 @@ describe('Tweet database model', () => {
     let err = null;
 
     try {
-      await mockTweet.validate();
+      await mockTweet.save();
     } catch (error) {
       err = error;
     }
@@ -43,7 +55,7 @@ describe('Tweet database model', () => {
     let err = null;
 
     try {
-      await newTweet.validate();
+      await newTweet.save();
     } catch (error) {
       err = error;
     }
