@@ -73,23 +73,9 @@ const deleteFollower = async ({ userFromId, userToId }) => {
   ]);
 };
 
-const getFollowers = async ({ id, offset, limit }) => {
-  const userFollowers = await User.findOne({ _id: id });
-  if (!userFollowers) throw Error('User not found');
-
-  return Promise.all(userFollowers.followers.slice(offset, limit).map((follower) => User
-    .findOne({ _id: follower })
-    .select('id username fullName')));
-};
-
-const getFollowing = async ({ id, offset, limit }) => {
-  const userFollowing = await User.findOne({ _id: id });
-  if (!userFollowing) throw Error('User not found');
-
-  return Promise.all(userFollowing.following.slice(offset, limit).map((following) => User
-    .findOne({ _id: following })
-    .select('id username fullName')));
-};
+const getFollowers = async (id) => User.findOne({ _id: id })
+  .populate({ path: 'following', select: { id: 1, username: 1, fullName: 1 } })
+  .populate({ path: 'followers', select: { id: 1, username: 1, fullName: 1 } });
 
 const signin = async (payload) => {
   const { username, password } = payload.user;
@@ -133,7 +119,6 @@ export {
   getByUsername,
   getUsersByUsername,
   getFollowers,
-  getFollowing,
   signin,
   logout,
 };
