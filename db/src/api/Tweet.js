@@ -20,21 +20,24 @@ const saveTweet = async (payload) => {
 };
 
 const getById = async (id) => Tweet
-  .find({ _id: id })
+  .findOne({ _id: id })
   .sort({ createdAt: -1 })
   .populate({ path: 'user', options: { select: { username: 1, fullName: 1 } } })
   .populate({ path: 'favs', options: { select: { username: 1, fullName: 1 } } })
   .populate({ path: 'answers.user', options: { select: { username: 1, fullName: 1 } } });
 
-const getByHashtags = (hashtag) => Tweet
-  .find({ hashtags: hashtag.toLowerCase() })
-  .sort({ createdAt: -1 })
-  .populate({ path: 'user', options: { select: { username: 1, fullName: 1 } } })
-  .populate({ path: 'favs', options: { select: { username: 1, fullName: 1 } } })
-  .populate({ path: 'answers.user', options: { select: { username: 1, fullName: 1 } } });
+const getByHashtags = (hashtag) => {
+  const htx = hashtag[0] === '#' ? hashtag : '#'.concat(hashtag);
+
+  return Tweet
+    .find({ hashtags: htx.toLowerCase() })
+    .sort({ createdAt: -1 })
+    .populate({ path: 'user', options: { select: { username: 1, fullName: 1 } } })
+    .populate({ path: 'favs', options: { select: { username: 1, fullName: 1 } } })
+    .populate({ path: 'answers.user', options: { select: { username: 1, fullName: 1 } } });
+};
 
 const favorite = async ({ tweetId, fav, userId }) => {
-  if (!fav) throw Error('Invalid parameters');
   if (!mongoose.Types.ObjectId.isValid(userId) || !mongoose.Types.ObjectId.isValid(tweetId)) throw Error('Invalid id');
 
   const isFav = fav ? { $push: { favs: userId } } : { $pull: { favs: userId } };

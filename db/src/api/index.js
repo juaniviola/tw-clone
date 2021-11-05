@@ -1,4 +1,4 @@
 import * as User from './User';
-import Tweet from './Tweet';
+import * as Tweet from './Tweet';
 
 export { User, Tweet };
