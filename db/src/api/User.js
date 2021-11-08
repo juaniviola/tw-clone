@@ -1,5 +1,4 @@
 import { hashSync, compare } from 'bcryptjs';
-import { v4 as uuid } from 'uuid';
 import { User } from '../models';
 
 const saveUser = (payload) => {
@@ -8,7 +7,6 @@ const saveUser = (payload) => {
 
   const hashPassword = (password) => hashSync(password, 8);
   const copyPayload = Object.assign(payload, {
-    id: uuid(),
     password: hashPassword(payload.password),
   });
 
@@ -18,17 +16,17 @@ const saveUser = (payload) => {
 };
 
 const comparePassword = async ({ id, password }) => {
-  if (!id || typeof id !== 'string' || !password || typeof password !== 'string') throw Error('Invalid parameters');
+  if (!id || !password || typeof password !== 'string') throw Error('Invalid parameters');
 
-  const findUser = await User.findOne({ id });
+  const findUser = await User.findOne({ _id: id });
 
   return compare(password, findUser.password);
 };
 
 const getById = (id) => {
-  if (!id || typeof id !== 'string') throw Error('Invalid parameter');
+  if (!id) throw Error('Invalid parameter');
 
-  return User.findOne({ id })
+  return User.findOne({ _id: id })
     .select('_id id username fullName email');
 };
 

@@ -45,11 +45,11 @@ const favorite = async ({ tweetId, fav, userId }) => {
   return Tweet.findOneAndUpdate({ _id: tweetId }, isFav, { multi: true });
 };
 
-const updateTweet = async ({ _id, description }) => {
+const updateTweet = async ({ id, description }) => {
   if (!description) throw Error('Invalid parameters');
-  if (!mongoose.Types.ObjectId.isValid(_id)) throw Error('Invalid id');
+  if (!mongoose.Types.ObjectId.isValid(id)) throw Error('Invalid id');
 
-  return Tweet.findOneAndUpdate({ _id }, {
+  return Tweet.findOneAndUpdate({ _id: id }, {
     description,
     mentions: utils.getHashtag(description),
     hashtags: utils.getMentions(description),
