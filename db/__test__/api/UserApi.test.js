@@ -37,7 +37,7 @@ describe('Test User Api', () => {
     userCreated2 = newUser;
 
     expect(newUser).toBeTruthy();
-    expect(newUser.id).toBeTruthy();
+    expect(newUser._id).toBeTruthy();
     expect(newUser.password).toBeTruthy();
     expect(newUser.username).toEqual(mockUser.username);
     expect(newUser.fullName).toEqual(mockUser.fullName);
@@ -75,7 +75,7 @@ describe('Test User Api', () => {
 
   it('getById() --> it should return user with id parameter', async () => {
     userCreated = await User.saveUser(mockUser2);
-    const findUser = await User.getById(userCreated.id);
+    const findUser = await User.getById(userCreated._id);
 
     expect(userCreated).toBeTruthy();
     expect(findUser).toBeTruthy();
@@ -84,19 +84,25 @@ describe('Test User Api', () => {
   });
 
   it('getById() --> it should return error with invalid id', async () => {
-    const getUser = await User.getById('foo');
+    let err = null;
 
-    expect(getUser).toBeFalsy();
+    try {
+      await User.getById('foo');
+    } catch (error) {
+      err = error;
+    }
+
+    expect(err).toBeTruthy();
   });
 
   it('comparePassword() --> it should return true with valid user', async () => {
-    const comparePass = await User.comparePassword({ id: userCreated.id, password: 'passw0rd' });
+    const comparePass = await User.comparePassword({ id: userCreated._id, password: 'passw0rd' });
 
     expect(comparePass).toBeTruthy();
   });
 
   it('comparePassword() --> it should return false with invalid password', async () => {
-    const comparePass = await User.comparePassword({ id: userCreated.id, password: 'password' });
+    const comparePass = await User.comparePassword({ id: userCreated._id, password: 'password' });
 
     expect(comparePass).toBeFalsy();
   });
@@ -105,7 +111,7 @@ describe('Test User Api', () => {
     const getUser = await User.getByUsername(userCreated.username);
 
     expect(getUser).toBeTruthy();
-    expect(getUser.id).toEqual(userCreated.id);
+    expect(getUser._id).toEqual(userCreated._id);
   });
 
   it('getUsersByUsername() --> it should return users list', async () => {

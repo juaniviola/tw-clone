@@ -71,7 +71,7 @@ describe('Tweet api', () => {
     const { _id } = tweetCreated;
     const description = '#holamundo --> #tweetcreated.';
 
-    await Tweet.updateTweet({ _id, description });
+    await Tweet.updateTweet({ id: _id, description });
     const tweet = await Tweet.getById(_id);
 
     expect(tweet).toBeTruthy();

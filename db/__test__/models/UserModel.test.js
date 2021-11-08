@@ -7,7 +7,6 @@ describe('User database model', () => {
   let mongod;
 
   const mockUser = new User({
-    id: '123',
     username: 'foobar',
     password: 'foobar',
     fullName: 'foo bar',
@@ -62,7 +61,6 @@ describe('User database model', () => {
 
   it('it should not return error with valid user', async () => {
     const userMock = new User({
-      id: '123',
       username: 'foobar',
       password: 'foobarbuzz',
       fullName: 'foo bar',
