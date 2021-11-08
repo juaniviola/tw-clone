@@ -145,7 +145,7 @@ describe('Tweet api', () => {
   it('deleteTweet() --> it should delete tweet created before', async () => {
     const tweetId = tweetCreated._id;
 
-    await Tweet.deleteTweet({ tweetId });
+    await Tweet.deleteTweet(tweetId);
     const tweet = await Tweet.getById(tweetId);
 
     expect(tweet).toBeFalsy();
@@ -184,7 +184,7 @@ describe('Tweet api', () => {
 
     await Promise.all(mockTweets.map((tweet) => Tweet.saveTweet(tweet)));
 
-    const tweets = await Tweet.tweetByFollowingUsers(userCId);
+    const tweets = await Tweet.tweetByFollowingUsers({ id: userCId });
 
     expect(tweets).toBeTruthy();
     expect(tweets.length).toBe(mockTweets.length - 1);

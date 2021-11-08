@@ -56,7 +56,7 @@ const updateTweet = async ({ id, description }) => {
   });
 };
 
-const deleteTweet = async ({ tweetId }) => Tweet.findOneAndRemove({ _id: tweetId });
+const deleteTweet = async (id) => Tweet.findOneAndRemove({ _id: id });
 
 const addAnswer = async ({ tweetId, userId, description }) => {
   if (!description) throw Error('Invalid parameters');
@@ -93,10 +93,10 @@ const updateAnswer = async ({ tweetId, answerId, description }) => {
   return Tweet.findOneAndUpdate({ 'answers._id': answerId }, { $set: { 'answers.$.description': description } });
 };
 
-const tweetByFollowingUsers = async (userId, offset = 0, limit = 30) => {
-  if (!mongoose.Types.ObjectId.isValid(userId)) throw Error('Invalid id');
+const tweetByFollowingUsers = async ({ id = null, offset = 0, limit = 30 } = {}) => {
+  if (!mongoose.Types.ObjectId.isValid(id)) throw Error('Invalid id');
 
-  const user = await User.findOne({ _id: userId });
+  const user = await User.findOne({ _id: id });
   if (!user) throw Error('User not found');
 
   return Tweet

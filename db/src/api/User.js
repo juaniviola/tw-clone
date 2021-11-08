@@ -1,16 +1,21 @@
 import { hashSync, compare } from 'bcryptjs';
 import { User } from '../models';
 
-const saveUser = (payload) => {
-  if (!payload.password || !payload.username
-    || !payload.fullName || !payload.email || payload.id) throw Error('Invalid parameters');
+const saveUser = ({
+  username,
+  password,
+  fullName,
+  email,
+}) => {
+  if (!password || !username || !fullName || !email) throw Error('Invalid parameters');
+  const hashPassword = (pass) => hashSync(pass, 8);
 
-  const hashPassword = (password) => hashSync(password, 8);
-  const copyPayload = Object.assign(payload, {
-    password: hashPassword(payload.password),
+  const user = new User({
+    username,
+    password: hashPassword(password),
+    fullName,
+    email,
   });
-
-  const user = new User(copyPayload);
 
   return user.save();
 };
@@ -27,23 +32,21 @@ const getById = (id) => {
   if (!id) throw Error('Invalid parameter');
 
   return User.findOne({ _id: id })
-    .select('_id id username fullName email');
+    .select('_id username fullName email');
 };
 
-const getByUsername = (usname) => {
-  if (!usname || typeof usname !== 'string') throw Error('Invalid parameter');
-  const username = usname.toString().trim();
+const getByUsername = (username) => {
+  if (!username) throw Error('Invalid parameter');
 
-  return User.findOne({ username })
-    .select('_id id username fullName email');
+  return User.findOne({ username: username.toString().trim() })
+    .select('_id username fullName email');
 };
 
-const getUsersByUsername = (usname) => {
-  if (!usname || typeof usname !== 'string') throw Error('Invalid parameter');
-  const username = usname.toString().trim();
+const getUsersByUsername = (username) => {
+  if (!username) throw Error('Invalid parameter');
 
-  return User.find({ username: new RegExp(username, 'i') })
-    .select('_id id username fullName email');
+  return User.find({ username: new RegExp(username.toString().trim(), 'i') })
+    .select('_id username fullName email');
 };
 
 const addFollower = async ({ userFromId, userToId }) => {
