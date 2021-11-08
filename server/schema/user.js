@@ -1,6 +1,4 @@
-'use strict'
-
-module.exports = `
+export default `
   # Type User definition
 
   type User {
@@ -33,4 +31,4 @@ module.exports = `
     token: String
     userToId: objectId
   }
-`
+`;

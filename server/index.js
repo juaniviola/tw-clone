@@ -1,34 +1,32 @@
-'use strict'
+/* eslint-disable no-console */
+import express from 'express';
+import graphQl from 'apollo-server-express';
+import cors from 'cors';
+import helmet from 'helmet';
+import schema from './schema';
 
-const express = require('express')
-const bodyParser = require('body-parser')
-const { graphqlExpress, graphiqlExpress } = require('apollo-server-express')
-const cors = require('cors')
-const helmet = require('helmet')
-const chalk = require('chalk')
+const PORT = process.env.PORT || 5000;
+const app = express();
+const { graphqlExpress, graphiqlExpress } = graphQl;
 
-const app = express()
-const schema = require('./schema')
-
-app.use(cors())
-app.use(helmet())
-app.use('/graphql', bodyParser.json(), graphqlExpress({ schema }))
+app.use(cors());
+app.use(helmet());
+app.use('/graphql', express.json(), graphqlExpress({ schema }));
 
 if (process.env.NODE_ENV === 'development') {
-  app.use('/graphiql', graphiqlExpress({ endpointURL: '/graphql' }))
+  app.use('/graphiql', graphiqlExpress({ endpointURL: '/graphql' }));
 }
 
-process.on('uncaughtException', function (err) {
-  console.error(err.message)
-  process.exit(1)
-})
+process.on('uncaughtException', (err) => {
+  console.error(err.message);
+  process.exit(1);
+});
 
-process.on('unhandledRejection', function (err) {
-  console.error(err.message)
-  process.exit(1)
-})
+process.on('unhandledRejection', (err) => {
+  console.error(err.message);
+  process.exit(1);
+});
 
-const port = process.env.PORT || 5000
-app.listen(port, () => {
-  console.log(`${chalk.green('[Server] Listening on port ' + port)}`)
-})
+app.listen(PORT, () => {
+  console.log('[Server] Listening on port ', PORT);
+});

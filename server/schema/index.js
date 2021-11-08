@@ -1,11 +1,9 @@
-'use strict'
+import gqlTools from 'graphql-tools';
+import User from './user';
+import Tweet from './tweet';
+import resolvers from '../resolvers';
 
-const { makeExecutableSchema } = require('graphql-tools')
-
-const User = require('./user')
-const Tweet = require('./tweet')
-
-const resolvers = require('../resolvers')
+const { makeExecutableSchema } = gqlTools;
 
 const rootTypeDef = `
   scalar objectId
@@ -41,9 +39,9 @@ const rootTypeDef = `
     query: Query
     mutation: Mutation
   }
-`
+`;
 
-module.exports = makeExecutableSchema({
+export default makeExecutableSchema({
   typeDefs: [rootTypeDef, User, Tweet],
-  resolvers
-})
+  resolvers,
+});

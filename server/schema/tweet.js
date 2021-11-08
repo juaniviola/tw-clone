@@ -1,6 +1,4 @@
-'use strict'
-
-module.exports = `
+export default `
   # Type definition for Tweet
   scalar Date
 
@@ -54,4 +52,4 @@ module.exports = `
     tweetId: objectId
     token: String
   }
-`
+`;
