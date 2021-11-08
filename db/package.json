@@ -9,6 +9,10 @@
     "test:watch": "jest --watchAll",
     "lint": "eslint src"
   },
+  "jest": {
+    "verbose": true,
+    "testEnvironment": "node"
+  },
   "author": "Juani Viola",
   "license": "MIT",
   "dependencies": {
@@ -30,6 +34,7 @@
     "eslint-config-airbnb-base": "^14.2.1",
     "eslint-plugin-import": "^2.25.2",
     "jest": "^27.3.1",
+    "mongodb-memory-server": "^8.0.2",
     "nodemon": "^2.0.14",
     "regenerator-runtime": "^0.13.9"
   }
