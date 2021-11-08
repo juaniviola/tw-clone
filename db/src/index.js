@@ -1,6 +1,8 @@
 import mongoose from 'mongoose';
-import api from './api';
+import { Tweet, User } from './api';
 
-export default (uri) => mongoose.connect(uri, { useNewUrlParser: true });
+export function connect(uri) {
+  return mongoose.connect(uri, { useNewUrlParser: true });
+}
 
-export { api };
+export { Tweet, User };

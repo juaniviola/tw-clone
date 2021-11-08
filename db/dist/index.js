@@ -5,22 +5,26 @@ var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefau
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-Object.defineProperty(exports, "api", {
+Object.defineProperty(exports, "Tweet", {
   enumerable: true,
   get: function get() {
-    return _api["default"];
+    return _api.Tweet;
   }
 });
-exports["default"] = void 0;
+Object.defineProperty(exports, "User", {
+  enumerable: true,
+  get: function get() {
+    return _api.User;
+  }
+});
+exports.connect = connect;
 
 var _mongoose = _interopRequireDefault(require("mongoose"));
 
-var _api = _interopRequireDefault(require("./api"));
+var _api = require("./api");
 
-var _default = function _default(uri) {
+function connect(uri) {
   return _mongoose["default"].connect(uri, {
     useNewUrlParser: true
   });
-};
-
-exports["default"] = _default;
+}
