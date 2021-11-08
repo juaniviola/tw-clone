@@ -9,7 +9,7 @@
     "test:watch": "jest --watchAll",
     "lint": "eslint src"
   },
-  "author": "Juani Viola <juaniviola1297@gmail.com> (https://twitter.com/juanviola15)",
+  "author": "Juani Viola",
   "license": "MIT",
   "dependencies": {
     "bcryptjs": "^2.4.3",
