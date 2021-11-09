@@ -1,21 +1,11 @@
 /* eslint-disable no-console */
 import express from 'express';
-import graphQl from 'apollo-server-express';
-import cors from 'cors';
+import http from 'http';
 import helmet from 'helmet';
-import schema from './schema';
+import cors from 'cors';
+import server from './graphql';
 
-const PORT = process.env.PORT || 5000;
-const app = express();
-const { graphqlExpress, graphiqlExpress } = graphQl;
-
-app.use(cors());
-app.use(helmet());
-app.use('/graphql', express.json(), graphqlExpress({ schema }));
-
-if (process.env.NODE_ENV === 'development') {
-  app.use('/graphiql', graphiqlExpress({ endpointURL: '/graphql' }));
-}
+const PORT = process.env.PORT || 3000;
 
 process.on('uncaughtException', (err) => {
   console.error(err.message);
@@ -27,6 +17,21 @@ process.on('unhandledRejection', (err) => {
   process.exit(1);
 });
 
-app.listen(PORT, () => {
-  console.log('[Server] Listening on port ', PORT);
-});
+async function runServer() {
+  const app = express();
+  app.use(helmet());
+  app.use(cors());
+
+  await server.start();
+  server.applyMiddleware({
+    app,
+    path: '/',
+  });
+
+  const httpServer = http.createServer(app);
+  await new Promise((resolve) => httpServer.listen({ port: PORT }, resolve));
+
+  console.log(`🚀 Server ready at http://localhost:${PORT}`);
+}
+
+runServer();
