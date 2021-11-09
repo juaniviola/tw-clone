@@ -6,7 +6,8 @@
   "type": "module",
   "scripts": {
     "test": "jest --runInBand --forceExit",
-    "dev": "NODE_ENV=development nodemon index.js"
+    "dev": "nodemon --experimental-modules --es-module-specifier-resolution=node index.js",
+    "lint": "eslint index.js graphql"
   },
   "jest": {
     "verbose": true,
@@ -16,15 +17,15 @@
   "license": "MIT",
   "dependencies": {
     "apollo-server": "^3.5.0",
+    "apollo-server-core": "^3.5.0",
     "apollo-server-express": "^3.5.0",
     "cors": "^2.8.5",
-    "tw_clone_databse": "file:../db",
     "express": "^4.17.1",
     "graphql": "^16.0.1",
-    "graphql-tools": "^8.2.0",
     "helmet": "^4.6.0",
     "jsonwebtoken": "^8.5.1",
-    "ms": "^2.1.3"
+    "ms": "^2.1.3",
+    "twclone-databse": "file:../db"
   },
   "devDependencies": {
     "@babel/cli": "^7.16.0",
