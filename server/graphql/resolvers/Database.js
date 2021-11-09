@@ -1,4 +1,4 @@
-const getDb = async () => import('tw_clone_databse');
+const getDb = async () => import('twclone-databse');
 
 class Database {
   constructor() {

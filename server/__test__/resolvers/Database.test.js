@@ -1,6 +1,6 @@
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
-import Database from '../../resolvers/Database';
+import Database from '../../graphql/resolvers/Database';
 import connectDb from './db_handler';
 
 describe('test connection to database', () => {
