@@ -7,10 +7,5 @@
   "rules": {
     "max-len": [1, 120, { "tabWidth": 2, "ignoreComments": true }],
     "linebreak-style": 0
-  },
-  "parser": "babel-eslint",
-  "parserOptions": {
-    "sourceType": "module",
-    "allowImportExportEverywhere": true
   }
 }
