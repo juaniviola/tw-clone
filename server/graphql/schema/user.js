@@ -10,11 +10,6 @@ export default `
     following: [User!]
   }
 
-  type UserLogged {
-    user: User
-    secure: String
-  }
-
   input newUser {
     username: String
     email: String

@@ -1,15 +1,16 @@
-import gqlTools from 'graphql-tools';
+import { gql } from 'apollo-server';
 import User from './user';
 import Tweet from './tweet';
-import resolvers from '../resolvers';
 
-const { makeExecutableSchema } = gqlTools;
+export default gql`
+  ${User}
 
-const rootTypeDef = `
+  ${Tweet}
+
   scalar objectId
 
   type Query {
-    helloWorld: String
+    hello(name: String): String
     userById(id: objectId!): User
     userByUsername(username: String!): User
     usersByUsername(username: String!): [User!]
@@ -21,7 +22,6 @@ const rootTypeDef = `
 
   type Mutation {
     addUser(u: newUser!): User
-    signin(user: login!): UserLogged @deprecated(reason: "Used for tests")
     login(user: login!): String!
     logout(token: String!): String
     addTweet(tw: newTweet!): Tweet
@@ -40,8 +40,3 @@ const rootTypeDef = `
     mutation: Mutation
   }
 `;
-
-export default makeExecutableSchema({
-  typeDefs: [rootTypeDef, User, Tweet],
-  resolvers,
-});
