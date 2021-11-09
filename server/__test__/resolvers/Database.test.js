@@ -1,14 +1,13 @@
+/* eslint-disable import/no-named-as-default-member */
+/* eslint-disable import/no-named-as-default */
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
-import Database from '../../graphql/resolvers/Database';
+import database from '../../graphql/resolvers/Database';
 import connectDb from './db_handler';
 
 describe('test connection to database', () => {
-  let database;
-
   beforeAll(async () => {
     const mongod = await connectDb();
-    database = new Database();
     await database.connect(mongod.getUri());
   });
 
