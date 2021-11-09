@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "test": "jest --runInBand --forceExit",
-    "dev": "nodemon --experimental-modules --es-module-specifier-resolution=node index.js",
+    "dev": "ENV=env nodemon --experimental-modules --es-module-specifier-resolution=node index.js",
     "lint": "eslint index.js graphql"
   },
   "jest": {
