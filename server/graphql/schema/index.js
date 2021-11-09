@@ -14,10 +14,11 @@ export default gql`
     userById(id: objectId!): User
     userByUsername(username: String!): User
     usersByUsername(username: String!): [User!]
+    userFollowers(id: objectId!): [User!]
     tweetById(id: objectId!): Tweet
     tweetsByUsername(username: String!): [Tweet!]
     tweetsByFollowingUsers(token: String!): [Tweet!]
-    tweetsByHashtags(hashtag: String!): [Tweet!]
+    tweetsByHashtag(hashtag: String!): [Tweet!]
   }
 
   type Mutation {
