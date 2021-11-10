@@ -1,11 +1,11 @@
-const getDb = async () => import('twclone-databse');
+const getDb = async () => import('twclone-database');
 
 class Database {
   constructor() {
     this.uri = null;
     this.Tweet = null;
     this.User = null;
-    this.connected = false;
+    this.Utils = null;
   }
 
   async connect(uri) {
@@ -13,9 +13,9 @@ class Database {
 
     const db = await getDb();
     this.uri = uri;
-    this.Tweet = { ...db.Tweet };
+    this.Tweet = { ...db.Tweet};
     this.User = { ...db.User };
-    this.connected = true;
+    this.Utils = { ...db.utils };
 
     return db.connect(uri);
   }
