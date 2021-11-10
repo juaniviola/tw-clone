@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 import { Tweet, User } from './api';
-import utils from './utils/methodsForApi';
+import * as utils from './utils/methodsForApi';
 
 export function connect(uri) {
   return mongoose.connect(uri, { useNewUrlParser: true });
