@@ -5,7 +5,7 @@ var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefau
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.updateTweet = exports.updateAnswer = exports.tweetByFollowingUsers = exports.saveTweet = exports.getById = exports.getByHashtags = exports.favorite = exports.deleteTweet = exports.deleteAnswer = exports.addAnswer = void 0;
+exports.updateTweet = exports.updateAnswer = exports.tweetByFollowingUsers = exports.saveTweet = exports.getByUser = exports.getById = exports.getByHashtags = exports.favorite = exports.deleteTweet = exports.deleteAnswer = exports.addAnswer = void 0;
 
 var _regenerator = _interopRequireDefault(require("@babel/runtime/regenerator"));
 
@@ -151,6 +151,40 @@ var getByHashtags = function getByHashtags(hashtag) {
 };
 
 exports.getByHashtags = getByHashtags;
+
+var getByUser = function getByUser(id) {
+  return _models.Tweet.find({
+    user: id
+  }).sort({
+    createdAt: -1
+  }).populate({
+    path: 'user',
+    options: {
+      select: {
+        username: 1,
+        fullName: 1
+      }
+    }
+  }).populate({
+    path: 'favs',
+    options: {
+      select: {
+        username: 1,
+        fullName: 1
+      }
+    }
+  }).populate({
+    path: 'answers.user',
+    options: {
+      select: {
+        username: 1,
+        fullName: 1
+      }
+    }
+  });
+};
+
+exports.getByUser = getByUser;
 
 var favorite = /*#__PURE__*/function () {
   var _ref4 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee3(_ref3) {

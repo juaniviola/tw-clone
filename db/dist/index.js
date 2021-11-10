@@ -18,10 +18,18 @@ Object.defineProperty(exports, "User", {
   }
 });
 exports.connect = connect;
+Object.defineProperty(exports, "utils", {
+  enumerable: true,
+  get: function get() {
+    return _methodsForApi["default"];
+  }
+});
 
 var _mongoose = _interopRequireDefault(require("mongoose"));
 
 var _api = require("./api");
+
+var _methodsForApi = _interopRequireDefault(require("./utils/methodsForApi"));
 
 function connect(uri) {
   return _mongoose["default"].connect(uri, {
