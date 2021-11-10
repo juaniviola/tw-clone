@@ -23,17 +23,15 @@ process.on('unhandledRejection', (err) => {
 });
 
 async function runServer() {
-  const envNode = process.env.ENV === 'env';
+  const isEnvDev = process.env.ENV === 'dev';
   const app = express();
   app.use(helmet());
   app.use(cors());
 
-  const memoryDb = envNode ? Promise.resolve(MongoMemoryServer.create()) : null;
-  const uri = envNode ? (await memoryDb).getUri() : process.env.URL_DB;
+  const memoryDb = isEnvDev ? Promise.resolve(MongoMemoryServer.create()) : null;
+  const uri = isEnvDev ? (await memoryDb).getUri() : process.env.URL_DB;
 
   await database.connect(uri);
-  if (database.connected) console.log('Database connected...');
-  else console.error('Database not connected...');
 
   await server.start();
   server.applyMiddleware({
@@ -47,4 +45,4 @@ async function runServer() {
   console.log(`🚀 Server ready at http://localhost:${PORT}`);
 }
 
-runServer().catch(err => console.error(err));
+runServer().catch((err) => console.error(err));
