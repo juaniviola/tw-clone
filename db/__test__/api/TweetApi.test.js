@@ -10,6 +10,7 @@ describe('Tweet api', () => {
   let userCreatedB;
   let tweetCreated;
   let answerId;
+  let tweetsByUserA = 0;
 
   beforeAll(async () => {
     mongod = await create();
@@ -30,9 +31,8 @@ describe('Tweet api', () => {
     const mockTweet = { description: 'Hola mundo. #helloworld' };
 
     userCreated = await User.saveUser(mockUser);
-    Object.assign(mockTweet, { user: userCreated._id });
-
-    tweetCreated = await Tweet.saveTweet(mockTweet);
+    tweetCreated = await Tweet.saveTweet({ ...mockTweet, user: userCreated._id });
+    tweetsByUserA += 1;
 
     expect(tweetCreated).toBeTruthy();
     expect(tweetCreated.user).toEqual(userCreated._id);
@@ -65,6 +65,20 @@ describe('Tweet api', () => {
     expect(tweet).toBeTruthy();
     expect(tweet.length).toBe(1);
     expect(tweet[0]._id).toEqual(tweetCreated._id);
+  });
+
+  it('getByUser() --> it should return 3 tweets by username', async () => {
+    const userId = userCreated._id;
+    await Tweet.saveTweet({ user: userId, description: '2' });
+    await Tweet.saveTweet({ user: userId, description: '3' });
+
+    const tweets = await Tweet.getByUser(userId);
+    tweetsByUserA += 2;
+
+    expect(tweets).toBeTruthy();
+    expect(tweets.length).toBe(3);
+    expect(tweets[1].description).toEqual('2');
+    expect(tweets[0].description).toEqual('3');
   });
 
   it('updateTweet() --> it should update tweet created before', async () => {
@@ -147,25 +161,24 @@ describe('Tweet api', () => {
 
     await Tweet.deleteTweet(tweetId);
     const tweet = await Tweet.getById(tweetId);
+    tweetsByUserA -= 1;
 
     expect(tweet).toBeFalsy();
   });
 
   it('tweetByFollowingUsers() --> it should return tweets of users that you are following', async () => {
-    const userAId = userCreated._id;
-    const userBId = userCreatedB._id;
-
     const filterById = (tweet, userId) => tweet.filter(
       (tw) => JSON.stringify(tw.user._id) === JSON.stringify(userId),
     );
 
+    const userAId = userCreated._id;
+    const userBId = userCreatedB._id;
     const mockUser = {
       username: 'useruser',
       fullName: 'user',
       email: 'user@user.user',
       password: 'PaSsWoRd',
     };
-
     const mockTweets = [
       { description: 'Hola mundo. #helloworld', user: userAId },
       { description: 'Hello world. #holamundo', user: userAId },
@@ -177,18 +190,20 @@ describe('Tweet api', () => {
 
     const userCreatedC = await User.saveUser(mockUser);
     const userCId = userCreatedC._id;
-    Object.assign(mockTweets[mockTweets.length - 1], { user: userCId });
+
+    mockTweets[mockTweets.length - 1] = {
+      ...mockTweets[mockTweets.length - 1],
+      user: userCId,
+    };
 
     await User.addFollower({ userFromId: userCId, userToId: userAId });
     await User.addFollower({ userFromId: userCId, userToId: userBId });
-
     await Promise.all(mockTweets.map((tweet) => Tweet.saveTweet(tweet)));
-
     const tweets = await Tweet.tweetByFollowingUsers({ id: userCId });
 
     expect(tweets).toBeTruthy();
-    expect(tweets.length).toBe(mockTweets.length - 1);
-    expect(filterById(tweets, userAId).length).toEqual(2);
+    expect(tweets.length).toBe((mockTweets.length - 1) + tweetsByUserA);
+    expect(filterById(tweets, userAId).length).toEqual(tweetsByUserA + 2);
     expect(filterById(tweets, userBId).length).toEqual(3);
     expect(filterById(tweets, userCId).length).toEqual(0);
   });
