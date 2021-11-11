@@ -9,8 +9,9 @@ import cors from 'cors';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import server from './graphql';
 import database from './graphql/resolvers/Database';
+import config from './config';
 
-const PORT = process.env.PORT || 3000;
+const { PORT, URL_DB, NODE_ENV } = config;
 
 process.on('uncaughtException', (err) => {
   console.error(err.message);
@@ -23,13 +24,13 @@ process.on('unhandledRejection', (err) => {
 });
 
 async function runServer() {
-  const isEnvDev = process.env.ENV === 'dev';
+  const isEnvDev = NODE_ENV === 'dev';
   const app = express();
   app.use(helmet());
   app.use(cors());
 
   const memoryDb = isEnvDev ? Promise.resolve(MongoMemoryServer.create()) : null;
-  const uri = isEnvDev ? (await memoryDb).getUri() : process.env.URL_DB;
+  const uri = isEnvDev ? (await memoryDb).getUri() : URL_DB;
 
   await database.connect(uri);
 
