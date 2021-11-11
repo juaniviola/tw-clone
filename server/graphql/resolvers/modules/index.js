@@ -1,3 +1,8 @@
+import jwt from 'jsonwebtoken';
+import { promisify } from 'util';
+
+const asyncVerifyToken = promisify(jwt.verify);
+
 const wrapAsync = async (fn, params) => {
   try {
     const result = await fn(params);
@@ -5,4 +10,6 @@ const wrapAsync = async (fn, params) => {
   } catch (_) { return null; }
 };
 
-export default wrapAsync;
+const verifyToken = (token, key, opts) => asyncVerifyToken(token, key, opts);
+
+export { wrapAsync, verifyToken };
