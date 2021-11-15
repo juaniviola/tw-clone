@@ -12,8 +12,8 @@ const saveTweet = async (payload) => {
     user,
     description,
     createdAt: new Date(),
-    hashtags: utils.getHashtag(description) || [],
-    mentions: utils.getMentions(description) || [],
+    hashtags: utils.getHashtag(description),
+    mentions: utils.getMentions(description),
   });
 
   return tweet.save();
@@ -49,7 +49,11 @@ const favorite = async ({ tweetId, fav, userId }) => {
 
   const isFav = fav ? { $push: { favs: userId } } : { $pull: { favs: userId } };
 
-  return Tweet.findOneAndUpdate({ _id: tweetId }, isFav, { multi: true });
+  return Tweet.findOneAndUpdate(
+    { _id: tweetId },
+    isFav,
+    { new: true },
+  );
 };
 
 const updateTweet = async ({ id, description }) => {
@@ -58,9 +62,9 @@ const updateTweet = async ({ id, description }) => {
 
   return Tweet.findOneAndUpdate({ _id: id }, {
     description,
-    mentions: utils.getHashtag(description),
-    hashtags: utils.getMentions(description),
-  });
+    mentions: utils.getMentions(description),
+    hashtags: utils.getHashtag(description),
+  }, { new: true });
 };
 
 const deleteTweet = async (id) => Tweet.findOneAndRemove({ _id: id });
@@ -77,7 +81,7 @@ const addAnswer = async ({ tweetId, userId, description }) => {
         createdAt: new Date(),
       },
     },
-  });
+  }, { new: true });
 };
 
 const deleteAnswer = async ({ tweetId, answerId }) => {
@@ -97,7 +101,11 @@ const updateAnswer = async ({ tweetId, answerId, description }) => {
   if (!mongoose.Types.ObjectId.isValid(tweetId)
     || !mongoose.Types.ObjectId.isValid(answerId)) throw Error('Invalid ids');
 
-  return Tweet.findOneAndUpdate({ 'answers._id': answerId }, { $set: { 'answers.$.description': description } });
+  return Tweet.findOneAndUpdate(
+    { 'answers._id': answerId },
+    { $set: { 'answers.$.description': description } },
+    { new: true },
+  );
 };
 
 const tweetByFollowingUsers = async ({ id = null, offset = 0, limit = 30 } = {}) => {

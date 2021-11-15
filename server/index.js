@@ -7,8 +7,9 @@ import helmet from 'helmet';
 import cors from 'cors';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { MongoMemoryServer } from 'mongodb-memory-server';
+import loginRoute from './routes/login';
 import server from './graphql';
-import database from './graphql/resolvers/Database';
+import database from './Database/Database';
 import config from './config';
 
 const { PORT, URL_DB, NODE_ENV } = config;
@@ -28,6 +29,11 @@ async function runServer() {
   const app = express();
   app.use(helmet());
   app.use(cors());
+  app.use(express.json());
+  app.use(express.urlencoded({
+    extended: true,
+  }));
+  app.use('/', loginRoute);
 
   const memoryDb = isEnvDev ? Promise.resolve(MongoMemoryServer.create()) : null;
   const uri = isEnvDev ? (await memoryDb).getUri() : URL_DB;
