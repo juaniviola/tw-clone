@@ -7,33 +7,29 @@ export default gql`
 
   ${Tweet}
 
-  scalar objectId
-
   type Query {
     hello(name: String): String
-    userById(id: objectId!): User
+    userById(id: String!): User
     userByUsername(username: String!): User
     usersByUsername(username: String!): [User!]
-    userFollowers(id: objectId!): [User!]
-    tweetById(id: objectId!): Tweet
+    userFollowers(id: String!): [User!]
+    tweetById(id: String!): Tweet
     tweetsByUser(id: String!): [Tweet!]
     tweetsByFollowingUsers(token: String!): [Tweet!]
     tweetsByHashtag(hashtag: String!): [Tweet!]
   }
 
   type Mutation {
-    addUser(u: newUser!): User
-    login(user: login!): String!
-    logout(token: String!): String
-    addTweet(tw: newTweet!): Tweet
-    editTweet(tw: editTweet!): Tweet
-    deleteTweet(tw: deleteTweet!): String
-    favTweet(fav: favTweet!): Tweet
-    delFav(fav: favTweet!): Tweet
-    addAnswer(answer: addAnswer!): Tweet
-    delAnswer(answer: delAnswer!): Tweet
+    addUser(user: newUser!): User
     addFollow(follow: userFollow!): User
-    delFollow(follow: userFollow!): User
+    deleteFollow(follow: userFollow!): User
+    addTweet(tweet: addTwInput!): TweetCreated
+    editTweet(tweet: editTwInput!): TweetCreated
+    deleteTweet(id: String!): Boolean!
+    favTweet(fav: favInput!): Boolean!
+    addAnswer(answer: addAnsInput!): Tweet
+    deleteAnswer(answer: delAnsInput!): Boolean!
+    updateAnswer(answer: updateAnsInput!): Tweet
   }
 
   schema {

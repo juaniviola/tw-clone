@@ -2,7 +2,7 @@ export default `
   # Type User definition
 
   type User {
-    _id: objectId!
+    _id: String!
     username: String!
     fullName: String!
     email: String!
@@ -11,19 +11,19 @@ export default `
   }
 
   input newUser {
-    username: String
-    email: String
-    fullName: String
-    password: String
+    username: String!
+    email: String!
+    fullName: String!
+    password: String!
   }
 
   input login {
-    username: String
-    password: String
+    username: String!
+    password: String!
   }
 
   input userFollow {
-    token: String
-    userToId: objectId
+    token: String!
+    userToId: String!
   }
 `;

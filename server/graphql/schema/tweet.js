@@ -3,7 +3,7 @@ export default `
   scalar Date
 
   type Tweet {
-    _id: objectId!
+    _id: String!
     user: User!
     description: String!
     createdAt: Date!
@@ -14,42 +14,60 @@ export default `
   }
 
   type Answer {
-    _id: objectId
+    _id: String
     user: User
     description: String
     createdAt: Date
   }
 
-  input newTweet {
-    token: String
-    description: String
+  type TweetCreated {
+    _id: String!
+    user: String!
+    description: String!
+    createdAt: Date!
   }
 
-  input editTweet {
-    _id: objectId,
-    description: String,
-    token: String
+  type AnswerCreatedAndUpdated {
+    description: String!
+    createdAt: String!
   }
 
-  input favTweet {
-    tweetId: objectId,
-    token: String
+  type AnswerCreated {
+    answers: AnswerCreatedAndUpdated!
   }
 
-  input addAnswer {
-    tweetId: objectId
-    description: String
-    token: String
+  # create tweet input
+  input addTwInput {
+    user: String!
+    description: String!
   }
 
-  input delAnswer {
-    tweetId: objectId
-    answerId: objectId
-    token: String
+  # update tweet input
+  input editTwInput {
+    _id: String!
+    description: String!
   }
 
-  input deleteTweet {
-    tweetId: objectId
-    token: String
+  # fav or unfav tweet input
+  input favInput {
+    id: String!
+    favorite: Boolean!
+  }
+
+  # answer tweet inputs
+  input addAnsInput {
+    tweetId: String!
+    description: String!
+  }
+
+  input delAnsInput {
+    tweetId: String!
+    answerId: String!
+  }
+
+  input updateAnsInput {
+    tweetId: String!
+    answerId: String!
+    description: String!
   }
 `;
