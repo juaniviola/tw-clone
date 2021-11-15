@@ -21,9 +21,4 @@ export default `
     username: String!
     password: String!
   }
-
-  input userFollow {
-    token: String!
-    userToId: String!
-  }
 `;

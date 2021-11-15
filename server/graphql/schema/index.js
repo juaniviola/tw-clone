@@ -21,8 +21,8 @@ export default gql`
 
   type Mutation {
     addUser(user: newUser!): User
-    addFollow(follow: userFollow!): User
-    deleteFollow(follow: userFollow!): User
+    addFollow(userId: String!): Boolean!
+    deleteFollow(userId: String!): Boolean!
     addTweet(tweet: addTwInput!): TweetCreated
     editTweet(tweet: editTwInput!): TweetCreated
     deleteTweet(id: String!): Boolean!
