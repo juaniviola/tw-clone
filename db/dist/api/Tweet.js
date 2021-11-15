@@ -46,8 +46,8 @@ var saveTweet = /*#__PURE__*/function () {
               user: user,
               description: description,
               createdAt: new Date(),
-              hashtags: _utils["default"].getHashtag(description) || [],
-              mentions: _utils["default"].getMentions(description) || []
+              hashtags: _utils["default"].getHashtag(description),
+              mentions: _utils["default"].getMentions(description)
             });
             return _context.abrupt("return", tweet.save());
 
@@ -215,7 +215,7 @@ var favorite = /*#__PURE__*/function () {
             return _context3.abrupt("return", _models.Tweet.findOneAndUpdate({
               _id: tweetId
             }, isFav, {
-              multi: true
+              "new": true
             }));
 
           case 5:
@@ -262,8 +262,10 @@ var updateTweet = /*#__PURE__*/function () {
               _id: id
             }, {
               description: description,
-              mentions: _utils["default"].getHashtag(description),
-              hashtags: _utils["default"].getMentions(description)
+              mentions: _utils["default"].getMentions(description),
+              hashtags: _utils["default"].getHashtag(description)
+            }, {
+              "new": true
             }));
 
           case 6:
@@ -341,6 +343,8 @@ var addAnswer = /*#__PURE__*/function () {
                   createdAt: new Date()
                 }
               }
+            }, {
+              "new": true
             }));
 
           case 6:
@@ -423,6 +427,8 @@ var updateAnswer = /*#__PURE__*/function () {
               $set: {
                 'answers.$.description': description
               }
+            }, {
+              "new": true
             }));
 
           case 4:
