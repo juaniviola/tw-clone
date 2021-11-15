@@ -2,7 +2,7 @@
 /* eslint-disable import/no-named-as-default */
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
-import database from '../../graphql/resolvers/Database';
+import database from '../../Database/Database';
 import connectDb from './db_handler';
 
 describe('test connection to database', () => {
@@ -15,6 +15,7 @@ describe('test connection to database', () => {
     expect(database.uri).toBeTruthy();
     expect(database.Tweet).toBeTruthy();
     expect(database.User).toBeTruthy();
+    expect(database.Utils).toBeTruthy();
   });
 
   it('get', async () => {
