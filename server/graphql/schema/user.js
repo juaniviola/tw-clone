@@ -16,9 +16,4 @@ export default `
     fullName: String!
     password: String!
   }
-
-  input login {
-    username: String!
-    password: String!
-  }
 `;

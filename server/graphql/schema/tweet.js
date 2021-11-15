@@ -20,6 +20,7 @@ export default `
     createdAt: Date
   }
 
+  # type for update tweet
   type TweetCreated {
     _id: String!
     user: String!
@@ -27,6 +28,7 @@ export default `
     createdAt: Date!
   }
 
+  # type for update or add answer
   type AnswerCreatedAndUpdated {
     description: String!
     createdAt: String!
