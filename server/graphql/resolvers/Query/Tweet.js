@@ -1,6 +1,6 @@
 /* eslint-disable import/no-named-as-default */
 /* eslint-disable import/no-named-as-default-member */
-import db from '../Database';
+import db from '../../../Database/Database';
 import { wrapAsync, verifyToken } from '../modules';
 import config from '../../../config';
 
@@ -16,10 +16,8 @@ const Querys = {
     return query;
   },
   tweetsByUser: async (_, { id }) => {
-    const query = await wrapAsync(
-      db.Tweet.getByUser,
-      wrapAsync(db.Utils.stringToObjectId, id),
-    );
+    const query = await wrapAsync(db.Tweet.getByUser, id);
+
     return query;
   },
   tweetsByFollowingUsers: async (_, { token }) => {

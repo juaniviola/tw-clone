@@ -1,6 +1,6 @@
 /* eslint-disable import/no-named-as-default */
 /* eslint-disable import/no-named-as-default-member */
-import db from '../Database';
+import db from '../../../Database/Database';
 import { wrapAsync } from '../modules';
 
 const Querys = {
