@@ -79,8 +79,8 @@ const deleteFollower = async ({ userFromId, userToId }) => {
 
 const getFollowers = async (id) => User.findOne({ _id: id })
   .select('username')
-  .populate({ path: 'following', select: { id: 1, username: 1, fullName: 1 } })
-  .populate({ path: 'followers', select: { id: 1, username: 1, fullName: 1 } });
+  .populate({ path: 'following', select: { _id: 1, username: 1, fullName: 1 } })
+  .populate({ path: 'followers', select: { _id: 1, username: 1, fullName: 1 } });
 
 export {
   saveUser,

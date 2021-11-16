@@ -208,14 +208,14 @@ var getFollowers = /*#__PURE__*/function () {
             }).select('username').populate({
               path: 'following',
               select: {
-                id: 1,
+                _id: 1,
                 username: 1,
                 fullName: 1
               }
             }).populate({
               path: 'followers',
               select: {
-                id: 1,
+                _id: 1,
                 username: 1,
                 fullName: 1
               }
