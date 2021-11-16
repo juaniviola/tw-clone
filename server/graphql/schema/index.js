@@ -12,10 +12,10 @@ export default gql`
     userById(id: String!): User
     userByUsername(username: String!): User
     usersByUsername(username: String!): [User!]
-    userFollowers(id: String!): [User!]
+    userFollowers(id: String!): Follower
     tweetById(id: String!): Tweet
     tweetsByUser(id: String!): [Tweet!]
-    tweetsByFollowingUsers(token: String!): [Tweet!]
+    tweetsByFollowingUsers: [Tweet!]
     tweetsByHashtag(hashtag: String!): [Tweet!]
   }
 

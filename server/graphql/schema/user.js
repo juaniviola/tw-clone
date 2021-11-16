@@ -10,6 +10,17 @@ export default `
     following: [User!]
   }
 
+  type UserFollower {
+    _id: String!
+    username: String!
+    fullName: String!
+  }
+
+  type Follower {
+    followers: [UserFollower!]
+    following: [UserFollower!]
+  }
+
   input newUser {
     username: String!
     email: String!

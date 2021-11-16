@@ -28,4 +28,7 @@ export default {
     _id: ({ _id }) => db.Utils.objectIdToString(_id),
     user: ({ user }) => db.Utils.objectIdToString(user),
   },
+  UserFollower: {
+    _id: ({ _id }) => db.Utils.objectIdToString(_id),
+  },
 };
