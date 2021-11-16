@@ -3,7 +3,7 @@
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 import database from '../../Database/Database';
-import connectDb from './db_handler';
+import connectDb from '../db_handler';
 
 describe('test connection to database', () => {
   beforeAll(async () => {
