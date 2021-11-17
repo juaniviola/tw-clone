@@ -22,6 +22,11 @@ const saveTweet = async (payload) => {
 const getById = async (id) => Tweet
   .findOne({ _id: id })
   .sort({ createdAt: -1 })
+  .populate({ path: 'user', options: { select: { _id: 1, username: 1, fullName: 1 } } });
+
+const getByIdPopulated = async (id) => Tweet
+  .findOne({ _id: id })
+  .sort({ createdAt: -1 })
   .populate({ path: 'user', options: { select: { _id: 1, username: 1, fullName: 1 } } })
   .populate({ path: 'favs', options: { select: { _id: 1, username: 1, fullName: 1 } } })
   .populate({ path: 'answers.user', options: { select: { _id: 1, username: 1, fullName: 1 } } });
@@ -40,9 +45,7 @@ const getByHashtags = (hashtag) => {
 const getByUser = (id) => Tweet
   .find({ user: id })
   .sort({ createdAt: -1 })
-  .populate({ path: 'user', options: { select: { _id: 1, username: 1, fullName: 1 } } })
-  .populate({ path: 'favs', options: { select: { _id: 1, username: 1, fullName: 1 } } })
-  .populate({ path: 'answers.user', options: { select: { _id: 1, username: 1, fullName: 1 } } });
+  .populate({ path: 'user', options: { select: { _id: 1, username: 1, fullName: 1 } } });
 
 const favorite = async ({ tweetId, fav, userId }) => {
   if (!mongoose.Types.ObjectId.isValid(userId) || !mongoose.Types.ObjectId.isValid(tweetId)) throw Error('Invalid id');
@@ -127,6 +130,7 @@ const tweetByFollowingUsers = async ({ id = null, offset = 0, limit = 30 } = {})
 export {
   saveTweet,
   getById,
+  getByIdPopulated,
   getByHashtags,
   getByUser,
   favorite,
