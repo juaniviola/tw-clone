@@ -80,6 +80,7 @@ var getById = /*#__PURE__*/function () {
               path: 'user',
               options: {
                 select: {
+                  _id: 1,
                   username: 1,
                   fullName: 1
                 }
@@ -88,6 +89,7 @@ var getById = /*#__PURE__*/function () {
               path: 'favs',
               options: {
                 select: {
+                  _id: 1,
                   username: 1,
                   fullName: 1
                 }
@@ -96,6 +98,7 @@ var getById = /*#__PURE__*/function () {
               path: 'answers.user',
               options: {
                 select: {
+                  _id: 1,
                   username: 1,
                   fullName: 1
                 }
@@ -127,6 +130,7 @@ var getByHashtags = function getByHashtags(hashtag) {
     path: 'user',
     options: {
       select: {
+        _id: 1,
         username: 1,
         fullName: 1
       }
@@ -135,6 +139,7 @@ var getByHashtags = function getByHashtags(hashtag) {
     path: 'favs',
     options: {
       select: {
+        _id: 1,
         username: 1,
         fullName: 1
       }
@@ -143,6 +148,7 @@ var getByHashtags = function getByHashtags(hashtag) {
     path: 'answers.user',
     options: {
       select: {
+        _id: 1,
         username: 1,
         fullName: 1
       }
@@ -161,6 +167,7 @@ var getByUser = function getByUser(id) {
     path: 'user',
     options: {
       select: {
+        _id: 1,
         username: 1,
         fullName: 1
       }
@@ -169,6 +176,7 @@ var getByUser = function getByUser(id) {
     path: 'favs',
     options: {
       select: {
+        _id: 1,
         username: 1,
         fullName: 1
       }
@@ -177,6 +185,7 @@ var getByUser = function getByUser(id) {
     path: 'answers.user',
     options: {
       select: {
+        _id: 1,
         username: 1,
         fullName: 1
       }
@@ -498,6 +507,7 @@ var tweetByFollowingUsers = /*#__PURE__*/function () {
               path: 'user',
               options: {
                 select: {
+                  _id: 1,
                   username: 1,
                   fullName: 1
                 }
@@ -506,6 +516,7 @@ var tweetByFollowingUsers = /*#__PURE__*/function () {
               path: 'favs',
               options: {
                 select: {
+                  _id: 1,
                   username: 1,
                   fullName: 1
                 }
@@ -514,6 +525,7 @@ var tweetByFollowingUsers = /*#__PURE__*/function () {
               path: 'answers.user',
               options: {
                 select: {
+                  _id: 1,
                   username: 1,
                   fullName: 1
                 }

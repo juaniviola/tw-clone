@@ -22,9 +22,9 @@ const saveTweet = async (payload) => {
 const getById = async (id) => Tweet
   .findOne({ _id: id })
   .sort({ createdAt: -1 })
-  .populate({ path: 'user', options: { select: { username: 1, fullName: 1 } } })
-  .populate({ path: 'favs', options: { select: { username: 1, fullName: 1 } } })
-  .populate({ path: 'answers.user', options: { select: { username: 1, fullName: 1 } } });
+  .populate({ path: 'user', options: { select: { _id: 1, username: 1, fullName: 1 } } })
+  .populate({ path: 'favs', options: { select: { _id: 1, username: 1, fullName: 1 } } })
+  .populate({ path: 'answers.user', options: { select: { _id: 1, username: 1, fullName: 1 } } });
 
 const getByHashtags = (hashtag) => {
   const htx = hashtag[0] === '#' ? hashtag : '#'.concat(hashtag);
@@ -32,17 +32,17 @@ const getByHashtags = (hashtag) => {
   return Tweet
     .find({ hashtags: htx.toLowerCase() })
     .sort({ createdAt: -1 })
-    .populate({ path: 'user', options: { select: { username: 1, fullName: 1 } } })
-    .populate({ path: 'favs', options: { select: { username: 1, fullName: 1 } } })
-    .populate({ path: 'answers.user', options: { select: { username: 1, fullName: 1 } } });
+    .populate({ path: 'user', options: { select: { _id: 1, username: 1, fullName: 1 } } })
+    .populate({ path: 'favs', options: { select: { _id: 1, username: 1, fullName: 1 } } })
+    .populate({ path: 'answers.user', options: { select: { _id: 1, username: 1, fullName: 1 } } });
 };
 
 const getByUser = (id) => Tweet
   .find({ user: id })
   .sort({ createdAt: -1 })
-  .populate({ path: 'user', options: { select: { username: 1, fullName: 1 } } })
-  .populate({ path: 'favs', options: { select: { username: 1, fullName: 1 } } })
-  .populate({ path: 'answers.user', options: { select: { username: 1, fullName: 1 } } });
+  .populate({ path: 'user', options: { select: { _id: 1, username: 1, fullName: 1 } } })
+  .populate({ path: 'favs', options: { select: { _id: 1, username: 1, fullName: 1 } } })
+  .populate({ path: 'answers.user', options: { select: { _id: 1, username: 1, fullName: 1 } } });
 
 const favorite = async ({ tweetId, fav, userId }) => {
   if (!mongoose.Types.ObjectId.isValid(userId) || !mongoose.Types.ObjectId.isValid(tweetId)) throw Error('Invalid id');
@@ -119,9 +119,9 @@ const tweetByFollowingUsers = async ({ id = null, offset = 0, limit = 30 } = {})
     .sort({ createdAt: -1 })
     .skip(offset)
     .limit(limit)
-    .populate({ path: 'user', options: { select: { username: 1, fullName: 1 } } })
-    .populate({ path: 'favs', options: { select: { username: 1, fullName: 1 } } })
-    .populate({ path: 'answers.user', options: { select: { username: 1, fullName: 1 } } });
+    .populate({ path: 'user', options: { select: { _id: 1, username: 1, fullName: 1 } } })
+    .populate({ path: 'favs', options: { select: { _id: 1, username: 1, fullName: 1 } } })
+    .populate({ path: 'answers.user', options: { select: { _id: 1, username: 1, fullName: 1 } } });
 };
 
 export {
