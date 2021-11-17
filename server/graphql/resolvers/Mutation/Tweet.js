@@ -20,6 +20,9 @@ const Mutations = {
     try {
       if (!userToken) throw Error(0);
 
+      const findTweet = await db.Tweet.getById(db.Utils.stringToObjectId(_id));
+      if (userToken !== db.Utils.objectIdToString(findTweet.user._id)) throw Error(0);
+
       const updateTweet = await db.Tweet.updateTweet({ id: _id, description });
 
       return updateTweet;
@@ -31,6 +34,9 @@ const Mutations = {
   deleteTweet: async (_, { id }, { userToken }) => {
     try {
       if (!userToken) throw Error(0);
+
+      const findTweet = await db.Tweet.getById(db.Utils.stringToObjectId(id));
+      if (userToken !== db.Utils.objectIdToString(findTweet.user._id)) throw Error(0);
 
       const deleteTweet = await db.Tweet.deleteTweet(db.Utils.stringToObjectId(id));
 
@@ -72,6 +78,10 @@ const Mutations = {
     try {
       if (!userToken) throw Error(0);
 
+      const findTweet = await db.Tweet.getById(db.Utils.stringToObjectId(tweetId));
+      const findAnswer = findTweet.answers.filter((answer) => db.Utils.objectIdToString(answer._id) === answerId);
+      if (findAnswer.length !== 1 || db.Utils.objectIdToString((findAnswer[0].user._id) !== userToken)) throw Error(0);
+
       await db.Tweet.deleteAnswer({ tweetId, answerId });
 
       return true;
@@ -83,6 +93,10 @@ const Mutations = {
   updateAnswer: async (_, { answer: { tweetId, answerId, description } }, { userToken }) => {
     try {
       if (!userToken) throw Error(0);
+
+      const findTweet = await db.Tweet.getById(db.Utils.stringToObjectId(tweetId));
+      const findAnswer = findTweet.answers.filter((answer) => db.Utils.objectIdToString(answer._id) === answerId);
+      if (findAnswer.length !== 1 || db.Utils.objectIdToString((findAnswer[0].user._id) !== userToken)) throw Error(0);
 
       const answerUpdated = await db.Tweet.updateAnswer({ tweetId, answerId, description });
 
