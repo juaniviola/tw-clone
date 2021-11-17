@@ -31,6 +31,26 @@ const Querys = {
       return null;
     }
   },
+
+  tweetFavorites: async (_, { id }) => {
+    try {
+      const query = await db.Tweet.getByIdPopulated(id);
+
+      return query.favs ? query.favs : null;
+    } catch (error) {
+      return null;
+    }
+  },
+
+  tweetAnswers: async (_, { id }) => {
+    try {
+      const query = await db.Tweet.getByIdPopulated(id);
+
+      return query.answers ? query.answers : null;
+    } catch (error) {
+      return null;
+    }
+  },
 };
 
 export default Querys;

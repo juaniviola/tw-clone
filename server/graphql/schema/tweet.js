@@ -7,8 +7,8 @@ export default `
     user: User!
     description: String!
     createdAt: Date!
-    favs: [User!]
-    answers: [Answer!]
+    favs: Int!
+    answers: Int!
     hashtags: [String!]
     mentions: [String!]
   }
@@ -18,6 +18,12 @@ export default `
     user: User
     description: String
     createdAt: Date
+  }
+
+  type Favorite {
+    _id: String!
+    username: String!
+    fullName: String!
   }
 
   # type for update tweet
@@ -40,13 +46,12 @@ export default `
     answers: [AnswerCreatedAndUpdated!]
   }
 
-  # create tweet input
+  # tweet inputs
   input addTwInput {
     user: String!
     description: String!
   }
 
-  # update tweet input
   input editTwInput {
     _id: String!
     description: String!

@@ -17,6 +17,8 @@ export default gql`
     tweetsByUser(id: String!): [Tweet!]
     tweetsByFollowingUsers: [Tweet!]
     tweetsByHashtag(hashtag: String!): [Tweet!]
+    tweetFavorites(id: String!): [Favorite!]
+    tweetAnswers(id: String!): [Answer!]
   }
 
   type Mutation {

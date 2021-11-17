@@ -20,6 +20,8 @@ export default {
   },
   Tweet: {
     _id: ({ _id }) => db.Utils.objectIdToString(_id),
+    favs: ({ favs }) => favs.length || 0,
+    answers: ({ answers }) => answers.length || 0,
   },
   Answer: {
     _id: ({ _id }) => db.Utils.objectIdToString(_id),
@@ -34,5 +36,8 @@ export default {
   AnswerCreatedAndUpdated: {
     _id: ({ _id }) => db.Utils.objectIdToString(_id),
     user: ({ user }) => db.Utils.objectIdToString(user),
+  },
+  Favorite: {
+    _id: ({ _id }) => db.Utils.objectIdToString(_id),
   },
 };
