@@ -9,11 +9,10 @@ class Database {
   }
 
   async connect(uri) {
-    if (this.connected) return;
-
     const db = await getDb();
+
     this.uri = uri;
-    this.Tweet = { ...db.Tweet};
+    this.Tweet = { ...db.Tweet };
     this.User = { ...db.User };
     this.Utils = { ...db.utils };
 
