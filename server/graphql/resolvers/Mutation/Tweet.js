@@ -4,11 +4,11 @@
 import db from '../../../Database/Database';
 
 const Mutations = {
-  addTweet: async (_, { tweet }, { userToken }) => {
+  addTweet: async (_, { description }, { userToken }) => {
     try {
       if (!userToken) throw Error(0);
 
-      const newTweet = await db.Tweet.saveTweet({ ...tweet, user: userToken });
+      const newTweet = await db.Tweet.saveTweet({ description, user: userToken });
 
       return newTweet;
     } catch (error) {
@@ -32,9 +32,9 @@ const Mutations = {
     try {
       if (!userToken) throw Error(0);
 
-      await db.Tweet.deleteTweet(db.Utils.stringToObjectId(id));
+      const deleteTweet = await db.Tweet.deleteTweet(db.Utils.stringToObjectId(id));
 
-      return true;
+      return !!deleteTweet;
     } catch (error) {
       return false;
     }
@@ -50,7 +50,7 @@ const Mutations = {
         userId: db.Utils.stringToObjectId(userToken),
       });
 
-      return favoriteTweet;
+      return !!favoriteTweet;
     } catch (error) {
       return false;
     }
@@ -86,7 +86,7 @@ const Mutations = {
 
       const answerUpdated = await db.Tweet.updateAnswer({ tweetId, answerId, description });
 
-      return answerUpdated;
+      return !!answerUpdated;
     } catch (error) {
       return null;
     }

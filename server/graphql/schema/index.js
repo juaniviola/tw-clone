@@ -23,13 +23,13 @@ export default gql`
     addUser(user: newUser!): User
     addFollow(userId: String!): Boolean!
     deleteFollow(userId: String!): Boolean!
-    addTweet(tweet: addTwInput!): TweetCreated
+    addTweet(description: String!): TweetCreated
     editTweet(tweet: editTwInput!): TweetCreated
     deleteTweet(id: String!): Boolean!
     favTweet(fav: favInput!): Boolean!
-    addAnswer(answer: addAnsInput!): Tweet
+    addAnswer(answer: addAnsInput!): AnswerCreated
     deleteAnswer(answer: delAnsInput!): Boolean!
-    updateAnswer(answer: updateAnsInput!): Tweet
+    updateAnswer(answer: updateAnsInput!): Boolean!
   }
 
   schema {

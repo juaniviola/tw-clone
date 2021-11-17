@@ -31,4 +31,8 @@ export default {
   UserFollower: {
     _id: ({ _id }) => db.Utils.objectIdToString(_id),
   },
+  AnswerCreatedAndUpdated: {
+    _id: ({ _id }) => db.Utils.objectIdToString(_id),
+    user: ({ user }) => db.Utils.objectIdToString(user),
+  },
 };

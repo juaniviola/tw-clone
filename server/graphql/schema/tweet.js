@@ -30,12 +30,14 @@ export default `
 
   # type for update or add answer
   type AnswerCreatedAndUpdated {
+    _id: String!
+    user: String!
     description: String!
     createdAt: String!
   }
 
   type AnswerCreated {
-    answers: AnswerCreatedAndUpdated!
+    answers: [AnswerCreatedAndUpdated!]
   }
 
   # create tweet input
