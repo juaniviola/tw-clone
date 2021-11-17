@@ -142,10 +142,13 @@ describe('Querys', () => {
   });
 
   describe('Tweet Querys', () => {
+    let tweetId;
+
     it('tweetById() --> it should return tweet created', async () => {
       const tweet = await database.Tweet.saveTweet({ user: mockUser2._id, description: 'hola #mundo' });
+      tweetId = database.Utils.objectIdToString(tweet._id);
 
-      const query = 'query($id: String!) { tweetById(id: $id) { user { username } description hashtags } }';
+      const query = 'query($id: String!) { tweetById(id: $id) { user { username } description hashtags favs } }';
 
       const resultQuery = await server.executeOperation({
         query,
@@ -156,6 +159,7 @@ describe('Querys', () => {
       expect(resultQuery.data.tweetById.user.username).toEqual(mockUser2.username);
       expect(resultQuery.data.tweetById.description).toEqual(tweet.description);
       expect(resultQuery.data.tweetById.hashtags[0]).toEqual('#mundo');
+      expect(resultQuery.data.tweetById.favs).toBe(0);
     });
 
     it('tweetsByUser() --> it should return 2 tweets by mockUser', async () => {
@@ -255,6 +259,52 @@ describe('Querys', () => {
           || user.username === mockUser4.username,
         ).length,
       ).toEqual(0);
+    });
+
+    it('tweetFavorites() --> it should return favs', async () => {
+      await database.Tweet.favorite({
+        tweetId,
+        fav: true,
+        userId: database.Utils.objectIdToString(mockUser._id),
+      });
+      await database.Tweet.favorite({
+        tweetId,
+        fav: true,
+        userId: database.Utils.objectIdToString(mockUser2._id),
+      });
+
+      const query = 'query($id: String!) { tweetFavorites(id: $id) { username } }';
+
+      const resultQuery = await server.executeOperation({
+        query,
+        variables: { id: tweetId },
+      });
+
+      expect(resultQuery.data.tweetFavorites).toBeTruthy();
+      expect(resultQuery.data.tweetFavorites.length).toBe(2);
+    });
+
+    it('tweetFavorites() --> it should return favs', async () => {
+      await database.Tweet.addAnswer({
+        tweetId,
+        description: 'true',
+        userId: database.Utils.objectIdToString(mockUser._id),
+      });
+      await database.Tweet.addAnswer({
+        tweetId,
+        description: 'false',
+        userId: database.Utils.objectIdToString(mockUser2._id),
+      });
+
+      const query = 'query($id: String!) { tweetAnswers(id: $id) { user { username } description } }';
+
+      const resultQuery = await server.executeOperation({
+        query,
+        variables: { id: tweetId },
+      });
+
+      expect(resultQuery.data.tweetAnswers).toBeTruthy();
+      expect(resultQuery.data.tweetAnswers.length).toBe(2);
     });
   });
 });

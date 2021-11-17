@@ -126,7 +126,7 @@ describe('Mutations', () => {
         variables: { fav: { id: tweetId, favorite: true } },
       });
 
-      const tweet = await database.Tweet.getById(tweetId);
+      const tweet = await database.Tweet.getByIdPopulated(tweetId);
 
       expect(resultQuery.data.favTweet).toBeTruthy();
       expect(tweet.favs.length).toBe(1);
@@ -153,7 +153,7 @@ describe('Mutations', () => {
         variables: { ans: { tweetId, description: 'hola!' } },
       });
 
-      const tweet = await database.Tweet.getById(tweetId);
+      const tweet = await database.Tweet.getByIdPopulated(tweetId);
       answerId = database.Utils.objectIdToString(tweet.answers[0]._id);
 
       expect(resultQuery.data.addAnswer).toBeTruthy();
