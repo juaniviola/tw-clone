@@ -1,7 +1,7 @@
 import { Tweet, User } from '../models';
 import utils from '../utils';
 
-const { getByHashtags, getMentions } = utils;
+const { getHashtag, getMentions } = utils;
 
 const saveTweet = async ({ user = null, description = null } = {}) => {
   const tweet = new Tweet({
