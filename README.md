@@ -1,6 +1,6 @@
-# 🐦🎉 Tweeter clone
+# 🐦🎉 Twitter clone
 
-Javascript full stack application, trying to copy Tweeter style.
+Javascript full stack application, trying to copy Twitter style.
 
 Using **MongoDB**, **GraphQL** and **Vue.js**
 
