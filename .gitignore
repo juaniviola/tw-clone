@@ -1,16 +1,42 @@
 .vscode
 
-server/node_modules
 server/package-lock.json
-server/.nyc_output
-server/coverage
+server/public/img
+server/.DS_Store
+server/node_modules
+server/dist
+server/.env.local
+server/.env.*.local
+server/npm-debug.log*
+server/yarn-debug.log*
+server/yarn-error.log*
+server/pnpm-debug.log*
 
-db/node_modules
 db/package-lock.json
-db/.nyc_output
-db/coverage
+db/public/img
+db/.DS_Store
+db/node_modules
+db/dist
+db/.env.local
+db/.env.*.local
+db/npm-debug.log*
+db/yarn-debug.log*
+db/yarn-error.log*
+db/pnpm-debug.log*
 
 client/node_modules
 client/package-lock.json
+
+twclone/yarn.lock
+twclone/public/img
+twclone/.DS_Store
+twclone/node_modules
+twclone/dist
+twclone/.env.local
+twclone/.env.*.local
+twclone/npm-debug.log*
+twclone/yarn-debug.log*
+twclone/yarn-error.log*
+twclone/pnpm-debug.log*
 
 prod
