@@ -3,6 +3,7 @@
 /* eslint-disable no-underscore-dangle */
 import express from 'express';
 import jwt from 'jsonwebtoken';
+import ms from 'ms';
 import { promisify } from 'util';
 import db from '../../Database/Database';
 import config from '../../config';
@@ -13,20 +14,22 @@ const { SECRET_TOKEN } = config;
 
 app.post('/login', async (req, res) => {
   const { username, password } = req.body;
+
   try {
     const user = await db.User.getByUsername(username);
 
-    const verifyToken = await db.User.comparePassword({ id: user._id, password });
-    if (!verifyToken) throw Error('Invalid credentials');
+    const comparePassword = await db.User.comparePassword({ id: user._id, password });
+    if (!comparePassword) throw Error('Invalid credentials');
 
-    const claimsToken = {
-      iss: user._id,
-      name: user.username,
-      // TODO: add exp
-    };
-    const token = await signToken(claimsToken, SECRET_TOKEN);
+    const claimsToken = { iss: user._id, name: user.username };
+    const token = await signToken(claimsToken, SECRET_TOKEN, { expiresIn: ms('7 days') });
 
-    res.cookie('user_token', token, { httpOnly: true });
+    res.cookie('user_token', token, {
+      httpOnly: true,
+      // secure: true,
+      maxAge: ms('7 days'),
+    });
+
     res.status(200).send('logged');
   } catch (error) {
     res.status(404).send('Error ocurred');
