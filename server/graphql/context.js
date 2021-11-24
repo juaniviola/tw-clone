@@ -8,25 +8,14 @@ import config from '../config';
 const { SECRET_TOKEN } = config;
 const verifyToken = promisify(jwt.verify);
 
-const deleteSpaces = (str) => {
-  let string = str;
-  while (string.includes(' ')) string = string.replace(' ', '');
+const getUserToken = (str) => str.split(' ').filter((cookie) => cookie.startsWith('user_token'));
 
-  return string;
-};
-
-const stringCookieToArray = (str) => {
-  const string = str;
-
-  return string
-    .split(';')
-    .join('')
-    .split('=');
-};
-
-const getCookieFromArray = (array, cookie) => {
-  const index = array.indexOf(cookie);
-  return index !== -1 ? array[index + 1] : null;
+const deleteWords = (str) => {
+  const [cookie] = str;
+  if (!cookie) return null;
+  return cookie
+    .replace('user_token=', '')
+    .replace(';', '');
 };
 
 export default async function context({ req }) {
@@ -34,7 +23,7 @@ export default async function context({ req }) {
     const { cookie } = req.headers;
     if (!cookie) throw Error('Invalid cookie');
 
-    const valueCookie = getCookieFromArray(stringCookieToArray(deleteSpaces(cookie)), 'user_token');
+    const valueCookie = deleteWords(getUserToken(cookie));
     if (!valueCookie) throw Error('Invalid value cookie');
 
     const token = await verifyToken(valueCookie, SECRET_TOKEN);
