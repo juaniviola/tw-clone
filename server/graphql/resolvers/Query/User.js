@@ -1,5 +1,5 @@
 /* eslint-disable import/no-named-as-default */
-/* eslint-disable import/no-named-as-default-member */
+/* eslint-disable import/no-named-as-default-member   */
 import db from '../../../Database/Database';
 import wrapAsync from '../modules';
 
@@ -24,6 +24,19 @@ const Querys = {
   userFollowers: async (_, { id }) => {
     const query = await wrapAsync(db.User.getFollowers, id);
     return query;
+  },
+
+  userLogged: async (_, __, { userToken }) => {
+    if (!userToken) return false;
+
+    try {
+      const user = await db.User.getById(userToken);
+      if (!user || !user.username) throw Error(0);
+
+      return true;
+    } catch (error) {
+      return false;
+    }
   },
 };
 
