@@ -8,6 +8,7 @@ const config = {
   COOKIE_SECRET: process.env.COOKIE_SECRET || 's3cr3t',
   PORT: process.env.PORT || 3000,
   NODE_ENV: process.env.ENV,
+  CLIENT_URI: process.env.CLIENT_URI || 'http://localhost:8080',
 };
 
 export default config;

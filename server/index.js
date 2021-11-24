@@ -12,7 +12,12 @@ import server from './graphql';
 import database from './Database/Database';
 import config from './config';
 
-const { PORT, URL_DB, NODE_ENV } = config;
+const {
+  PORT,
+  URL_DB,
+  NODE_ENV,
+  CLIENT_URI,
+} = config;
 
 process.on('uncaughtException', (err) => {
   console.error(err.message);
@@ -28,7 +33,7 @@ async function runServer() {
   const isEnvDev = NODE_ENV === 'dev';
   const app = express();
   app.use(helmet());
-  app.use(cors());
+  app.use(cors({ origin: CLIENT_URI, credentials: true }));
   app.use(express.json());
   app.use(express.urlencoded({
     extended: true,
