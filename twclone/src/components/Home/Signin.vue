@@ -2,8 +2,7 @@
   <div class="signin">
     <section>
       <div class="logo">
-        <img src="/twitter.svg" alt="tw logo" height="64" width="71" />
-        <h3>Twitter</h3>
+        <img src="/tweeter.svg" alt="tw logo" height="30" width="126" />
       </div>
 
       <div class="form">

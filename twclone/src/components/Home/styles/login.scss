@@ -4,8 +4,10 @@
   justify-content: center;
   align-items: center;
   font-family: 'Lato', sans-serif;
+  background-color: #f2f2f2;
 
   section {
+    background-color: white;
     font-size: 18px;
     width: 33%;
     margin-left: 33.5%;
@@ -18,13 +20,10 @@
 }
 
 .logo {
-  display: flex;
-  flex-direction: row;
-  font-family: 'Architects Daughter', cursive;
-  font-size: 1em;
-
   img {
     margin-right: 10px;
+    width: 8em;
+    height: 2em;
   }
 }
 

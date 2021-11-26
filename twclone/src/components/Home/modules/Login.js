@@ -5,9 +5,7 @@ const setLoading = (isLoading) => {
   const [password] = document.getElementsByName('password');
   const [email] = document.getElementsByName('email');
   const [fullName] = document.getElementsByName('fullName');
-  const errorToast = document.getElementById('error_toast');
 
-  errorToast.className = 'disabled';
   if (isLoading) {
     button.disabled = true;
     text.className = 'disabled';
@@ -25,8 +23,8 @@ const setLoading = (isLoading) => {
     username.disabled = false;
     password.disabled = false;
     if (!!email || !!fullName) {
-      email.disabled = true;
-      fullName.disabled = true;
+      email.disabled = false;
+      fullName.disabled = false;
     }
   }
 };
