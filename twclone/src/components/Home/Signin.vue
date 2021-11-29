@@ -34,8 +34,8 @@
       </div>
 
       <div class="login">
-        <span
-          >Don't have an account?
+        <span>
+          Don't have an account?
           <a href="#" @click="$emit('changeScreen', 'signup')"> Sign up </a>
         </span>
       </div>
@@ -46,6 +46,7 @@
 <script>
 import axios from 'axios';
 import { setLoading, setError } from './modules/Login';
+import eventBus from '@/utils/EventBus';
 
 // TODO: import from config file
 const serverUrl = 'http://localhost:3000';
@@ -83,6 +84,7 @@ export default {
           { withCredentials: true },
         );
 
+        eventBus.emit('user_logged', true);
         this.$emit('changeScreen', 'home');
       } catch (error) {
         if (error.response?.status === 404) this.setErrorToast('Usuario o Contraseña invalidos.');
