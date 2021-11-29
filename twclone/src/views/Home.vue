@@ -20,6 +20,7 @@ import Hello from '@/components/HelloWorld.vue';
 import LoadingComponent from '@/components/Home/Loading.vue';
 import Signin from '@/components/Home/Signin.vue';
 import Signup from '@/components/Home/Signup.vue';
+import eventBus from '@/utils/EventBus';
 
 export default {
   name: 'Home',
@@ -54,6 +55,7 @@ export default {
       if (query.data.userLogged) {
         this.userLogged = true;
         this.selectedScreen = 'home';
+        eventBus.emit('user_logged', true);
       } else this.userLogged = false;
     } catch (e) {
       this.userLogged = false;
