@@ -69,6 +69,7 @@
       background-color: white;
       border-radius: 6px;
       border: 0.5px solid #828282;
+      animation: dropdownAnimation .5s ease;
 
       .btn {
         display: flex;
@@ -109,7 +110,7 @@
       }
 
       .line {
-        border-bottom: 1px solid #828282;
+        border-bottom: 2px solid #f2f2f2;
         margin: 10px 10px;
       }
     }
@@ -120,9 +121,13 @@
   }
 }
 
-// @media (max-width: 760px) {}
+// media
 
 @media (max-width: 745px) {
+  .header {
+    padding: 2%;
+  }
+
   .buttons {
     display: none;
   }
@@ -133,10 +138,17 @@
     }
 
     .menu {
-      top: 3em !important;
+      top: 4em !important;
       right: 1em !important;
     }
   }
+}
+
+// animations
+
+@keyframes dropdownAnimation {
+  0% { margin-top: -15%; }
+  100% { margin-top: 0; }
 }
 
 // helpers

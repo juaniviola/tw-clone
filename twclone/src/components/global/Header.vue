@@ -4,19 +4,10 @@
       <img src="/tweeter.svg" alt="logo" height="30" width="126" />
     </div>
 
-    <div class="buttons">
-      <button
-        v-for="btn in buttons" :key="btn.id"
-        :id="btn.id"
-        @click="activeButton(btn.id)">
-          {{ btn.name }}
-      </button>
-    </div>
-
     <div class="profile">
       <div class="menuToggle" @click="showMenu">
         <img src="/user.svg" alt="asd" />
-        <span>Juani Viola</span>
+        <span>{{ username }}</span>
       </div>
 
       <div id="menu" class="menu hidden">
@@ -47,21 +38,14 @@ export default {
     return {
       menuActive: false,
       selectedItem: 'home_btn',
-      buttons: [
-        { name: 'Home', id: 'home_btn' },
-        { name: 'Explore', id: 'explore_btn' },
-        { name: 'Bookmarks', id: 'bookm_btn' },
-      ],
     };
   },
 
-  methods: {
-    activeButton(el) {
-      document.getElementById(this.selectedItem).className = '';
-      document.getElementById(el).className = 'selected_button';
-      this.selectedItem = el;
-    },
+  props: {
+    username: String,
+  },
 
+  methods: {
     showMenu() {
       this.menuActive = !this.menuActive;
       if (this.menuActive) {
@@ -70,10 +54,6 @@ export default {
         document.getElementById('menu').className = 'menu hidden';
       }
     },
-  },
-
-  mounted() {
-    document.getElementById(this.selectedItem).className = 'selected_button';
   },
 };
 </script>
