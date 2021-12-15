@@ -1,0 +1,28 @@
+.disabled {
+  display: none;
+}
+
+.snackbar {
+  position: fixed;
+  text-align: center;
+  background-color: black;
+  color: white;
+  padding: 1%;
+  margin: 0 auto;
+  right: 0;
+  bottom: 10px;
+  left: 0;
+  width: 250px;
+  border-radius: 7px;
+  animation: appear .5s ease;
+}
+
+@keyframes appear {
+  0% {
+    width: 0;
+  }
+
+  100% {
+    width: 250px;
+  }
+}

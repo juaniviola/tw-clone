@@ -1,0 +1,119 @@
+.card {
+  margin: 2% 5%;
+  background-color: white;
+  border-radius: 10px;
+  padding: 2%;
+  font-family: 'Lato', sans-serif;
+
+  .nickname {
+    .name {
+      font-weight: 600;
+      font-size: 1em;
+    }
+
+    .date {
+      color: #828282;
+      font-size: .7em;
+    }
+  }
+
+  .tweet {
+    word-wrap: break-word;
+
+    p {
+      color: #4f4f4f;
+    }
+  }
+
+  .numbers {
+    text-align: right;
+
+    span {
+      font-size: .8em;
+      font-weight: bold;
+      color: #828282;
+
+      &:last-child {
+        margin-left: 1%;
+      }
+    }
+  }
+
+  .line {
+    border-bottom: 2px solid #f2f2f2;
+  }
+
+  .buttons {
+    margin: .25% 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    button {
+      font-family: 'Lato', sans-serif;
+      font-size: 1em;
+      padding: 1% 5%;
+      display: flex;
+      justify-content: center;
+      border: none;
+      background-color: white;
+
+      &:hover {
+        cursor: pointer;
+        background-color: #f2f2f2;
+        border-radius: 10px;
+      }
+
+      img {
+        margin-right: 5%;
+      }
+
+      .liked {
+        filter: invert(23%) sepia(66%) saturate(4391%) hue-rotate(0deg) brightness(98%) contrast(112%);
+      }
+
+      .retweeted {
+        filter: invert(50%) sepia(16%) saturate(2076%) hue-rotate(92deg) brightness(109%) contrast(79%);
+      }
+    }
+  }
+
+  .reply {
+    display: flex;
+    margin: 1% 0;
+    input {
+      flex: 2;
+      background-color: #fafafa;
+      color: #4f4f4f;
+      outline: none;
+      border: 1px solid #f2f2f2;
+      font-family: 'Lato', sans-serif;
+      font-size: 1em;
+      padding: 1%;
+      border-radius: 7px;
+    }
+  }
+
+  .replies {
+    &:first-child {
+      margin-top: 1%;
+    }
+
+    &:last-child {
+      margin-bottom: -1%;
+    }
+  }
+}
+
+
+@media (max-width: 745px) {
+  .card {
+    padding: 5%;
+
+    .reply {
+      margin: 3% 0;
+    }
+  }
+}
+
+
