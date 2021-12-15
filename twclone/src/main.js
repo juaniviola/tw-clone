@@ -1,5 +1,5 @@
 import { createApp } from 'vue';
-import apolloProvider from './ApolloProvider';
+import apolloProvider from './utils/ApolloProvider';
 import App from './App.vue';
 import './registerServiceWorker';
 import router from './router';
