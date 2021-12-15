@@ -1,0 +1,129 @@
+.signin {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: 'Lato', sans-serif;
+  background-color: #f2f2f2;
+
+  section {
+    background-color: white;
+    font-size: 18px;
+    width: 33%;
+    margin-left: 33.5%;
+    margin-right: 33.5%;
+    border-radius: 10px;
+    display: inline-block;
+    border: 1px #bdbdbd solid;
+    padding: 4%;
+  }
+}
+
+.logo {
+  img {
+    margin-right: 10px;
+    width: 8em;
+    height: 2em;
+  }
+}
+
+.form {
+  form {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+
+    .username__signin {
+      background: url('/user.svg') no-repeat scroll 7px 7px;
+      padding-left: 40px;
+    }
+
+    .password__signin {
+      background: url('/password.svg') no-repeat scroll 7px 7px;
+      padding-left: 40px;
+    }
+
+    .error_toast {
+      color: #bb494f;
+      background-color: #ebc8c4;
+      margin-bottom: 10px;
+      padding: 5px;
+      border-radius: 5px;
+      border: 1px #bb494f solid;
+    }
+
+    button {
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      font-family: 'Lato', sans-serif;
+      cursor: pointer;
+      border: none;
+      background-color: #2f80ed;
+      border-radius: 5px;
+      padding: 10px;
+      color: white;
+      font-weight: 500;
+      font-size: 1em;
+
+      .loading_btn {
+        border: 3px solid rgba(0, 0, 0, 0.1);
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        border-left-color: white;
+        animation: spin 1s ease infinite;
+      }
+    }
+  }
+}
+
+.disabled {
+  display: none;
+}
+
+input {
+  font-family: 'Lato', sans-serif;
+  font-size: 1em;
+  border: 1px #bdbdbd solid;
+  border-radius: 5px;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+.login {
+  text-align: center;
+  span {
+    color: #bdbdbd;
+
+    a {
+      text-decoration: none;
+      color: #2d9cdb;
+    }
+  }
+}
+
+@media (max-width: 767.98px) {
+  .signin {
+    justify-content: center;
+    align-items: flex-start;
+    background-color: white;
+
+    section {
+      text-align: left;
+      margin: 0;
+      width: 100%;
+      border: none;
+    }
+  }
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
