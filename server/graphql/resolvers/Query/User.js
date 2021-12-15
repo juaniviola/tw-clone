@@ -38,6 +38,19 @@ const Querys = {
       return false;
     }
   },
+
+  userInfo: async (_, __, { userToken }) => {
+    if (!userToken) return null;
+
+    try {
+      const user = await db.User.getById(userToken);
+      if (!user || !user.username) throw Error(0);
+
+      return user;
+    } catch (e) {
+      return null;
+    }
+  },
 };
 
 export default Querys;

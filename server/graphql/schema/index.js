@@ -9,6 +9,7 @@ export default gql`
 
   type Query {
     hello(name: String): String
+    userInfo: User
     userLogged: Boolean!
     userById(id: String!): User
     userByUsername(username: String!): User
@@ -30,7 +31,7 @@ export default gql`
     editTweet(tweet: editTwInput!): TweetCreated
     deleteTweet(id: String!): Boolean!
     favTweet(fav: favInput!): Boolean!
-    addAnswer(answer: addAnsInput!): AnswerCreated
+    addAnswer(answer: addAnsInput!): AnswerCreatedAndUpdated
     deleteAnswer(answer: delAnsInput!): Boolean!
     updateAnswer(answer: updateAnsInput!): Boolean!
   }
