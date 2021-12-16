@@ -1,26 +1,23 @@
 <template>
   <div>
-    <LoadingComponent v-if="loading" />
-
     <Signin
-      v-if="!loading && !userLogged && selectedScreen === 'signin'"
+      v-if="!userLogged && selectedScreen === 'signin'"
       @changeScreen='screenSelection'/>
 
     <Signup
-      v-if="!loading && !userLogged && selectedScreen === 'signup'"
+      v-if="!userLogged && selectedScreen === 'signup'"
       @changeScreen='screenSelection'/>
 
-    <Home v-if="!loading && userLogged && selectedScreen === 'home'" />
+    <Home v-if="userLogged && selectedScreen === 'home'" />
   </div>
 </template>
 
 <script>
-import gql from 'graphql-tag';
 import Home from '@/components/Home/Home.vue';
-import LoadingComponent from '@/components/Welcome/Loading.vue';
 import Signin from '@/components/Welcome/Signin.vue';
 import Signup from '@/components/Welcome/Signup.vue';
-import eventBus from '@/utils/EventBus';
+import globalState from '@/utils/GlobalState';
+import EventBus from '@/utils/EventBus';
 
 export default {
   name: 'Welcome',
@@ -29,12 +26,10 @@ export default {
     Home,
     Signin,
     Signup,
-    LoadingComponent,
   },
 
   data() {
     return {
-      loading: true,
       userLogged: false,
       selectedScreen: 'signup',
     };
@@ -44,24 +39,16 @@ export default {
     screenSelection(selected) {
       this.selectedScreen = selected;
 
-      if (selected === 'home') this.userLogged = true;
+      if (selected === 'home') {
+        this.userLogged = true;
+        EventBus.emit('userLogged');
+      }
     },
   },
 
-  async created() {
-    try {
-      const query = await this.$apollo.query({ query: gql`query { userLogged }` });
-
-      if (query.data.userLogged) {
-        this.userLogged = true;
-        this.selectedScreen = 'home';
-        eventBus.emit('user_logged', true);
-      } else this.userLogged = false;
-    } catch (e) {
-      this.userLogged = false;
-    } finally {
-      this.loading = false;
-    }
+  mounted() {
+    this.userLogged = globalState.getUserIsLogged();
+    if (this.userLogged) this.selectedScreen = 'home';
   },
 };
 </script>

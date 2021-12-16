@@ -30,7 +30,7 @@ app.post('/login', async (req, res) => {
       maxAge: ms('7 days'),
     });
 
-    res.status(200).send('logged');
+    res.status(200).send({ _id: user._id, username: user.username });
   } catch (error) {
     res.status(404).send('Error ocurred');
   }

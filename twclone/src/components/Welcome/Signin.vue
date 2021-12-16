@@ -46,7 +46,7 @@
 <script>
 import axios from 'axios';
 import { setLoading, setError } from './modules/Login';
-import eventBus from '@/utils/EventBus';
+import globalState from '@/utils/GlobalState';
 
 // TODO: import from config file
 const serverUrl = 'http://localhost:3000';
@@ -58,6 +58,7 @@ export default {
       password: '',
     };
   },
+
   methods: {
     clearInputs() {
       this.username = '';
@@ -78,13 +79,14 @@ export default {
       this.setLoadingForm(true);
 
       try {
-        await axios.post(
+        const userLogged = await axios.post(
           serverUrl.concat('/login'),
           { username, password },
           { withCredentials: true },
         );
 
-        eventBus.emit('user_logged', true);
+        globalState.setIsUserLogged(true);
+        globalState.setUser(userLogged.data);
         this.$emit('changeScreen', 'home');
       } catch (error) {
         if (error.response?.status === 404) this.setErrorToast('Usuario o Contraseña invalidos.');

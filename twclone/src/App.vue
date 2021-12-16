@@ -1,25 +1,30 @@
 <template>
   <div>
-    <Header v-if="userLogged" :username="username" />
-    <router-view/>
+    <Header v-if="!loading && userLogged" :username="username" />
+    <LoadingComponent v-if="loading" />
+    <router-view v-if="!loading"/>
   </div>
 </template>
 
 <script>
 import gql from 'graphql-tag';
 import Header from '@/components/global/Header.vue';
-import eventBus from '@/utils/EventBus';
+import LoadingComponent from '@/components/Welcome/Loading.vue';
+import globalState from '@/utils/GlobalState';
+import EventBus from '@/utils/EventBus';
 
 export default {
   data() {
     return {
       userLogged: false,
       username: '',
+      loading: true,
     };
   },
 
   components: {
     Header,
+    LoadingComponent,
   },
 
   methods: {
@@ -37,23 +42,29 @@ export default {
           `,
         });
 
-        if (user.data?.userInfo) {
-          this.username = user.data.userInfo.username;
-          localStorage.setItem('user', JSON.stringify(user.data.userInfo));
-        }
-      } catch (error) {
-        return null;
-      }
+        if (!user.data?.userInfo) return;
 
-      return 0;
+        this.userLogged = true;
+        this.username = user.data.userInfo.username;
+        globalState.setUser(user.data.userInfo);
+        globalState.setIsUserLogged(true);
+      } catch (error) {
+        this.userLogged = false;
+      } finally {
+        this.loading = false;
+      }
     },
   },
 
-  mounted() {
-    eventBus.on('user_logged', async (isLogged) => {
-      this.userLogged = isLogged;
-      if (isLogged) await this.saveUserInfoInStorage();
+  created() {
+    EventBus.on('userLogged', () => {
+      this.userLogged = globalState.isUserLogged;
+      this.username = globalState.user.username;
     });
+  },
+
+  async mounted() {
+    await this.saveUserInfoInStorage();
   },
 };
 </script>

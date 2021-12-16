@@ -9,6 +9,10 @@
   .username {
     font-weight: bold;
     margin-right: 1%;
+
+    &:hover {
+      cursor: pointer;
+    }
   }
 
   .date {

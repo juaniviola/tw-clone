@@ -1,7 +1,10 @@
 <template>
   <div class="card">
     <div class="nickname">
-      <span class="name">{{ user.username }}</span><br>
+      <span
+        class="name"
+        @click="goToUserPage"
+        >{{ user.username }}</span><br>
       <span class="date">{{ createdAt }}</span>
     </div>
 
@@ -71,10 +74,10 @@
 
 <script>
 /* eslint-disable no-underscore-dangle */
-// TODO: trash button for delete
 import gql from 'graphql-tag';
 import Replies from '@/components/Home/TweetReplies.vue';
 import setSnackbar from '@/components/Home/modules/Snackbar';
+import globalState from '@/utils/GlobalState';
 
 export default {
   data() {
@@ -102,11 +105,15 @@ export default {
   },
 
   methods: {
+    goToUserPage() {
+      return this.$router.push({ name: 'User', params: { username: this.user.username } });
+    },
+
     setSnackbar(message) { return setSnackbar(message); },
 
     isLiked(favorites) {
       const image = document.getElementById(this._id);
-      const userId = JSON.parse(localStorage.getItem('user'))._id;
+      const userId = globalState.getUser()._id;
 
       favorites.forEach((favs) => {
         if (favs._id === userId) {
@@ -153,7 +160,7 @@ export default {
     async submitAnswer() {
       if (!this.answer) return;
 
-      const user = JSON.parse(localStorage.getItem('user'));
+      const user = globalState.getUser();
       const input = document.getElementById('tweet_input');
       input.disabled = true;
 
@@ -261,7 +268,7 @@ export default {
   async mounted() {
     await this.getRepliesAndFavorites();
 
-    const user = JSON.parse(localStorage.getItem('user'));
+    const user = globalState.getUser();
     if (!user || !user._id) return;
 
     if (user._id === this.user._id) this.owner = true;

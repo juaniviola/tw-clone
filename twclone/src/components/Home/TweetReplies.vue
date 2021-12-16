@@ -1,7 +1,10 @@
 <template>
   <div class="replies">
     <div>
-      <span class="username">{{ user.username }}</span>
+      <span
+        class="username"
+        @click="goToUserPage"
+        >{{ user.username }}</span>
       <span class="date">{{ createdAtFormatted }}</span>
     </div>
 
@@ -26,6 +29,7 @@
 import gql from 'graphql-tag';
 import moment from 'moment';
 import setSnackbar from '@/components/Home/modules/Snackbar';
+import globalState from '@/utils/GlobalState';
 
 export default {
   data() {
@@ -43,6 +47,10 @@ export default {
   },
 
   methods: {
+    goToUserPage() {
+      return this.$router.push({ name: 'User', params: { username: this.user.username } });
+    },
+
     setSnackbar(message) { return setSnackbar(message); },
 
     async deleteAnswer() {
@@ -72,7 +80,7 @@ export default {
 
   mounted() {
     this.createdAtFormatted = moment(this.createdAt).format('MMM Do YY');
-    const user = JSON.parse(localStorage.getItem('user'));
+    const user = globalState.getUser();
     if (!user || !user._id || user._id !== this.user._id) return;
 
     document.getElementById(this._id).className = 'delete';
