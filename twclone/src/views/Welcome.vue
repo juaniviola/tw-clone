@@ -42,13 +42,21 @@ export default {
       if (selected === 'home') {
         this.userLogged = true;
         EventBus.emit('userLogged');
+        return;
       }
+
+      EventBus.emit('selectedScreen', 'login');
     },
   },
 
   mounted() {
     this.userLogged = globalState.getUserIsLogged();
-    if (this.userLogged) this.selectedScreen = 'home';
+    if (this.userLogged) {
+      this.selectedScreen = 'home';
+      return;
+    }
+
+    EventBus.emit('selectedScreen', 'login');
   },
 };
 </script>

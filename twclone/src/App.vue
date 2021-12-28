@@ -1,8 +1,11 @@
 <template>
   <div>
-    <Header v-if="!loading && userLogged" :username="username" />
-    <LoadingComponent v-if="loading" />
-    <router-view v-if="!loading"/>
+    <Header
+      v-if="!loading && this.route !== 'login'"
+      :username="username"
+      :userLogged="userLogged" />
+    <LoadingComponent v-show="loading" />
+    <router-view :key="key" v-if="!loading"/>
   </div>
 </template>
 
@@ -16,9 +19,11 @@ import EventBus from '@/utils/EventBus';
 export default {
   data() {
     return {
+      key: this.$route.path,
       userLogged: false,
       username: '',
       loading: true,
+      route: '',
     };
   },
 
@@ -60,6 +65,11 @@ export default {
     EventBus.on('userLogged', () => {
       this.userLogged = globalState.isUserLogged;
       this.username = globalState.user.username;
+      this.route = 'home';
+    });
+
+    EventBus.on('selectedScreen', (screen) => {
+      this.route = screen;
     });
   },
 
@@ -75,5 +85,6 @@ export default {
   html, body {
     height: 100%;
     margin: 0;
+    box-sizing: border-box;
   }
 </style>
