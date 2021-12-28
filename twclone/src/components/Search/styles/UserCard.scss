@@ -1,0 +1,52 @@
+.user_card {
+  display: flex;
+  justify-content: space-between;
+  background-color: white;
+  margin: 0 10%;
+  font-family: 'Lato', sans-serif;
+  border-radius: 7px;
+  border-bottom: 1px solid #828282;
+
+  .info {
+    padding: 1% 2%;
+
+    span {
+      color: #828282;
+      font-weight: bold;
+      font-size: .9em;
+    }
+
+    h3 {
+      margin: 0 0 20px 0;
+      padding: 0;
+    }
+  }
+
+  .follow {
+    padding: 1% 2%;
+
+    button {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #2f80ed;
+      color: white;
+      border: none;
+      border-radius: 7px;
+      padding: .4em .8em;
+
+      &:hover {
+        cursor: pointer;
+      }
+
+      span {
+        font-weight: bold;
+        margin-left: 15%;
+      }
+    }
+
+    .unfollow {
+      background-color: red;
+    }
+  }
+}
