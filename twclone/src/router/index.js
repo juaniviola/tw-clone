@@ -5,11 +5,19 @@ const routes = [
     path: '/',
     name: 'Welcome',
     component: () => import('@/views/Welcome.vue'),
+    meta: { reuse: false },
   },
   {
     path: '/user/:username',
     name: 'User',
     component: () => import('@/views/User.vue'),
+    meta: { reuse: false },
+  },
+  {
+    path: '/search',
+    name: 'Search',
+    component: () => import('@/views/Search.vue'),
+    meta: { reuse: false },
   },
 ];
 
