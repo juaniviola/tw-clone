@@ -43,6 +43,17 @@ const getByUser = (id) => Tweet
   .sort({ createdAt: -1 })
   .populate({ path: 'user', options: { select: { _id: 1, username: 1, fullName: 1 } } });
 
+const getByUsername = (username) => Tweet
+  .find({ username: username.toString().trim() })
+  .sort({ createdAt: -1 })
+  .populate({ path: 'user', options: { select: { _id: 1, username: 1, fullName: 1 } } });
+
+const getLikesByUser = (_id) => Tweet
+  .find({ favs: _id })
+  .populate({ path: 'user', options: { select: { _id: 1, username: 1, fullName: 1 } } })
+  .populate({ path: 'favs', options: { select: { _id: 1, username: 1, fullName: 1 } } })
+  .populate({ path: 'answers.user', options: { select: { _id: 1, username: 1, fullName: 1 } } });
+
 const favorite = async ({ tweetId = null, fav = false, userId = null } = {}) => {
   const isFav = fav ? { $push: { favs: userId } } : { $pull: { favs: userId } };
 
@@ -109,6 +120,7 @@ export {
   getByIdPopulated,
   getByHashtags,
   getByUser,
+  getByUsername,
   favorite,
   updateTweet,
   deleteTweet,
@@ -116,4 +128,5 @@ export {
   deleteAnswer,
   updateAnswer,
   tweetByFollowingUsers,
+  getLikesByUser,
 };

@@ -67,13 +67,24 @@ describe('Tweet api', () => {
     expect(tweet[0]._id).toEqual(tweetCreated._id);
   });
 
-  it('getByUser() --> it should return 3 tweets by username', async () => {
+  it('getByUser() --> it should return 3 tweets by userId', async () => {
     const userId = userCreated._id;
     await Tweet.saveTweet({ user: userId, description: '2' });
     await Tweet.saveTweet({ user: userId, description: '3' });
 
     const tweets = await Tweet.getByUser(userId);
     tweetsByUserA += 2;
+
+    expect(tweets).toBeTruthy();
+    expect(tweets.length).toBe(3);
+    expect(tweets[1].description).toEqual('2');
+    expect(tweets[0].description).toEqual('3');
+  });
+
+  it('getByUsername() --> it should return 3 tweets by username', async () => {
+    const { username } = userCreated;
+
+    const tweets = await Tweet.getByUsername(username);
 
     expect(tweets).toBeTruthy();
     expect(tweets.length).toBe(3);
@@ -146,7 +157,17 @@ describe('Tweet api', () => {
     expect(tweet.favs[0]._id).toEqual(userCreatedB._id);
   });
 
-  it('favorite() --> should add favorite to tweet', async () => {
+  it('getLikesByUser() --> should return tweet liked by user createdB', async () => {
+    const id = userCreatedB._id;
+
+    const tweets = await Tweet.getLikesByUser(id);
+
+    expect(tweets).toBeTruthy();
+    expect(tweets.length).toBe(1);
+    expect(tweets[0]._id).toEqual(tweetCreated._id);
+  });
+
+  it('favorite() --> should delete favorite to tweet', async () => {
     const userId = userCreatedB._id;
     const tweetId = tweetCreated._id;
 

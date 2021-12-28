@@ -5,7 +5,7 @@ var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefau
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.updateTweet = exports.updateAnswer = exports.tweetByFollowingUsers = exports.saveTweet = exports.getByUser = exports.getByIdPopulated = exports.getById = exports.getByHashtags = exports.favorite = exports.deleteTweet = exports.deleteAnswer = exports.addAnswer = void 0;
+exports.updateTweet = exports.updateAnswer = exports.tweetByFollowingUsers = exports.saveTweet = exports.getLikesByUser = exports.getByUsername = exports.getByUser = exports.getByIdPopulated = exports.getById = exports.getByHashtags = exports.favorite = exports.deleteTweet = exports.deleteAnswer = exports.addAnswer = void 0;
 
 var _regenerator = _interopRequireDefault(require("@babel/runtime/regenerator"));
 
@@ -203,6 +203,60 @@ var getByUser = function getByUser(id) {
 };
 
 exports.getByUser = getByUser;
+
+var getByUsername = function getByUsername(username) {
+  return _models.Tweet.find({
+    username: username.toString().trim()
+  }).sort({
+    createdAt: -1
+  }).populate({
+    path: 'user',
+    options: {
+      select: {
+        _id: 1,
+        username: 1,
+        fullName: 1
+      }
+    }
+  });
+};
+
+exports.getByUsername = getByUsername;
+
+var getLikesByUser = function getLikesByUser(_id) {
+  return _models.Tweet.find({
+    favs: _id
+  }).populate({
+    path: 'user',
+    options: {
+      select: {
+        _id: 1,
+        username: 1,
+        fullName: 1
+      }
+    }
+  }).populate({
+    path: 'favs',
+    options: {
+      select: {
+        _id: 1,
+        username: 1,
+        fullName: 1
+      }
+    }
+  }).populate({
+    path: 'answers.user',
+    options: {
+      select: {
+        _id: 1,
+        username: 1,
+        fullName: 1
+      }
+    }
+  });
+};
+
+exports.getLikesByUser = getLikesByUser;
 
 var favorite = /*#__PURE__*/function () {
   var _ref5 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee4() {
