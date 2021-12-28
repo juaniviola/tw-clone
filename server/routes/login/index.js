@@ -36,4 +36,10 @@ app.post('/login', async (req, res) => {
   }
 });
 
+app.post('/logout', async (_, res) => {
+  res.clearCookie('user_token');
+
+  return res.status(200).send('logged out');
+});
+
 export default app;
