@@ -39,6 +39,15 @@
     }
   }
 
+  .search {
+    padding-top: 1.5%;
+    margin-left: auto;
+
+    &:hover {
+      cursor: pointer;
+    }
+  }
+
   .profile {
     padding: 1% 5%;
     display: flex;
@@ -117,6 +126,22 @@
 
     &:hover {
       cursor: pointer;
+    }
+  }
+
+  .notLogged {
+    padding: 1% 5%;
+
+    a {
+      text-decoration: none;
+      color: black;
+      font-size: 1.2em;
+      font-weight: bold;
+
+      &:hover {
+        cursor: pointer;
+        color: #828282;
+      }
     }
   }
 }
