@@ -15,8 +15,10 @@ export default gql`
     userByUsername(username: String!): User
     usersByUsername(username: String!): [User!]
     userFollowers(id: String!): Follower
+    tweetsLikedByUser(id: String!): [Tweet!]
     tweetById(id: String!): Tweet
     tweetsByUser(id: String!): [Tweet!]
+    tweetsByUsername(username: String!): [Tweet!]
     tweetsByFollowingUsers: [Tweet!]
     tweetsByHashtag(hashtag: String!): [Tweet!]
     tweetFavorites(id: String!): [Favorite!]

@@ -20,6 +20,12 @@ const Querys = {
     return query;
   },
 
+  tweetsByUsername: async (_, { username }) => {
+    const query = await wrapAsync(db.Tweet.getByUsername, username);
+
+    return query;
+  },
+
   tweetsByFollowingUsers: async (_, __, { userToken }) => {
     try {
       if (!userToken) throw Error(0);
@@ -47,6 +53,16 @@ const Querys = {
       const query = await db.Tweet.getByIdPopulated(id);
 
       return query.answers ? query.answers : null;
+    } catch (error) {
+      return null;
+    }
+  },
+
+  tweetsLikedByUser: async (_, { id }) => {
+    try {
+      const query = await db.Tweet.getLikesByUser(id);
+
+      return query || null;
     } catch (error) {
       return null;
     }
