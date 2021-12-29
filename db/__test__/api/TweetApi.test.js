@@ -177,6 +177,29 @@ describe('Tweet api', () => {
     expect(tweet.favs.length).toBe(0);
   });
 
+  it('retweet() --> should add retweet to tweet', async () => {
+    const userId = userCreated._id;
+    const tweetId = tweetCreated._id;
+
+    await Tweet.retweet({ tweetId, rt: true, userId });
+    const tweet = await Tweet.getById(tweetId);
+
+    expect(tweet).toBeTruthy();
+    expect(tweet.retweets.length).toBe(1);
+    expect(tweet.retweets[0]).toEqual(userId);
+  });
+
+  it('retweet() --> should delete retweet to tweet', async () => {
+    const userId = userCreated._id;
+    const tweetId = tweetCreated._id;
+
+    await Tweet.retweet({ tweetId, rt: false, userId });
+    const tweet = await Tweet.getById(tweetId);
+
+    expect(tweet).toBeTruthy();
+    expect(tweet.retweets.length).toBe(0);
+  });
+
   it('deleteTweet() --> it should delete tweet created before', async () => {
     const tweetId = tweetCreated._id;
 

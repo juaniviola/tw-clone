@@ -23,6 +23,11 @@ const tweetSchema = new Schema({
     ref: 'User',
   }],
 
+  retweets: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+  }],
+
   hashtags: {
     type: Array,
     default: [],

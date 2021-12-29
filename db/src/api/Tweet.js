@@ -64,6 +64,16 @@ const favorite = async ({ tweetId = null, fav = false, userId = null } = {}) => 
   );
 };
 
+const retweet = async ({ tweetId = null, rt = null, userId = null } = {}) => {
+  const isRt = rt ? { $push: { retweets: userId } } : { $pull: { retweets: userId } };
+
+  return Tweet.findOneAndUpdate(
+    { _id: tweetId },
+    isRt,
+    { new: true },
+  );
+};
+
 const updateTweet = async ({ id = null, description = null } = {}) => Tweet
   .findOneAndUpdate({ _id: id }, {
     description,
@@ -129,4 +139,5 @@ export {
   updateAnswer,
   tweetByFollowingUsers,
   getLikesByUser,
+  retweet,
 };
