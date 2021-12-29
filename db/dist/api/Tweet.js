@@ -5,7 +5,7 @@ var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefau
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.updateTweet = exports.updateAnswer = exports.tweetByFollowingUsers = exports.saveTweet = exports.retweet = exports.getLikesByUser = exports.getByUsername = exports.getByUser = exports.getByIdPopulated = exports.getById = exports.getByHashtags = exports.favorite = exports.deleteTweet = exports.deleteAnswer = exports.addAnswer = void 0;
+exports.updateTweet = exports.updateAnswer = exports.tweetByFollowingUsers = exports.saveTweet = exports.retweet = exports.getRetweetsByUser = exports.getLikesByUser = exports.getByUsername = exports.getByUser = exports.getByIdPopulated = exports.getById = exports.getByHashtags = exports.favorite = exports.deleteTweet = exports.deleteAnswer = exports.addAnswer = void 0;
 
 var _regenerator = _interopRequireDefault(require("@babel/runtime/regenerator"));
 
@@ -257,6 +257,41 @@ var getLikesByUser = function getLikesByUser(_id) {
 };
 
 exports.getLikesByUser = getLikesByUser;
+
+var getRetweetsByUser = function getRetweetsByUser(_id) {
+  return _models.Tweet.find({
+    retweets: _id
+  }).populate({
+    path: 'user',
+    options: {
+      select: {
+        _id: 1,
+        username: 1,
+        fullName: 1
+      }
+    }
+  }).populate({
+    path: 'favs',
+    options: {
+      select: {
+        _id: 1,
+        username: 1,
+        fullName: 1
+      }
+    }
+  }).populate({
+    path: 'answers.user',
+    options: {
+      select: {
+        _id: 1,
+        username: 1,
+        fullName: 1
+      }
+    }
+  });
+};
+
+exports.getRetweetsByUser = getRetweetsByUser;
 
 var favorite = /*#__PURE__*/function () {
   var _ref5 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee4() {

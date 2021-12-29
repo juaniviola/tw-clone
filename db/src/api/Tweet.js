@@ -54,6 +54,12 @@ const getLikesByUser = (_id) => Tweet
   .populate({ path: 'favs', options: { select: { _id: 1, username: 1, fullName: 1 } } })
   .populate({ path: 'answers.user', options: { select: { _id: 1, username: 1, fullName: 1 } } });
 
+const getRetweetsByUser = (_id) => Tweet
+  .find({ retweets: _id })
+  .populate({ path: 'user', options: { select: { _id: 1, username: 1, fullName: 1 } } })
+  .populate({ path: 'favs', options: { select: { _id: 1, username: 1, fullName: 1 } } })
+  .populate({ path: 'answers.user', options: { select: { _id: 1, username: 1, fullName: 1 } } });
+
 const favorite = async ({ tweetId = null, fav = false, userId = null } = {}) => {
   const isFav = fav ? { $push: { favs: userId } } : { $pull: { favs: userId } };
 
@@ -131,13 +137,14 @@ export {
   getByHashtags,
   getByUser,
   getByUsername,
+  getLikesByUser,
+  getRetweetsByUser,
   favorite,
+  retweet,
   updateTweet,
   deleteTweet,
   addAnswer,
   deleteAnswer,
   updateAnswer,
   tweetByFollowingUsers,
-  getLikesByUser,
-  retweet,
 };

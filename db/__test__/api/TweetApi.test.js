@@ -189,6 +189,16 @@ describe('Tweet api', () => {
     expect(tweet.retweets[0]).toEqual(userId);
   });
 
+  it('getRetweetsByUser() --> should return tweet retweeted by user created', async () => {
+    const id = userCreated._id;
+
+    const tweets = await Tweet.getRetweetsByUser(id);
+
+    expect(tweets).toBeTruthy();
+    expect(tweets.length).toBe(1);
+    expect(tweets[0]._id).toEqual(tweetCreated._id);
+  });
+
   it('retweet() --> should delete retweet to tweet', async () => {
     const userId = userCreated._id;
     const tweetId = tweetCreated._id;
