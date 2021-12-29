@@ -48,6 +48,33 @@ describe('Querys', () => {
       expect(resultQuery.data.hello).toEqual('Hello test');
     });
 
+    it('userInfo() --> it should return user logged info', async () => {
+      const query = `
+        query {
+          userInfo {
+            username
+            fullName
+          }
+        }
+      `;
+
+      const result = await server.executeOperation({ query });
+
+      expect(result).toBeTruthy();
+      expect(result.data.userInfo).toBeTruthy();
+      expect(result.data.userInfo.username).toEqual(mockUser.username);
+      expect(result.data.userInfo.fullName).toEqual(mockUser.fullName);
+    });
+
+    it('userLogged() --> it should return user logged', async () => {
+      const query = 'query { userLogged }';
+
+      const result = await server.executeOperation({ query });
+
+      expect(result).toBeTruthy();
+      expect(result.data.userLogged).toBeTruthy();
+    });
+
     it('userById() --> it should return mockUser', async () => {
       const query = `
         query ($id: String!){
@@ -180,6 +207,26 @@ describe('Querys', () => {
       expect(resultQuery.data.tweetsByUser[1].description).toEqual('hola #mundo');
     });
 
+    it('tweetsByUsername() --> it should return 2 tweets by mockUser username', async () => {
+      const query = `
+        query($username: String!) {
+          tweetsByUsername(username: $username) {
+            user { username }
+          }
+        }
+      `;
+
+      const result = await server.executeOperation({
+        query,
+        variables: { username: mockUser2.username },
+      });
+
+      expect(result.data.tweetsByUsername).toBeTruthy();
+      expect(result.data.tweetsByUsername.length).toBe(2);
+      expect(result.data.tweetsByUsername[0].user.username).toEqual(mockUser2.username);
+      expect(result.data.tweetsByUsername[1].user.username).toEqual(mockUser2.username);
+    });
+
     it('tweetsByHashtag() --> it should return 2 tweets by mockUser', async () => {
       await database.Tweet.saveTweet({ user: mockUser2._id, description: 'hello #mundi' });
 
@@ -284,7 +331,24 @@ describe('Querys', () => {
       expect(resultQuery.data.tweetFavorites.length).toBe(2);
     });
 
-    it('tweetFavorites() --> it should return favs', async () => {
+    it('tweetsLikedByUser() --> it should return likes by user', async () => {
+      const query = `
+        query ($id: String!) {
+          tweetsLikedByUser(id: $id) { _id }
+        }
+      `;
+
+      const result = await server.executeOperation({
+        query,
+        variables: { id: database.Utils.objectIdToString(mockUser._id) },
+      });
+
+      expect(result).toBeTruthy();
+      expect(result.data.tweetsLikedByUser).toBeTruthy();
+      expect(result.data.tweetsLikedByUser.length).toBe(1);
+    });
+
+    it('tweetAnswers() --> it should return answers', async () => {
       await database.Tweet.addAnswer({
         tweetId,
         description: 'true',

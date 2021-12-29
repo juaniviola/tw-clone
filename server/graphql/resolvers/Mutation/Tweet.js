@@ -105,6 +105,38 @@ const Mutations = {
       return null;
     }
   },
+
+  addRetweet: async (_, { id }, { userToken }) => {
+    try {
+      if (!userToken) throw Error(0);
+
+      const retweet = await db.Tweet.retweet({
+        tweetId: db.Utils.stringToObjectId(id),
+        rt: true,
+        userId: db.Utils.stringToObjectId(userToken),
+      });
+
+      return !!retweet._id;
+    } catch (error) {
+      return null;
+    }
+  },
+
+  deleteRetweet: async (_, { id }, { userToken }) => {
+    try {
+      if (!userToken) throw Error(0);
+
+      const retweet = await db.Tweet.retweet({
+        tweetId: db.Utils.stringToObjectId(id),
+        rt: false,
+        userId: db.Utils.stringToObjectId(userToken),
+      });
+
+      return !!retweet._id;
+    } catch (error) {
+      return null;
+    }
+  },
 };
 
 export default Mutations;

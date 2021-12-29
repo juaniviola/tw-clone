@@ -147,7 +147,15 @@ describe('Mutations', () => {
     });
 
     it('addAnswer() --> should return anwer', async () => {
-      const query = 'mutation($ans: addAnsInput!) { addAnswer(answer: $ans) { answers { _id description } } }';
+      const query = `
+        mutation($ans: addAnsInput!) {
+          addAnswer(answer: $ans) {
+            _id
+            description
+          }
+        }
+      `;
+
       const resultQuery = await server.executeOperation({
         query,
         variables: { ans: { tweetId, description: 'hola!' } },
@@ -157,7 +165,6 @@ describe('Mutations', () => {
       answerId = database.Utils.objectIdToString(tweet.answers[0]._id);
 
       expect(resultQuery.data.addAnswer).toBeTruthy();
-      expect(resultQuery.data.addAnswer.answers[0].description).toEqual('hola!');
       expect(tweet.answers.length).toBe(1);
       expect(tweet.answers[0].description).toEqual('hola!');
       expect(tweet.answers[0].user.username).toEqual(userMock2.username);
@@ -188,6 +195,32 @@ describe('Mutations', () => {
 
       expect(resultQuery.data.deleteAnswer).toBeTruthy();
       expect(tweet.answers.length).toBe(0);
+    });
+
+    it('addRetweet() --> should add rt to tweet', async () => {
+      const query = 'mutation($id: String!) { addRetweet(id: $id) }';
+      const result = await server.executeOperation({
+        query,
+        variables: { id: tweetId },
+      });
+
+      const tweet = await database.Tweet.getByIdPopulated(tweetId);
+
+      expect(result.data.addRetweet).toBeTruthy();
+      expect(tweet.retweets.length).toBe(1);
+    });
+
+    it('deleteRetweet() --> should delete rt to tweet', async () => {
+      const query = 'mutation($id: String!) { deleteRetweet(id: $id) }';
+      const result = await server.executeOperation({
+        query,
+        variables: { id: tweetId },
+      });
+
+      const tweet = await database.Tweet.getByIdPopulated(tweetId);
+
+      expect(result.data.deleteRetweet).toBeTruthy();
+      expect(tweet.retweets.length).toBe(0);
     });
 
     it('deleteTweet() --> should return tweet deleted', async () => {

@@ -36,6 +36,8 @@ export default gql`
     addAnswer(answer: addAnsInput!): AnswerCreatedAndUpdated
     deleteAnswer(answer: delAnsInput!): Boolean!
     updateAnswer(answer: updateAnsInput!): Boolean!
+    addRetweet(id: String!): Boolean!
+    deleteRetweet(id: String!): Boolean!
   }
 
   schema {
