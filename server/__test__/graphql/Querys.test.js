@@ -348,6 +348,34 @@ describe('Querys', () => {
       expect(result.data.tweetsLikedByUser.length).toBe(1);
     });
 
+    it('tweetsRetwetedByUser() --> it should return rts of user', async () => {
+      await database.Tweet.retweet({
+        tweetId,
+        rt: true,
+        userId: database.Utils.objectIdToString(mockUser._id),
+      });
+      await database.Tweet.retweet({
+        tweetId,
+        rt: true,
+        userId: database.Utils.objectIdToString(mockUser2._id),
+      });
+
+      const query = `
+        query ($id: String!) {
+          tweetsRetweetedByUser(id: $id) { _id }
+        }
+      `;
+
+      const result = await server.executeOperation({
+        query,
+        variables: { id: database.Utils.objectIdToString(mockUser._id) },
+      });
+
+      expect(result).toBeTruthy();
+      expect(result.data.tweetsRetweetedByUser).toBeTruthy();
+      expect(result.data.tweetsRetweetedByUser.length).toBe(1);
+    });
+
     it('tweetAnswers() --> it should return answers', async () => {
       await database.Tweet.addAnswer({
         tweetId,

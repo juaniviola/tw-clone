@@ -67,6 +67,16 @@ const Querys = {
       return null;
     }
   },
+
+  tweetsRetweetedByUser: async (_, { id }) => {
+    try {
+      const query = await db.Tweet.getRetweetsByUser(id);
+
+      return query || null;
+    } catch (error) {
+      return null;
+    }
+  },
 };
 
 export default Querys;
