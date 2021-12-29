@@ -34,6 +34,10 @@ var tweetSchema = new _mongoose.Schema({
     type: _mongoose["default"].Schema.Types.ObjectId,
     ref: 'User'
   }],
+  retweets: [{
+    type: _mongoose["default"].Schema.Types.ObjectId,
+    ref: 'User'
+  }],
   hashtags: {
     type: Array,
     "default": []

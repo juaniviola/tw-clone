@@ -5,7 +5,7 @@ var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefau
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.updateTweet = exports.updateAnswer = exports.tweetByFollowingUsers = exports.saveTweet = exports.getLikesByUser = exports.getByUsername = exports.getByUser = exports.getByIdPopulated = exports.getById = exports.getByHashtags = exports.favorite = exports.deleteTweet = exports.deleteAnswer = exports.addAnswer = void 0;
+exports.updateTweet = exports.updateAnswer = exports.tweetByFollowingUsers = exports.saveTweet = exports.retweet = exports.getLikesByUser = exports.getByUsername = exports.getByUser = exports.getByIdPopulated = exports.getById = exports.getByHashtags = exports.favorite = exports.deleteTweet = exports.deleteAnswer = exports.addAnswer = void 0;
 
 var _regenerator = _interopRequireDefault(require("@babel/runtime/regenerator"));
 
@@ -305,21 +305,68 @@ var favorite = /*#__PURE__*/function () {
 
 exports.favorite = favorite;
 
-var updateTweet = /*#__PURE__*/function () {
+var retweet = /*#__PURE__*/function () {
   var _ref7 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee5() {
     var _ref8,
-        _ref8$id,
-        id,
-        _ref8$description,
-        description,
+        _ref8$tweetId,
+        tweetId,
+        _ref8$rt,
+        rt,
+        _ref8$userId,
+        userId,
+        isRt,
         _args5 = arguments;
 
     return _regenerator["default"].wrap(function _callee5$(_context5) {
       while (1) {
         switch (_context5.prev = _context5.next) {
           case 0:
-            _ref8 = _args5.length > 0 && _args5[0] !== undefined ? _args5[0] : {}, _ref8$id = _ref8.id, id = _ref8$id === void 0 ? null : _ref8$id, _ref8$description = _ref8.description, description = _ref8$description === void 0 ? null : _ref8$description;
+            _ref8 = _args5.length > 0 && _args5[0] !== undefined ? _args5[0] : {}, _ref8$tweetId = _ref8.tweetId, tweetId = _ref8$tweetId === void 0 ? null : _ref8$tweetId, _ref8$rt = _ref8.rt, rt = _ref8$rt === void 0 ? null : _ref8$rt, _ref8$userId = _ref8.userId, userId = _ref8$userId === void 0 ? null : _ref8$userId;
+            isRt = rt ? {
+              $push: {
+                retweets: userId
+              }
+            } : {
+              $pull: {
+                retweets: userId
+              }
+            };
             return _context5.abrupt("return", _models.Tweet.findOneAndUpdate({
+              _id: tweetId
+            }, isRt, {
+              "new": true
+            }));
+
+          case 3:
+          case "end":
+            return _context5.stop();
+        }
+      }
+    }, _callee5);
+  }));
+
+  return function retweet() {
+    return _ref7.apply(this, arguments);
+  };
+}();
+
+exports.retweet = retweet;
+
+var updateTweet = /*#__PURE__*/function () {
+  var _ref9 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee6() {
+    var _ref10,
+        _ref10$id,
+        id,
+        _ref10$description,
+        description,
+        _args6 = arguments;
+
+    return _regenerator["default"].wrap(function _callee6$(_context6) {
+      while (1) {
+        switch (_context6.prev = _context6.next) {
+          case 0:
+            _ref10 = _args6.length > 0 && _args6[0] !== undefined ? _args6[0] : {}, _ref10$id = _ref10.id, id = _ref10$id === void 0 ? null : _ref10$id, _ref10$description = _ref10.description, description = _ref10$description === void 0 ? null : _ref10$description;
+            return _context6.abrupt("return", _models.Tweet.findOneAndUpdate({
               _id: id
             }, {
               description: description,
@@ -331,61 +378,61 @@ var updateTweet = /*#__PURE__*/function () {
 
           case 2:
           case "end":
-            return _context5.stop();
-        }
-      }
-    }, _callee5);
-  }));
-
-  return function updateTweet() {
-    return _ref7.apply(this, arguments);
-  };
-}();
-
-exports.updateTweet = updateTweet;
-
-var deleteTweet = /*#__PURE__*/function () {
-  var _ref9 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee6(id) {
-    return _regenerator["default"].wrap(function _callee6$(_context6) {
-      while (1) {
-        switch (_context6.prev = _context6.next) {
-          case 0:
-            return _context6.abrupt("return", _models.Tweet.findOneAndRemove({
-              _id: id
-            }));
-
-          case 1:
-          case "end":
             return _context6.stop();
         }
       }
     }, _callee6);
   }));
 
-  return function deleteTweet(_x3) {
+  return function updateTweet() {
     return _ref9.apply(this, arguments);
+  };
+}();
+
+exports.updateTweet = updateTweet;
+
+var deleteTweet = /*#__PURE__*/function () {
+  var _ref11 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee7(id) {
+    return _regenerator["default"].wrap(function _callee7$(_context7) {
+      while (1) {
+        switch (_context7.prev = _context7.next) {
+          case 0:
+            return _context7.abrupt("return", _models.Tweet.findOneAndRemove({
+              _id: id
+            }));
+
+          case 1:
+          case "end":
+            return _context7.stop();
+        }
+      }
+    }, _callee7);
+  }));
+
+  return function deleteTweet(_x3) {
+    return _ref11.apply(this, arguments);
   };
 }();
 
 exports.deleteTweet = deleteTweet;
 
 var addAnswer = /*#__PURE__*/function () {
-  var _ref10 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee7() {
-    var _ref11,
-        _ref11$tweetId,
+  var _ref12 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee8() {
+    var _ref13,
+        _ref13$tweetId,
         tweetId,
-        _ref11$userId,
+        _ref13$userId,
         userId,
-        _ref11$description,
+        _ref13$description,
         description,
-        _args7 = arguments;
+        _args8 = arguments;
 
-    return _regenerator["default"].wrap(function _callee7$(_context7) {
+    return _regenerator["default"].wrap(function _callee8$(_context8) {
       while (1) {
-        switch (_context7.prev = _context7.next) {
+        switch (_context8.prev = _context8.next) {
           case 0:
-            _ref11 = _args7.length > 0 && _args7[0] !== undefined ? _args7[0] : {}, _ref11$tweetId = _ref11.tweetId, tweetId = _ref11$tweetId === void 0 ? null : _ref11$tweetId, _ref11$userId = _ref11.userId, userId = _ref11$userId === void 0 ? null : _ref11$userId, _ref11$description = _ref11.description, description = _ref11$description === void 0 ? null : _ref11$description;
-            return _context7.abrupt("return", _models.Tweet.findOneAndUpdate({
+            _ref13 = _args8.length > 0 && _args8[0] !== undefined ? _args8[0] : {}, _ref13$tweetId = _ref13.tweetId, tweetId = _ref13$tweetId === void 0 ? null : _ref13$tweetId, _ref13$userId = _ref13.userId, userId = _ref13$userId === void 0 ? null : _ref13$userId, _ref13$description = _ref13.description, description = _ref13$description === void 0 ? null : _ref13$description;
+            return _context8.abrupt("return", _models.Tweet.findOneAndUpdate({
               _id: tweetId
             }, {
               $push: {
@@ -401,34 +448,34 @@ var addAnswer = /*#__PURE__*/function () {
 
           case 2:
           case "end":
-            return _context7.stop();
+            return _context8.stop();
         }
       }
-    }, _callee7);
+    }, _callee8);
   }));
 
   return function addAnswer() {
-    return _ref10.apply(this, arguments);
+    return _ref12.apply(this, arguments);
   };
 }();
 
 exports.addAnswer = addAnswer;
 
 var deleteAnswer = /*#__PURE__*/function () {
-  var _ref12 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee8() {
-    var _ref13,
-        _ref13$tweetId,
+  var _ref14 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee9() {
+    var _ref15,
+        _ref15$tweetId,
         tweetId,
-        _ref13$answerId,
+        _ref15$answerId,
         answerId,
-        _args8 = arguments;
+        _args9 = arguments;
 
-    return _regenerator["default"].wrap(function _callee8$(_context8) {
+    return _regenerator["default"].wrap(function _callee9$(_context9) {
       while (1) {
-        switch (_context8.prev = _context8.next) {
+        switch (_context9.prev = _context9.next) {
           case 0:
-            _ref13 = _args8.length > 0 && _args8[0] !== undefined ? _args8[0] : {}, _ref13$tweetId = _ref13.tweetId, tweetId = _ref13$tweetId === void 0 ? null : _ref13$tweetId, _ref13$answerId = _ref13.answerId, answerId = _ref13$answerId === void 0 ? null : _ref13$answerId;
-            return _context8.abrupt("return", _models.Tweet.findOneAndUpdate({
+            _ref15 = _args9.length > 0 && _args9[0] !== undefined ? _args9[0] : {}, _ref15$tweetId = _ref15.tweetId, tweetId = _ref15$tweetId === void 0 ? null : _ref15$tweetId, _ref15$answerId = _ref15.answerId, answerId = _ref15$answerId === void 0 ? null : _ref15$answerId;
+            return _context9.abrupt("return", _models.Tweet.findOneAndUpdate({
               _id: tweetId
             }, {
               $pull: {
@@ -440,34 +487,34 @@ var deleteAnswer = /*#__PURE__*/function () {
 
           case 2:
           case "end":
-            return _context8.stop();
+            return _context9.stop();
         }
       }
-    }, _callee8);
+    }, _callee9);
   }));
 
   return function deleteAnswer() {
-    return _ref12.apply(this, arguments);
+    return _ref14.apply(this, arguments);
   };
 }();
 
 exports.deleteAnswer = deleteAnswer;
 
 var updateAnswer = /*#__PURE__*/function () {
-  var _ref14 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee9() {
-    var _ref15,
-        _ref15$answerId,
+  var _ref16 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee10() {
+    var _ref17,
+        _ref17$answerId,
         answerId,
-        _ref15$description,
+        _ref17$description,
         description,
-        _args9 = arguments;
+        _args10 = arguments;
 
-    return _regenerator["default"].wrap(function _callee9$(_context9) {
+    return _regenerator["default"].wrap(function _callee10$(_context10) {
       while (1) {
-        switch (_context9.prev = _context9.next) {
+        switch (_context10.prev = _context10.next) {
           case 0:
-            _ref15 = _args9.length > 0 && _args9[0] !== undefined ? _args9[0] : {}, _ref15$answerId = _ref15.answerId, answerId = _ref15$answerId === void 0 ? null : _ref15$answerId, _ref15$description = _ref15.description, description = _ref15$description === void 0 ? null : _ref15$description;
-            return _context9.abrupt("return", _models.Tweet.findOneAndUpdate({
+            _ref17 = _args10.length > 0 && _args10[0] !== undefined ? _args10[0] : {}, _ref17$answerId = _ref17.answerId, answerId = _ref17$answerId === void 0 ? null : _ref17$answerId, _ref17$description = _ref17.description, description = _ref17$description === void 0 ? null : _ref17$description;
+            return _context10.abrupt("return", _models.Tweet.findOneAndUpdate({
               'answers._id': answerId
             }, {
               $set: {
@@ -479,53 +526,53 @@ var updateAnswer = /*#__PURE__*/function () {
 
           case 2:
           case "end":
-            return _context9.stop();
+            return _context10.stop();
         }
       }
-    }, _callee9);
+    }, _callee10);
   }));
 
   return function updateAnswer() {
-    return _ref14.apply(this, arguments);
+    return _ref16.apply(this, arguments);
   };
 }();
 
 exports.updateAnswer = updateAnswer;
 
 var tweetByFollowingUsers = /*#__PURE__*/function () {
-  var _ref16 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee10() {
-    var _ref17,
-        _ref17$id,
+  var _ref18 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee11() {
+    var _ref19,
+        _ref19$id,
         id,
-        _ref17$offset,
+        _ref19$offset,
         offset,
-        _ref17$limit,
+        _ref19$limit,
         limit,
         user,
-        _args10 = arguments;
+        _args11 = arguments;
 
-    return _regenerator["default"].wrap(function _callee10$(_context10) {
+    return _regenerator["default"].wrap(function _callee11$(_context11) {
       while (1) {
-        switch (_context10.prev = _context10.next) {
+        switch (_context11.prev = _context11.next) {
           case 0:
-            _ref17 = _args10.length > 0 && _args10[0] !== undefined ? _args10[0] : {}, _ref17$id = _ref17.id, id = _ref17$id === void 0 ? null : _ref17$id, _ref17$offset = _ref17.offset, offset = _ref17$offset === void 0 ? 0 : _ref17$offset, _ref17$limit = _ref17.limit, limit = _ref17$limit === void 0 ? 30 : _ref17$limit;
-            _context10.next = 3;
+            _ref19 = _args11.length > 0 && _args11[0] !== undefined ? _args11[0] : {}, _ref19$id = _ref19.id, id = _ref19$id === void 0 ? null : _ref19$id, _ref19$offset = _ref19.offset, offset = _ref19$offset === void 0 ? 0 : _ref19$offset, _ref19$limit = _ref19.limit, limit = _ref19$limit === void 0 ? 30 : _ref19$limit;
+            _context11.next = 3;
             return _models.User.findOne({
               _id: id
             });
 
           case 3:
-            user = _context10.sent;
+            user = _context11.sent;
 
             if (user) {
-              _context10.next = 6;
+              _context11.next = 6;
               break;
             }
 
             throw Error('User not found');
 
           case 6:
-            return _context10.abrupt("return", _models.Tweet.find({
+            return _context11.abrupt("return", _models.Tweet.find({
               user: {
                 $in: user.following
               }
@@ -562,14 +609,14 @@ var tweetByFollowingUsers = /*#__PURE__*/function () {
 
           case 7:
           case "end":
-            return _context10.stop();
+            return _context11.stop();
         }
       }
-    }, _callee10);
+    }, _callee11);
   }));
 
   return function tweetByFollowingUsers() {
-    return _ref16.apply(this, arguments);
+    return _ref18.apply(this, arguments);
   };
 }();
 
