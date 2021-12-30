@@ -22,6 +22,7 @@ export default {
     _id: ({ _id }) => db.Utils.objectIdToString(_id),
     favs: ({ favs }) => favs.length || 0,
     answers: ({ answers }) => answers.length || 0,
+    retweets: ({ retweets }) => retweets.map((rt) => db.Utils.objectIdToString(rt)),
   },
   Answer: {
     _id: ({ _id }) => db.Utils.objectIdToString(_id),

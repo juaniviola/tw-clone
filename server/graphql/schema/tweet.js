@@ -9,6 +9,7 @@ export default `
     createdAt: Date!
     favs: Int!
     answers: Int!
+    retweets: [String!]
     hashtags: [String!]
     mentions: [String!]
   }
