@@ -114,6 +114,7 @@ export default {
             favs
             answers
             createdAt
+            retweets
           }
         `;
       } else if (type === 'likes') {
@@ -128,6 +129,22 @@ export default {
             favs
             answers
             createdAt
+            retweets
+          }
+        `;
+      } else if (type === 'retweets') {
+        query = `
+          tweetsRetweetedByUser(id: $id) {
+            _id
+            user {
+              _id
+              username
+            }
+            description
+            favs
+            answers
+            createdAt
+            retweets
           }
         `;
       }
@@ -149,6 +166,8 @@ export default {
           this.tweets = tweets.data?.tweetsByUser || null;
         } else if (type === 'likes') {
           this.tweets = tweets.data?.tweetsLikedByUser || null;
+        } else {
+          this.tweets = tweets.data?.tweetsRetweetedByUser || null;
         }
 
         this.tweets = this.tweets.map((tweet) => ({
@@ -198,6 +217,7 @@ export default {
               favs
               answers
               createdAt
+              retweets
             }
 
             userFollowers(id: $id) {

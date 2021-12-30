@@ -5,7 +5,7 @@
       :username="username"
       :userLogged="userLogged" />
     <LoadingComponent v-show="loading" />
-    <router-view :key="key" v-if="!loading"/>
+    <router-view :key="path" v-if="!loading"/>
   </div>
 </template>
 
@@ -19,7 +19,7 @@ import EventBus from '@/utils/EventBus';
 export default {
   data() {
     return {
-      key: this.$route.path,
+      path: this.$route.path,
       userLogged: false,
       username: '',
       loading: true,

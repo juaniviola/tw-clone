@@ -14,13 +14,14 @@
 
     <TweetCard
       v-show="!loading && !error && tweets.length >= 1"
-      v-for="(tweet, i) in tweets" :key="i"
+      v-for="tweet in tweets" :key="tweet._id"
       :_id="tweet._id"
       :user="tweet.user"
       :description="tweet.description"
       :createdAt="tweet.createdAt"
       :favs="tweet.favs"
       :answers="tweet.answers"
+      :retweets="tweet.retweets"
       @deleteTweet="deleteTweet"
     />
 
@@ -73,6 +74,7 @@ export default {
               createdAt
               favs
               answers
+              retweets
             }
           }
         `,

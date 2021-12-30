@@ -18,9 +18,9 @@
     <div class="line"></div>
 
     <div class="buttons">
-      <button>
+      <button @click="rtTweet">
         <img
-          id="retweetImage"
+          :id="rtId"
           src="/retweet.svg"
           alt="retweet"
           width="24"
@@ -56,7 +56,7 @@
 
     <div class="replies" v-if="replies.length > 0">
       <Replies
-        v-for="(reply, i) in replies" :key="i"
+        v-for="reply in replies" :key="reply._id"
         :tweetId="_id"
         :_id="reply._id"
         :user="reply.user"
@@ -85,9 +85,11 @@ export default {
       replies: [],
       answer: '',
       liked: false,
+      retweeted: false,
       owner: false,
       favorites: this.favs,
       comments: this.answers,
+      rtId: '',
     };
   },
 
@@ -98,6 +100,7 @@ export default {
     createdAt: String,
     favs: Number,
     answers: Number,
+    retweets: Array,
   },
 
   components: {
@@ -120,6 +123,18 @@ export default {
           image.className = 'liked';
           image.setAttribute('src', '/like_filled.svg');
           this.liked = true;
+        }
+      });
+    },
+
+    isRetweeted(rts) {
+      const button = document.getElementById(this._id.concat('rt'));
+      const userId = globalState.getUser()._id;
+
+      rts.forEach((rt) => {
+        if (rt === userId) {
+          button.className = 'retweeted';
+          this.retweeted = true;
         }
       });
     },
@@ -236,6 +251,31 @@ export default {
       }
     },
 
+    async rtTweet() {
+      try {
+        await this.$apollo.mutate({
+          mutation: gql`
+            mutation ($id: String!) {
+              addRetweet(id: $id)
+            }
+          `,
+
+          variables: {
+            id: this._id,
+          },
+        });
+
+        this.retweeted = !this.retweeted;
+        this.setSnackbar('Tweet retweeted');
+
+        const rtButton = document.getElementById(this._id.concat('rt'));
+        if (this.retweeted) rtButton.className = 'retweeted';
+        else rtButton.className = '';
+      } catch (error) {
+        this.setSnackbar('Error :(');
+      }
+    },
+
     deleteAnswer(value) {
       this.replies = this.replies.filter(({ _id }) => _id !== value);
       this.comments -= 1;
@@ -265,7 +305,13 @@ export default {
     },
   },
 
+  created() {
+    this.rtId = this._id.concat('rt');
+  },
+
   async mounted() {
+    this.isRetweeted(this.retweets);
+
     await this.getRepliesAndFavorites();
 
     const user = globalState.getUser();

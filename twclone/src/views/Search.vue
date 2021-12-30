@@ -12,7 +12,7 @@
         v-show="!loading && users.length > 0"
         class="users">
         <UserCard
-          v-for="(user, i) in users" :key="i"
+          v-for="user in users" :key="user._id"
           :_id="user._id"
           :username="user.username"
           :fullName="user.fullName" />

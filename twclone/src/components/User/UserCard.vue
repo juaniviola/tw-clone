@@ -57,13 +57,14 @@
       <div class="tweets">
         <TweetCard
           v-show="tweets.length >= 1"
-          v-for="(tweet, idx) in tweets"
-          :key="idx"
+          v-for="tweet in tweets"
+          :key="tweet._id"
           :_id="tweet._id"
           :user="tweet.user"
           :description="tweet.description"
           :favs="tweet.favs"
           :answers="tweet.answers"
+          :retweets="tweet.retweets"
           :createdAt="tweet.createdAt"
           @deleteTweet="deleteTweet"
         />
