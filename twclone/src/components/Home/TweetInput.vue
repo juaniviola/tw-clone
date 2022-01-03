@@ -32,7 +32,7 @@
 
 <script>
 import gql from 'graphql-tag';
-import setSnackbar from '@/components/Home/modules/Snackbar';
+import setSnackbar from '@/components/global/modules/Snackbar';
 
 export default {
   data() {
@@ -103,5 +103,5 @@ export default {
 
 <style lang="scss" scoped>
   @import "./styles/tweetInput.scss";
-  @import "./styles/Snackbar.scss";
+  @import "../global/styles/Snackbar.scss";
 </style>

@@ -55,8 +55,10 @@
       </div>
 
       <div class="tweets">
+        <div v-show="loading" class="loading_spinner"></div>
+
         <TweetCard
-          v-show="tweets.length >= 1"
+          v-show="!loading && tweets.length >= 1"
           v-for="tweet in tweets"
           :key="tweet._id"
           :_id="tweet._id"
@@ -70,7 +72,7 @@
         />
 
         <div
-          v-show="tweets.length === 0"
+          v-show="!loading && tweets.length === 0"
           class="no_data">
           <span>No hay tweets aún</span>
         </div>
@@ -80,11 +82,12 @@
 </template>
 
 <script>
-import TweetCard from '@/components/Home/TweetCard.vue';
+import TweetCard from '@/components/global/TweetCard.vue';
 
 export default {
   data() {
     return {
+      loading: false,
       selected: 'tweets',
     };
   },
@@ -102,11 +105,15 @@ export default {
 
   methods: {
     followUser() {
-      return this.$emit('followUser', this.user);
+      this.loading = true;
+      this.$emit('followUser', this.user);
+      this.loading = false;
     },
 
     unfollowUser() {
-      return this.$emit('unfollowUser', this.user);
+      this.loading = true;
+      this.$emit('unfollowUser', this.user);
+      this.loading = false;
     },
 
     selectFromPanel(selected) {
@@ -143,4 +150,5 @@ export default {
 
 <style lang="scss" scoped>
   @import "./styles/UserCard.scss";
+  @import "../global/styles/loading.scss";
 </style>

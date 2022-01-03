@@ -33,8 +33,8 @@
 import moment from 'moment';
 import gql from 'graphql-tag';
 import TweetInput from '@/components/Home/TweetInput.vue';
-import TweetCard from '@/components/Home/TweetCard.vue';
-import setSnackbar from '@/components/Home/modules/Snackbar';
+import TweetCard from '@/components/global/TweetCard.vue';
+import setSnackbar from '@/components/global/modules/Snackbar';
 
 export default {
   data() {

@@ -28,7 +28,7 @@
 /* eslint-disable no-underscore-dangle */
 import gql from 'graphql-tag';
 import moment from 'moment';
-import setSnackbar from '@/components/Home/modules/Snackbar';
+import setSnackbar from '@/components/global/modules/Snackbar';
 import globalState from '@/utils/GlobalState';
 
 export default {

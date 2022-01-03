@@ -150,7 +150,6 @@ export default {
       }
 
       try {
-        this.loading = true;
         this.tweets = [];
         const tweets = await this.$apollo.query({
           query: gql`
@@ -174,8 +173,8 @@ export default {
           ...tweet,
           createdAt: moment(tweet.createdAt).format('MMM Do YY'),
         }));
-      } finally {
-        this.loading = false;
+      } catch (error) {
+        this.tweets = [];
       }
     },
 

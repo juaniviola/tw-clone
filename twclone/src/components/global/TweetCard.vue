@@ -75,8 +75,8 @@
 <script>
 /* eslint-disable no-underscore-dangle */
 import gql from 'graphql-tag';
-import Replies from '@/components/Home/TweetReplies.vue';
-import setSnackbar from '@/components/Home/modules/Snackbar';
+import Replies from '@/components/global/TweetReplies.vue';
+import setSnackbar from '@/components/global/modules/Snackbar';
 import globalState from '@/utils/GlobalState';
 
 export default {
@@ -121,7 +121,7 @@ export default {
       favorites.forEach((favs) => {
         if (favs._id === userId) {
           image.className = 'liked';
-          image.setAttribute('src', '/like_filled.svg');
+          image.setAttribute('src', '/icons/like_filled.svg');
           this.liked = true;
         }
       });
@@ -239,11 +239,11 @@ export default {
         const likeButton = document.getElementById(this._id);
         if (this.liked) {
           likeButton.className = 'liked';
-          likeButton.setAttribute('src', '/like_filled.svg');
+          likeButton.setAttribute('src', '/icons/like_filled.svg');
           this.favorites += 1;
         } else {
           likeButton.className = '';
-          likeButton.setAttribute('src', '/like.svg');
+          likeButton.setAttribute('src', '/icons/like.svg');
           this.favorites -= 1;
         }
       } catch (error) {
