@@ -14,7 +14,7 @@
 
     <div :id="_id" class="disabled">
       <button @click="deleteAnswer">
-        <img src="/delete.svg" height="24" width="24" />
+        <img src="/icons/delete.svg" height="24" width="24" />
       </button>
     </div>
 

@@ -7,7 +7,7 @@
 
     <div class="follow">
       <button v-if="!following && !sameUser" @click="followUser">
-        <img src="/follow.svg" alt="follow" height="20" width="20">
+        <img src="/icons/follow.svg" alt="follow" height="20" width="20">
         <span>Follow</span>
       </button>
 

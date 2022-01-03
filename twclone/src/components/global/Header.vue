@@ -1,34 +1,34 @@
 <template>
   <div class="header">
     <div class="logo" @click="goToHome">
-      <img src="/tweeter.svg" alt="logo" height="30" width="126" />
+      <img src="/icons/tweeter.svg" alt="logo" height="30" width="126" />
     </div>
 
     <div class="search" @click="goToSearch">
-      <a><img src="/search.svg" alt="search"></a>
+      <a><img src="/icons/search.svg" alt="search"></a>
     </div>
 
     <div class="profile" v-show="userLogged">
       <div class="menuToggle" @click="showMenu">
-        <img src="/user.svg" alt="user" />
+        <img src="/icons/user.svg" alt="user" />
         <span>{{ username }}</span>
       </div>
 
       <div id="menu" class="menu hidden">
         <div class="btn" @click="goToProfile">
-          <img src="/user.svg" alt="profile">
+          <img src="/icons/user.svg" alt="profile">
           <a href="#"> My profile</a>
         </div>
 
         <div class="btn">
-          <img src="/settings.svg" alt="profile">
+          <img src="/icons/settings.svg" alt="profile">
           <a href="#"> Settings</a>
         </div>
 
         <div class="line"></div>
 
         <div class="btn" @click="logout">
-          <img src="/logout.svg" alt="profile">
+          <img src="/icons/logout.svg" alt="profile">
           <a href="#"> Logout</a>
         </div>
       </div>

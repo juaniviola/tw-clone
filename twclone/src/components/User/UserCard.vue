@@ -27,7 +27,7 @@
 
       <div class="follow_button" v-show="!sameUser">
         <button v-show="!following" @click="followUser">
-          <img src="/follow.svg" alt="follow" height="24" width="24">
+          <img src="/icons/follow.svg" alt="follow" height="24" width="24">
           <span>Follow</span>
         </button>
 

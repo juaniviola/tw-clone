@@ -21,7 +21,7 @@
       <button @click="rtTweet">
         <img
           :id="rtId"
-          src="/retweet.svg"
+          src="/icons/retweet.svg"
           alt="retweet"
           width="24"
           height="24">
@@ -30,14 +30,14 @@
       <button @click="likeTweet">
         <img
           :id="_id"
-          src="/like.svg"
+          src="/icons/like.svg"
           alt="like"
           width="24"
           height="24">
       </button>
 
       <button v-if="owner" @click="deleteTweet">
-        <img src="/delete.svg" alt="comment" width="24" height="24">
+        <img src="/icons/delete.svg" alt="comment" width="24" height="24">
       </button>
     </div>
 

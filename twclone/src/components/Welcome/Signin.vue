@@ -2,7 +2,7 @@
   <div class="signin">
     <section>
       <div class="logo">
-        <img src="/tweeter.svg" alt="tw logo" height="30" width="126" />
+        <img src="/icons/tweeter.svg" alt="tw logo" height="30" width="126" />
       </div>
 
       <div class="form">

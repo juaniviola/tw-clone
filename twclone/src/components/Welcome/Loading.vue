@@ -1,6 +1,6 @@
 <template>
   <div class="loading">
-    <img src="/tweeter.svg" alt="tw logo" height="80" width="200" />
+    <img src="/icons/tweeter.svg" alt="tw logo" height="80" width="200" />
     <div class="spinner"></div>
   </div>
 </template>
