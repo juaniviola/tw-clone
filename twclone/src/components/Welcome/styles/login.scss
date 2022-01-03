@@ -1,20 +1,22 @@
+@import "../../global/styles/variables";
+
 .signin {
   min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
   font-family: 'Lato', sans-serif;
-  background-color: #f2f2f2;
+  background-color: $white1;
 
   section {
-    background-color: white;
+    background-color: $white;
     font-size: 18px;
     width: 33%;
     margin-left: 33.5%;
     margin-right: 33.5%;
     border-radius: 10px;
     display: inline-block;
-    border: 1px #bdbdbd solid;
+    border: 1px $gray1 solid;
     padding: 4%;
   }
 }
@@ -44,12 +46,12 @@
     }
 
     .error_toast {
-      color: #bb494f;
-      background-color: #ebc8c4;
+      color: $red1;
+      background-color: $red2;
       margin-bottom: 10px;
       padding: 5px;
       border-radius: 5px;
-      border: 1px #bb494f solid;
+      border: 1px $red1 solid;
     }
 
     button {
@@ -59,10 +61,10 @@
       font-family: 'Lato', sans-serif;
       cursor: pointer;
       border: none;
-      background-color: #2f80ed;
+      background-color: $blue;
       border-radius: 5px;
       padding: 10px;
-      color: white;
+      color: $white;
       font-weight: 500;
       font-size: 1em;
 
@@ -71,7 +73,7 @@
         width: 12px;
         height: 12px;
         border-radius: 50%;
-        border-left-color: white;
+        border-left-color: $white;
         animation: spin 1s ease infinite;
       }
     }
@@ -85,7 +87,7 @@
 input {
   font-family: 'Lato', sans-serif;
   font-size: 1em;
-  border: 1px #bdbdbd solid;
+  border: 1px $gray1 solid;
   border-radius: 5px;
   padding: 10px;
   margin-bottom: 10px;
@@ -94,11 +96,11 @@ input {
 .login {
   text-align: center;
   span {
-    color: #bdbdbd;
+    color: $gray1;
 
     a {
       text-decoration: none;
-      color: #2d9cdb;
+      color: $blue;
     }
   }
 }
@@ -107,7 +109,7 @@ input {
   .signin {
     justify-content: center;
     align-items: flex-start;
-    background-color: white;
+    background-color: $white;
 
     section {
       text-align: left;

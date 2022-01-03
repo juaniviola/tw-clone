@@ -1,3 +1,5 @@
+@import "./variables";
+
 .disabled {
   display: none;
 }
@@ -5,8 +7,8 @@
 .snackbar {
   position: fixed;
   text-align: center;
-  background-color: black;
-  color: white;
+  background-color: $black;
+  color: $white;
   padding: 1%;
   margin: 0 auto;
   right: 0;

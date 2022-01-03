@@ -1,17 +1,19 @@
+@import "../../global/styles/variables";
+
 .user_card {
   display: flex;
   justify-content: space-between;
-  background-color: white;
+  background-color: $white;
   margin: 0 10%;
   font-family: 'Lato', sans-serif;
   border-radius: 7px;
-  border-bottom: 1px solid #828282;
+  border-bottom: 1px solid $gray3;
 
   .info {
     padding: 1% 2%;
 
     span {
-      color: #828282;
+      color: $gray3;
       font-weight: bold;
       font-size: .9em;
     }
@@ -29,8 +31,8 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      background-color: #2f80ed;
-      color: white;
+      background-color: $blue;
+      color: $white;
       border: none;
       border-radius: 7px;
       padding: .4em .8em;
@@ -46,7 +48,7 @@
     }
 
     .unfollow {
-      background-color: red;
+      background-color: $red;
     }
   }
 }

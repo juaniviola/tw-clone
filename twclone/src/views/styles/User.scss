@@ -1,6 +1,8 @@
+@import "../../components/global/styles/variables";
+
 .profile {
   min-height: 100vh;
-  background-color: #f2f2f2;
+  background-color: $white1;
   padding-top: 5%;
 
   .user_card {

@@ -1,8 +1,10 @@
+@import "./variables";
+
 .header {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  background-color: #ffffff;
+  background-color: $white;
   font-family: 'Lato', sans-serif;
 
   .logo {
@@ -16,8 +18,8 @@
     button {
       padding: 0 1em;
       height: 100%;
-      background-color: #ffffff;
-      color: #828282;
+      background-color: $white;
+      color: $gray3;
       border: none;
       font-size: 1em;
       font-weight: 600;
@@ -29,12 +31,12 @@
 
       &:hover {
         cursor: pointer;
-        color: black;
+        color: $black;
       }
     }
 
     .selected_button {
-      color: #2f80ed;
+      color: $blue;
       border-bottom: 3px solid #2f80ed;
     }
   }
@@ -66,7 +68,7 @@
 
         &:hover {
           cursor: pointer;
-          color: #828282;
+          color: $gray3;
         }
       }
     }
@@ -75,9 +77,9 @@
       position: absolute;
       top: 4em;
       right: 4em;
-      background-color: white;
+      background-color: $white;
       border-radius: 6px;
-      border: 0.5px solid #828282;
+      border: 0.5px solid $gray3;
       animation: dropdownAnimation .5s ease;
 
       .btn {
@@ -95,11 +97,11 @@
 
         a {
           text-decoration: none;
-          color: #333333;
+          color: $gray5;
         }
 
         &:hover {
-          background-color: #f2f2f2;
+          background-color: $white1;
         }
 
         &:first-child {
@@ -109,7 +111,7 @@
         &:last-child {
           margin-bottom: 10px;
           a {
-            color: red;
+            color: $red;
           }
 
           img {
@@ -119,7 +121,7 @@
       }
 
       .line {
-        border-bottom: 2px solid #f2f2f2;
+        border-bottom: 2px solid $white1;
         margin: 10px 10px;
       }
     }
@@ -134,13 +136,13 @@
 
     a {
       text-decoration: none;
-      color: black;
+      color: $black;
       font-size: 1.2em;
       font-weight: bold;
 
       &:hover {
         cursor: pointer;
-        color: #828282;
+        color: $gray3;
       }
     }
   }

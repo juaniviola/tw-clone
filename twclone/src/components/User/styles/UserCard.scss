@@ -1,6 +1,8 @@
+@import "../../global/styles/variables";
+
 .profile {
   .profile_card {
-    background-color: white;
+    background-color: $white;
     margin: 0 5% 2% 5%;
     border-radius: 7px;
     padding: 2%;
@@ -27,11 +29,11 @@
         .followers {
           span {
             font-size: 0.85em;
-            color: #828282;
+            color: $gray3;
 
             span {
               font-weight: bold;
-              color: black;
+              color: $black;
             }
           }
         }
@@ -46,8 +48,8 @@
         border: none;
         padding: 0.5% 1%;
         border-radius: 5px;
-        background-color: #2f80ed;
-        color: white;
+        background-color: $blue;
+        color: $white;
         font-weight: bold;
         text-align: center;
 
@@ -61,7 +63,7 @@
       }
 
       .unfollow {
-        background-color: #ff0000;
+        background-color: $red;
       }
     }
   }
@@ -78,7 +80,7 @@
 
       .buttons {
         font-family: 'Lato', sans-serif;
-        background-color: white;
+        background-color: $white;
         border-radius: 7px;
         padding: 6% 6% 6% 0;
 
@@ -93,7 +95,7 @@
           a {
             text-decoration: none;
             font-weight: bold;
-            color: #828282;
+            color: $gray3;
             padding-left: 6%;
 
             &:hover {
@@ -113,18 +115,18 @@
         align-items: center;
         margin-top: 5%;
         font-family: 'Lato', sans-serif;
-        color: #828282;
+        color: $gray3;
       }
     }
   }
 }
 
 .selectedDiv {
-  border-left: 5px solid #2f80ed;
+  border-left: 5px solid $blue;
 }
 
 .selectedButtonColor {
-  color: #2f80ed !important;
+  color: $blue !important;
 }
 
 @media (max-width: 745px) {
