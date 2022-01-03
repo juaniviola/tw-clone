@@ -1,6 +1,6 @@
 <template>
   <div class="profile">
-    <div v-show="loading" class="loading"></div>
+    <div v-show="loading" class="loading_spinner"></div>
 
     <UserNotFound
       v-show="!loading && !user.username"
@@ -267,4 +267,5 @@ export default {
 
 <style lang="scss" scoped>
   @import "./styles/User.scss";
+  @import "../components/global/styles/loading.scss";
 </style>

@@ -8,9 +8,7 @@
       <span>No hay tweet para mostrar</span>
     </div>
 
-    <div
-      v-show="loading"
-      class="loading"></div>
+    <div v-show="loading" class="loading_spinner"></div>
 
     <TweetCard
       v-show="!loading && !error && tweets.length >= 1"
@@ -96,4 +94,5 @@ export default {
 
 <style scoped lang="scss">
   @import "./styles/Home.scss";
+  @import "../global/styles/loading.scss";
 </style>

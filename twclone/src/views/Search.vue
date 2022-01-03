@@ -6,7 +6,7 @@
         <button type="submit">Search</button>
       </form>
 
-      <div v-show="loading" class="loading"></div>
+      <div v-show="loading" class="loading_spinner"></div>
 
       <div
         v-show="!loading && users.length > 0"
@@ -76,4 +76,5 @@ export default {
 
 <style lang="scss" scoped>
   @import "./styles/Search.scss";
+  @import "../components/global/styles/loading.scss";
 </style>

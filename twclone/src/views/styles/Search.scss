@@ -35,28 +35,7 @@
     }
   }
 
-  .loading {
-    margin: 5% auto 0 auto;
-
-    border: 3px solid #2f80ed;
-    width: 35px;
-    height: 35px;
-    border-radius: 50%;
-    border-left-color: #f2f2f2;
-    animation: spin 1s ease infinite;
-  }
-
   .users {
     margin-top: 5%;
-  }
-}
-
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-
-  100% {
-    transform: rotate(360deg);
   }
 }
