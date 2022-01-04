@@ -23,11 +23,11 @@
 
 <script>
 /* eslint-disable no-underscore-dangle */
-import gql from 'graphql-tag';
-import moment from 'moment';
 import UserCard from '@/components/User/UserCard.vue';
 import UserNotFound from '@/components/User/UserNotFound.vue';
 import globalState from '@/utils/GlobalState';
+import followUtils from '@/components/global/modules/FollowUser';
+import userUtils from '@/views/modules/User';
 
 export default {
   data() {
@@ -51,17 +51,7 @@ export default {
       if (!this.user || !this.user._id) return;
 
       try {
-        const followUser = await this.$apollo.mutate({
-          mutation: gql`
-            mutation ($userId: String!) {
-              addFollow(userId: $userId)
-            }
-          `,
-
-          variables: {
-            userId: this.user._id,
-          },
-        });
+        const followUser = await followUtils.followUser(this.$apollo, this.user._id);
 
         if (followUser.data?.addFollow) this.following = true;
 
@@ -77,17 +67,7 @@ export default {
       if (!this.user || !this.user._id) return;
 
       try {
-        const unfollowUser = await this.$apollo.mutate({
-          mutation: gql`
-            mutation ($userId: String!) {
-              deleteFollow(userId: $userId)
-            }
-          `,
-
-          variables: {
-            userId: this.user._id,
-          },
-        });
+        const unfollowUser = await followUtils.unfollowUser(this.$apollo, this.user._id);
 
         if (unfollowUser.data?.deleteFollow) this.following = false;
 
@@ -100,81 +80,35 @@ export default {
     },
 
     async getTweets(type) {
-      let query;
-
-      if (type === 'tweets') {
-        query = `
-          tweetsByUser(id: $id) {
-            _id
-            user {
-              _id
-              username
-            }
-            description
-            favs
-            answers
-            createdAt
-            retweets
-          }
-        `;
-      } else if (type === 'likes') {
-        query = `
-          tweetsLikedByUser(id: $id) {
-            _id
-            user {
-              _id
-              username
-            }
-            description
-            favs
-            answers
-            createdAt
-            retweets
-          }
-        `;
-      } else if (type === 'retweets') {
-        query = `
-          tweetsRetweetedByUser(id: $id) {
-            _id
-            user {
-              _id
-              username
-            }
-            description
-            favs
-            answers
-            createdAt
-            retweets
-          }
-        `;
-      }
-
       try {
-        this.tweets = [];
-        const tweets = await this.$apollo.query({
-          query: gql`
-            query ($id: String!) {
-              ${query}
-            }
-          `,
-
-          variables: { id: this.user._id },
-        });
-
-        if (type === 'tweets') {
-          this.tweets = tweets.data?.tweetsByUser || null;
-        } else if (type === 'likes') {
-          this.tweets = tweets.data?.tweetsLikedByUser || null;
-        } else {
-          this.tweets = tweets.data?.tweetsRetweetedByUser || null;
-        }
-
-        this.tweets = this.tweets.map((tweet) => ({
-          ...tweet,
-          createdAt: moment(tweet.createdAt).format('MMM Do YY'),
-        }));
+        const tweets = await userUtils.getPanelTweet(this.$apollo, type, this.user._id);
+        this.tweets = [...tweets];
       } catch (error) {
         this.tweets = [];
+      }
+    },
+
+    async getInfoAndFollowers() {
+      const { username } = this.$route.params;
+
+      try {
+        const { user, tweets } = await userUtils.getInfoAndFollowers(this.$apollo, username);
+        this.user = user || {};
+        this.tweets = tweets || [];
+
+        // check if is same user
+        if (this.user.username === globalState.getUser().username) this.sameUser = true;
+
+        // check if is following
+        if (this.user.followers?.some((x) => x.username === globalState.user.username)) {
+          this.following = true;
+        }
+      } catch (error) {
+        this.user = {};
+        this.tweets = [];
+        this.following = false;
+      } finally {
+        this.loading = false;
       }
     },
 
@@ -184,82 +118,7 @@ export default {
   },
 
   async mounted() {
-    const { username } = this.$route.params;
-
-    try {
-      const userInfo = await this.$apollo.query({
-        query: gql`
-          query ($username: String!) {
-            userByUsername(username: $username) {
-              _id
-              username
-              fullName
-            }
-          }
-        `,
-
-        variables: {
-          username,
-        },
-      });
-
-      const tweetsAndFollowers = await this.$apollo.query({
-        query: gql`
-          query ($id: String!) {
-            tweetsByUser(id: $id) {
-              _id
-              user {
-                _id
-                username
-              }
-              description
-              favs
-              answers
-              createdAt
-              retweets
-            }
-
-            userFollowers(id: $id) {
-              followers { username }
-              following { username }
-            }
-          }
-        `,
-
-        variables: {
-          id: userInfo.data?.userByUsername?._id || null,
-        },
-      });
-
-      if (!tweetsAndFollowers.data?.tweetsByUser) return;
-
-      // set user with info and followers
-      this.user = {
-        ...userInfo.data.userByUsername,
-        ...tweetsAndFollowers.data.userFollowers,
-      };
-
-      // set tweets and format createdAt
-      this.tweets = [...tweetsAndFollowers.data.tweetsByUser];
-      this.tweets = this.tweets.map((tweet) => ({
-        ...tweet,
-        createdAt: moment(tweet.createdAt).format('MMM Do YY'),
-      }));
-
-      // check if is same user
-      if (this.user.username === globalState.getUser().username) this.sameUser = true;
-
-      // check if is following
-      if (this.user.followers?.some((x) => x.username === globalState.user.username)) {
-        this.following = true;
-      }
-    } catch (error) {
-      this.user = {};
-      this.tweets = [];
-      this.following = false;
-    } finally {
-      this.loading = false;
-    }
+    await this.getInfoAndFollowers();
   },
 };
 </script>

@@ -10,11 +10,11 @@
 </template>
 
 <script>
-import gql from 'graphql-tag';
 import Header from '@/components/global/Header.vue';
 import LoadingComponent from '@/components/Welcome/Loading.vue';
 import globalState from '@/utils/GlobalState';
 import EventBus from '@/utils/EventBus';
+import appUtils from '@/utils/App';
 
 export default {
   data() {
@@ -35,17 +35,7 @@ export default {
   methods: {
     async saveUserInfoInStorage() {
       try {
-        const user = await this.$apollo.query({
-          query: gql`
-            query {
-              userInfo {
-                _id
-                username
-                fullName
-              }
-            }
-          `,
-        });
+        const user = await appUtils.getUserInfo(this.$apollo);
 
         if (!user.data?.userInfo) return;
 

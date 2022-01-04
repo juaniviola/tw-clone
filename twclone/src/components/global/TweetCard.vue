@@ -74,10 +74,10 @@
 
 <script>
 /* eslint-disable no-underscore-dangle */
-import gql from 'graphql-tag';
 import Replies from '@/components/global/TweetReplies.vue';
 import setSnackbar from '@/components/global/modules/Snackbar';
 import globalState from '@/utils/GlobalState';
+import tweetModules from '@/components/global/modules/TweetCard';
 
 export default {
   data() {
@@ -107,6 +107,12 @@ export default {
     Replies,
   },
 
+  watch: {
+    comments() {
+      return this.comments;
+    },
+  },
+
   methods: {
     goToUserPage() {
       return this.$router.push({ name: 'User', params: { username: this.user.username } });
@@ -115,55 +121,29 @@ export default {
     setSnackbar(message) { return setSnackbar(message); },
 
     isLiked(favorites) {
-      const image = document.getElementById(this._id);
       const userId = globalState.getUser()._id;
 
-      favorites.forEach((favs) => {
-        if (favs._id === userId) {
-          image.className = 'liked';
-          image.setAttribute('src', '/icons/like_filled.svg');
-          this.liked = true;
-        }
-      });
+      if (tweetModules.isChecked(favorites, userId, true)) {
+        this.liked = true;
+        tweetModules.favTweet(this._id, this.liked, this.favorites);
+      }
     },
 
     isRetweeted(rts) {
-      const button = document.getElementById(this._id.concat('rt'));
       const userId = globalState.getUser()._id;
 
-      rts.forEach((rt) => {
-        if (rt === userId) {
-          button.className = 'retweeted';
-          this.retweeted = true;
-        }
-      });
+      if (tweetModules.isChecked(rts, userId, false)) {
+        this.retweeted = true;
+        tweetModules.rtTweet(this._id, true);
+      }
     },
 
     async getRepliesAndFavorites() {
       try {
-        const getRepliesAndFavs = await this.$apollo.query({
-          query: gql`
-            query ($id: String!) {
-              tweetAnswers(id: $id) {
-                _id
-                user {
-                  _id
-                  username
-                }
-                description
-                createdAt
-              }
-
-              tweetFavorites(id: $id) {
-                _id
-              }
-            }
-          `,
-
-          variables: {
-            id: this._id,
-          },
-        });
+        const getRepliesAndFavs = await tweetModules.queryRepliesAndFavorites(
+          this.$apollo,
+          this._id,
+        );
 
         this.replies = getRepliesAndFavs.data?.tweetAnswers;
         this.isLiked(getRepliesAndFavs.data?.tweetFavorites);
@@ -180,27 +160,17 @@ export default {
       input.disabled = true;
 
       try {
-        const newAnswer = await this.$apollo.mutate({
-          mutation: gql`
-            mutation ($answer: addAnsInput!) {
-              addAnswer(answer: $answer) {
-                _id
-              }
-            }
-          `,
-
-          variables: {
-            answer: {
-              tweetId: this._id,
-              description: this.answer,
-            },
-          },
-        });
-
+        const newAnswer = await tweetModules.mutationSubmitAnswer(
+          this.$apollo,
+          this._id,
+          this.answer,
+        );
         if (!newAnswer.data?.addAnswer._id) throw Error(0);
 
         this.setSnackbar('Respuesta enviada!');
         this.comments += 1;
+
+        // add replie
         this.replies = [
           ...this.replies, {
             createdAt: `${new Date()}`,
@@ -218,34 +188,12 @@ export default {
 
     async likeTweet() {
       try {
-        await this.$apollo.mutate({
-          mutation: gql`
-            mutation ($fav: favInput!) {
-              favTweet(fav: $fav)
-            }
-          `,
-
-          variables: {
-            fav: {
-              id: this._id,
-              favorite: !this.liked,
-            },
-          },
-        });
+        await tweetModules.mutationLikeTweet(this.$apollo, this._id, !this.liked);
 
         this.liked = !this.liked;
         this.setSnackbar('Tweet liked ❤');
 
-        const likeButton = document.getElementById(this._id);
-        if (this.liked) {
-          likeButton.className = 'liked';
-          likeButton.setAttribute('src', '/icons/like_filled.svg');
-          this.favorites += 1;
-        } else {
-          likeButton.className = '';
-          likeButton.setAttribute('src', '/icons/like.svg');
-          this.favorites -= 1;
-        }
+        this.favorites = tweetModules.favTweet(this._id, this.liked, this.favorites);
       } catch (error) {
         this.setSnackbar('Error :(');
       }
@@ -253,24 +201,12 @@ export default {
 
     async rtTweet() {
       try {
-        await this.$apollo.mutate({
-          mutation: gql`
-            mutation ($id: String!) {
-              addRetweet(id: $id)
-            }
-          `,
-
-          variables: {
-            id: this._id,
-          },
-        });
+        await tweetModules.mutationRtTweet(this.$apollo, this._id);
 
         this.retweeted = !this.retweeted;
         this.setSnackbar('Tweet retweeted');
 
-        const rtButton = document.getElementById(this._id.concat('rt'));
-        if (this.retweeted) rtButton.className = 'retweeted';
-        else rtButton.className = '';
+        tweetModules.rtTweet(this._id, this.retweeted);
       } catch (error) {
         this.setSnackbar('Error :(');
       }
@@ -283,17 +219,7 @@ export default {
 
     async deleteTweet() {
       try {
-        const tweetDeleted = await this.$apollo.mutate({
-          mutation: gql`
-            mutation ($id: String!) {
-              deleteTweet(id: $id)
-            }
-          `,
-
-          variables: {
-            id: this._id,
-          },
-        });
+        const tweetDeleted = await tweetModules.mutationDeleteTweet(this.$apollo, this._id);
 
         if (tweetDeleted.data?.deleteTweet) {
           this.$emit('deleteTweet', this._id);
@@ -310,6 +236,7 @@ export default {
   },
 
   async mounted() {
+    // check if is retweeted
     this.isRetweeted(this.retweets);
 
     await this.getRepliesAndFavorites();

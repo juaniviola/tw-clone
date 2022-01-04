@@ -48,8 +48,7 @@
 </template>
 
 <script>
-import gql from 'graphql-tag';
-import { setLoading, setError } from './modules/Login';
+import { setLoading, setError, mutationCreateUser } from './modules/Login';
 
 export default {
   data() {
@@ -90,23 +89,11 @@ export default {
       this.setLoadingForm(true);
 
       try {
-        const result = await this.$apollo.mutate({
-          mutation: gql`
-            mutation ($user: newUser!) {
-              addUser(user: $user) {
-                username
-              }
-            }
-          `,
-
-          variables: {
-            user: {
-              username,
-              email,
-              fullName,
-              password,
-            },
-          },
+        const result = await mutationCreateUser(this.$apollo, {
+          username,
+          email,
+          fullName,
+          password,
         });
 
         if (!result?.data.addUser) throw Error('credentials');

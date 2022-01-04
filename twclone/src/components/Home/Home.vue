@@ -31,10 +31,10 @@
 
 <script>
 import moment from 'moment';
-import gql from 'graphql-tag';
 import TweetInput from '@/components/Home/TweetInput.vue';
 import TweetCard from '@/components/global/TweetCard.vue';
 import setSnackbar from '@/components/global/modules/Snackbar';
+import homeUtils from '@/components/Home/modules/Home';
 
 export default {
   data() {
@@ -55,39 +55,26 @@ export default {
     deleteTweet(id) {
       this.tweets = this.tweets.filter(({ _id }) => _id !== id);
     },
+
+    async getFeed() {
+      try {
+        const result = await homeUtils.getFeed(this.$apollo);
+
+        this.tweets = result.data?.tweetsByFollowingUsers;
+        this.tweets = this.tweets.map((tweet) => ({
+          ...tweet,
+          createdAt: moment(tweet.createdAt).format('MMM Do YY'),
+        }));
+      } catch (e) {
+        this.setSnackbar('Error al cargar :(');
+      } finally {
+        this.loading = false;
+      }
+    },
   },
 
   async mounted() {
-    try {
-      const result = await this.$apollo.query({
-        query: gql`
-          query {
-            tweetsByFollowingUsers {
-              _id
-              user {
-                _id
-                username
-              }
-              description
-              createdAt
-              favs
-              answers
-              retweets
-            }
-          }
-        `,
-      });
-
-      this.tweets = result.data?.tweetsByFollowingUsers;
-      this.tweets = this.tweets.map((tweet) => ({
-        ...tweet,
-        createdAt: moment(tweet.createdAt).format('MMM Do YY'),
-      }));
-    } catch (e) {
-      this.setSnackbar('Error al cargar :(');
-    } finally {
-      this.loading = false;
-    }
+    await this.getFeed();
   },
 };
 </script>

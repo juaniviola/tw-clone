@@ -20,8 +20,9 @@
 
 <script>
 /* eslint-disable no-underscore-dangle */
-import gql from 'graphql-tag';
 import globalState from '@/utils/GlobalState';
+import followUtils from '@/components/global/modules/FollowUser';
+import userCardUtils from '@/components/Search/modules/UserCard';
 
 export default {
   data() {
@@ -43,21 +44,27 @@ export default {
       return this.$router.push(`/user/${this.username}`);
     },
 
+    async getFollowers() {
+      try {
+        const followers = await userCardUtils.getFollowers(this.$apollo, this._id);
+
+        this.followers = followers.data?.userFollowers.followers || [];
+
+        const userId = globalState.getUser()._id;
+        this.sameUser = userId === this._id;
+
+        const isUserFollowing = this.followers.filter(({ _id }) => _id === userId);
+        this.following = isUserFollowing.length === 1;
+      } catch (error) {
+        this.followers = false;
+      }
+    },
+
     async followUser() {
       if (!this._id) return;
 
       try {
-        const followUser = await this.$apollo.mutate({
-          mutation: gql`
-            mutation ($userId: String!) {
-              addFollow(userId: $userId)
-            }
-          `,
-
-          variables: {
-            userId: this._id,
-          },
-        });
+        const followUser = await followUtils.followUser(this.$apollo, this._id);
 
         if (followUser.data?.addFollow) this.following = true;
 
@@ -71,17 +78,7 @@ export default {
       if (!this._id) return;
 
       try {
-        const unfollowUser = await this.$apollo.mutate({
-          mutation: gql`
-            mutation ($userId: String!) {
-              deleteFollow(userId: $userId)
-            }
-          `,
-
-          variables: {
-            userId: this._id,
-          },
-        });
+        const unfollowUser = await followUtils.unfollowUser(this.$apollo, this._id);
 
         if (unfollowUser.data?.deleteFollow) this.following = false;
 
@@ -95,34 +92,7 @@ export default {
   },
 
   async mounted() {
-    try {
-      const followers = await this.$apollo.query({
-        query: gql`
-          query ($id: String!) {
-            userFollowers(id: $id) {
-              followers {
-                _id
-                username
-              }
-            }
-          }
-        `,
-
-        variables: {
-          id: this._id,
-        },
-      });
-
-      this.followers = followers.data?.userFollowers.followers || [];
-
-      const userId = globalState.getUser()._id;
-      this.sameUser = userId === this._id;
-
-      const isUserFollowing = this.followers.filter(({ _id }) => _id === userId);
-      this.following = isUserFollowing.length === 1;
-    } catch (error) {
-      this.followers = false;
-    }
+    await this.getFollowers();
   },
 };
 </script>

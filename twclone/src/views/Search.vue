@@ -22,8 +22,8 @@
 </template>
 
 <script>
-import gql from 'graphql-tag';
 import UserCard from '@/components/Search/UserCard.vue';
+import searchUtils from '@/views/modules/Search';
 
 export default {
   data() {
@@ -47,21 +47,7 @@ export default {
 
       try {
         this.loading = true;
-        const users = await this.$apollo.query({
-          query: gql`
-            query ($username: String!) {
-              usersByUsername(username: $username) {
-                _id
-                username
-                fullName
-              }
-            }
-          `,
-
-          variables: {
-            username: this.text,
-          },
-        });
+        const users = await searchUtils.searchUser(this.$apollo, this.text);
 
         this.users = users.data?.usersByUsername || [];
       } catch (error) {

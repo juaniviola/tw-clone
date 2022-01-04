@@ -31,8 +31,8 @@
 </template>
 
 <script>
-import gql from 'graphql-tag';
 import setSnackbar from '@/components/global/modules/Snackbar';
+import inputUtils from '@/components/Home/modules/TweetInput';
 
 export default {
   data() {
@@ -48,24 +48,7 @@ export default {
   },
 
   methods: {
-    setLoadingForm(isLoading) {
-      const input = document.getElementById('inpt');
-      const button = document.getElementById('tweet_btn');
-      const [loader, text] = button.children;
-
-      if (isLoading) {
-        input.disabled = true;
-        button.disabled = true;
-        loader.className = 'loading_btn';
-        text.className = 'disabled';
-        return;
-      }
-
-      input.disabled = false;
-      button.disabled = false;
-      loader.className = 'disabled';
-      text.className = '';
-    },
+    setLoadingForm(isLoading) { return inputUtils.domSetLoading(isLoading); },
 
     setSnackbar(message) { return setSnackbar(message); },
 
@@ -75,19 +58,7 @@ export default {
       this.setLoadingForm(true);
 
       try {
-        await this.$apollo.mutate({
-          mutation: gql`
-            mutation ($description: String!) {
-              addTweet(description: $description) {
-                description
-              }
-            }
-          `,
-
-          variables: {
-            description: this.tweet,
-          },
-        });
+        await inputUtils.mutationCreateTweet(this.$apollo, this.tweet);
 
         this.setSnackbar('Tweet creado!');
       } catch (error) {

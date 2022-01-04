@@ -1,3 +1,5 @@
+import gql from 'graphql-tag';
+
 const setLoading = (isLoading) => {
   const button = document.getElementById('signin_btn');
   const [loader, text] = button.children;
@@ -37,4 +39,28 @@ const setError = (message) => {
   textErrorToast.innerHTML = '❌ '.concat(message);
 };
 
-export { setLoading, setError };
+const mutationCreateUser = (apollo, {
+  username,
+  email,
+  fullName,
+  password,
+}) => apollo.mutate({
+  mutation: gql`
+    mutation ($user: newUser!) {
+      addUser(user: $user) {
+        username
+      }
+    }
+  `,
+
+  variables: {
+    user: {
+      username,
+      email,
+      fullName,
+      password,
+    },
+  },
+});
+
+export { setLoading, setError, mutationCreateUser };

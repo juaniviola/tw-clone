@@ -2,7 +2,7 @@
 
 .card {
   margin: 2% 5%;
-  background-color: $white;
+  background-color: white;
   border-radius: 10px;
   padding: 2%;
   font-family: 'Lato', sans-serif;
@@ -62,7 +62,7 @@
       display: flex;
       justify-content: center;
       border: none;
-      background-color: $white;
+      background-color: white;
 
       &:hover {
         cursor: pointer;

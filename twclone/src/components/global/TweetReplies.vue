@@ -79,7 +79,10 @@ export default {
   },
 
   mounted() {
+    // format date
     this.createdAtFormatted = moment(this.createdAt).format('MMM Do YY');
+
+    // check if it is same user
     const user = globalState.getUser();
     if (!user || !user._id || user._id !== this.user._id) return;
 
