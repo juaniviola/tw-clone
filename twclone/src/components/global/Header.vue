@@ -42,8 +42,9 @@
 
 <script>
 import axios from 'axios';
+import config from '@/config';
 
-const server = 'http://localhost:3000';
+const { server } = config;
 
 export default {
   data() {

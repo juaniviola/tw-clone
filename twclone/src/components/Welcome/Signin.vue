@@ -47,9 +47,9 @@
 import axios from 'axios';
 import { setLoading, setError } from './modules/Login';
 import globalState from '@/utils/GlobalState';
+import config from '@/config';
 
-// TODO: import from config file
-const serverUrl = 'http://localhost:3000';
+const serverUrl = config.server;
 
 export default {
   data() {

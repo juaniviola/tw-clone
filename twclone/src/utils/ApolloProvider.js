@@ -1,8 +1,9 @@
 import { ApolloClient, HttpLink, InMemoryCache } from '@apollo/client/core';
 import { createApolloProvider } from '@vue/apollo-option';
+import config from '@/config';
 
 const httpLink = new HttpLink({
-  uri: 'http://localhost:3000',
+  uri: config.server,
   credentials: 'include',
 });
 
