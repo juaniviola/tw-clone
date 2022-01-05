@@ -5,6 +5,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
+    "start": "node --experimental-modules --es-module-specifier-resolution=node index.js",
     "test": "jest --runInBand --forceExit",
     "dev": "ENV=dev nodemon --experimental-modules --es-module-specifier-resolution=node index.js",
     "lint": "eslint index.js graphql"
