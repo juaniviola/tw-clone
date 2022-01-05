@@ -7,6 +7,7 @@ import helmet from 'helmet';
 import cors from 'cors';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { MongoMemoryServer } from 'mongodb-memory-server';
+import cookieParser from 'cookie-parser';
 import loginRoute from './routes/login';
 import server from './graphql';
 import database from './Database/Database';
@@ -34,6 +35,7 @@ async function runServer() {
   const app = express();
   app.use(helmet());
   app.use(cors({ origin: CLIENT_URI, credentials: true }));
+  app.use(cookieParser());
   app.use(express.json());
   app.use(express.urlencoded({
     extended: true,
@@ -49,6 +51,7 @@ async function runServer() {
   server.applyMiddleware({
     app,
     path: '/',
+    cors: { origin: CLIENT_URI },
   });
 
   const httpServer = http.createServer(app);

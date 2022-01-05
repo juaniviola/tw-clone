@@ -26,7 +26,7 @@ app.post('/login', async (req, res) => {
 
     res.cookie('user_token', token, {
       httpOnly: true,
-      // secure: true,
+      secure: true,
       maxAge: ms('7 days'),
     });
 
