@@ -45,11 +45,15 @@
 
 <script>
 import axios from 'axios';
-import { setLoading, setError } from './modules/Login';
 import globalState from '@/utils/GlobalState';
 import config from '@/config';
+import { setLoading, setError } from './modules/Login';
 
 const serverUrl = config.server;
+const requestPost = axios.create({
+  withCredentials: true,
+  baseURL: serverUrl,
+});
 
 export default {
   data() {
@@ -79,11 +83,7 @@ export default {
       this.setLoadingForm(true);
 
       try {
-        const userLogged = await axios.post(
-          serverUrl.concat('/login'),
-          { username, password },
-          { withCredentials: true },
-        );
+        const userLogged = await requestPost.post('/login', { username, password });
 
         globalState.setIsUserLogged(true);
         globalState.setUser(userLogged.data);

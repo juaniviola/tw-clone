@@ -45,6 +45,10 @@ import axios from 'axios';
 import config from '@/config';
 
 const { server } = config;
+const requestPost = axios.create({
+  withCredentials: true,
+  baseURL: server,
+});
 
 export default {
   data() {
@@ -87,11 +91,7 @@ export default {
 
     async logout() {
       try {
-        await axios.post(
-          server.concat('/logout'),
-          {},
-          { withCredentials: true },
-        );
+        await requestPost.post('/logout', {});
 
         this.$router.go();
       } catch (error) {
