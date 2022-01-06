@@ -4,12 +4,10 @@ Javascript full stack application, trying to copy Twitter style.
 
 Using **MongoDB**, **GraphQL** and **Vue.js**
 
-## Goals
+## [Deployed version](https://twclone-client.vercel.app/)
 
-* [x] Db Implementation
-* [x] Test db
-* [x] Server Implementation
-* [x] Test Server
-* [ ] Front-end Implementation
-* [ ] Front-end Test
-* [ ] Ready for production
+## To deploy local version
+
+- Go to **Server** folder and install with `npm install`
+- Run server with `npm run dev`
+- Go to **twclone** folder and install with `yarn install` and run with `yarn serve`
