@@ -45,9 +45,9 @@
 
 <script>
 import axios from 'axios';
-import globalState from '@/utils/GlobalState';
 import config from '@/config';
 import { setLoading, setError } from './modules/Login';
+import globalState from '@/utils/GlobalState';
 
 const serverUrl = config.server;
 const requestPost = axios.create({
@@ -83,7 +83,11 @@ export default {
       this.setLoadingForm(true);
 
       try {
-        const userLogged = await requestPost.post('/login', { username, password });
+        const userLogged = await requestPost.post(
+          '/login',
+          { username, password },
+          { headers: { 'Content-Type': 'application/json' } },
+        );
 
         globalState.setIsUserLogged(true);
         globalState.setUser(userLogged.data);

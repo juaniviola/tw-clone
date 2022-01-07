@@ -20,11 +20,6 @@
           <a href="#"> My profile</a>
         </div>
 
-        <div class="btn">
-          <img src="/icons/settings.svg" alt="profile">
-          <a href="#"> Settings</a>
-        </div>
-
         <div class="line"></div>
 
         <div class="btn" @click="logout">
@@ -91,7 +86,11 @@ export default {
 
     async logout() {
       try {
-        await requestPost.post('/logout', {});
+        await requestPost.post(
+          '/logout',
+          {},
+          { headers: { 'Content-Type': 'application/json' } },
+        );
 
         this.$router.go();
       } catch (error) {
