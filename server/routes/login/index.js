@@ -37,7 +37,7 @@ app.post('/login', async (req, res) => {
 });
 
 app.post('/logout', async (_, res) => {
-  res.clearCookie('user_token');
+  res.clearCookie('user_token', { path: '/' });
 
   return res.status(200).send('logged out');
 });
