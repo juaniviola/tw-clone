@@ -46,8 +46,8 @@
 <script>
 import axios from 'axios';
 import config from '@/config';
-import { setLoading, setError } from './modules/Login';
 import globalState from '@/utils/GlobalState';
+import { setLoading, setError } from './modules/Login';
 
 const serverUrl = config.server;
 const requestPost = axios.create({
