@@ -8,6 +8,5 @@ Using **MongoDB**, **GraphQL** and **Vue.js**
 
 ## To deploy local version
 
-- Go to **Server** folder and install with `npm install`
-- Run server with `npm run dev`
+- Go to **Server** folder and install with `npm install` and `npm run dev`
 - Go to **twclone** folder and install with `yarn install` and run with `yarn serve`
