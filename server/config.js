@@ -9,6 +9,7 @@ const config = {
   PORT: process.env.PORT || 3000,
   NODE_ENV: process.env.ENV,
   CLIENT_URI: process.env.CLIENT_URI || 'http://localhost:8080',
+  COOKIE_DOMAIN: process.env.COOKIE_DOMAIN || 'localhost',
 };
 
 export default config;
