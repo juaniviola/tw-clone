@@ -38,6 +38,7 @@
 <script>
 import axios from 'axios';
 import config from '@/config';
+import eventBus from '@/utils/EventBus';
 
 const { server } = config;
 const requestPost = axios.create({
@@ -85,8 +86,6 @@ export default {
     },
 
     async logout() {
-      const router = this.$router;
-
       try {
         await requestPost.post(
           '/logout',
@@ -94,9 +93,12 @@ export default {
           { headers: { 'Content-Type': 'application/json' } },
         );
 
-        setTimeout(() => router.go(), 100);
+        eventBus.emit('app/logout');
+        eventBus.emit('home/logout');
+
+        this.$router.push('/');
       } catch (error) {
-        console.error(error);
+        console.log(error);
       }
     },
   },

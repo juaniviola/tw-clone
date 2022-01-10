@@ -49,6 +49,13 @@ export default {
     },
   },
 
+  created() {
+    EventBus.on('home/logout', () => {
+      this.userLogged = false;
+      this.screenSelection('signup');
+    });
+  },
+
   mounted() {
     this.userLogged = globalState.getUserIsLogged();
     if (this.userLogged) {

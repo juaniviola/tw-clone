@@ -61,6 +61,14 @@ export default {
     EventBus.on('selectedScreen', (screen) => {
       this.route = screen;
     });
+
+    EventBus.on('app/logout', () => {
+      globalState.setUser(null);
+      globalState.setIsUserLogged(false);
+
+      this.userLogged = false;
+      this.username = undefined;
+    });
   },
 
   async mounted() {
