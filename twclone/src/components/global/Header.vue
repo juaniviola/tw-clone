@@ -94,8 +94,7 @@ export default {
           { headers: { 'Content-Type': 'application/json' } },
         );
 
-        router.push('/');
-        setTimeout(() => router.go());
+        setTimeout(() => router.go(), 100);
       } catch (error) {
         console.error(error);
       }
