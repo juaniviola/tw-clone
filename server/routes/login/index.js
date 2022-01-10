@@ -10,7 +10,7 @@ import config from '../../config';
 
 const app = express.Router();
 const signToken = promisify(jwt.sign);
-const { SECRET_TOKEN, COOKIE_DOMAIN } = config;
+const { SECRET_TOKEN } = config;
 
 app.post('/login', async (req, res) => {
   const { username, password } = req.body;
@@ -38,7 +38,11 @@ app.post('/login', async (req, res) => {
 });
 
 app.post('/logout', async (_, res) => {
-  res.clearCookie('user_token', { path: '/', domain: COOKIE_DOMAIN });
+  res.clearCookie('user_token', {
+    httpOnly: true,
+    secure: true,
+    sameSite: 'none',
+  });
 
   return res.status(200).send('logged out');
 });
