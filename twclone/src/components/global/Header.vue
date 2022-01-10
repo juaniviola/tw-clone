@@ -85,6 +85,8 @@ export default {
     },
 
     async logout() {
+      const router = this.$router;
+
       try {
         await requestPost.post(
           '/logout',
@@ -92,7 +94,8 @@ export default {
           { headers: { 'Content-Type': 'application/json' } },
         );
 
-        this.$router.go();
+        router.push('/');
+        setTimeout(() => router.go());
       } catch (error) {
         console.error(error);
       }
