@@ -28,6 +28,7 @@ app.post('/login', async (req, res) => {
       httpOnly: true,
       secure: true,
       maxAge: ms('7 days'),
+      sameSite: 'none',
     });
 
     res.status(200).send({ _id: user._id, username: user.username });
